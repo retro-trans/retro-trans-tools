@@ -335,7 +335,9 @@ class Application(tk.Tk):
                 if job is not None and job != self.job_id:
                     continue
                 if kind == "catalog":
-                    self.pending_catalog = value
+                    # A normal startup refresh usually returns the same catalog.
+                    # Do not queue another full image read after the initial scan.
+                    self.pending_catalog = value if value.data != self.catalog.data else None
                     self.catalog_status.set("Catalog current: {} patches".format(len(value.edges)))
                 elif kind == "catalog_error":
                     self.catalog_status.set("Using saved catalog (refresh unavailable)")

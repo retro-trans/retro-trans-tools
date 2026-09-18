@@ -273,6 +273,12 @@ def matches(node, hashes, size):
     return (node.size is None or node.size == size) and hashes.get(algorithm) == node.hashes[algorithm]
 
 
+def required_hashes(nodes):
+    # SHA-1 aliases link historical records; only SHA-1-only candidates need it
+    # for verification. Compute all necessary algorithms in a single read.
+    return {"sha256" if "sha256" in node.hashes else "sha1" for node in nodes}
+
+
 def recognize(path, catalog, cancel=None, progress=None):
     path = Path(path)
     if not path.is_file():
@@ -281,7 +287,7 @@ def recognize(path, catalog, cancel=None, progress=None):
     candidates = [n for n in catalog.nodes.values() if n.size is None or n.size == size]
     if not candidates:
         return []
-    algorithms = set(a for n in candidates for a in n.hashes)
+    algorithms = required_hashes(candidates)
     hashes = file_hashes(path, algorithms, cancel, progress)
     return sorted([n for n in candidates if matches(n, hashes, size)], key=lambda n: version_key(n.version), reverse=True)
 
@@ -340,7 +346,7 @@ def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=No
     output = output_path(output, (source,))
     if not plan.edges:
         raise PatchError("This binary is already at the selected version.")
-    hashes = file_hashes(source, plan.source.hashes, cancel, progress)
+    hashes = file_hashes(source, required_hashes([plan.source]), cancel, progress)
     if not matches(plan.source, hashes, source.stat().st_size):
         raise PatchError("The selected source changed or no longer matches its detected version.")
     # For legacy records without published sizes, VCDIFF header sizes are filled
@@ -363,7 +369,7 @@ def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=No
                 def step_progress(message, fraction):
                     report(progress, "Step {}/{}: {}".format(index + 1, len(plan.edges), message), fraction)
                 decode(engine, previous, delta, temporary, target.size, cancel, step_progress)
-                hashes = file_hashes(temporary, target.hashes, cancel, step_progress)
+                hashes = file_hashes(temporary, required_hashes([target]), cancel, step_progress)
                 if not matches(target, hashes, temporary.stat().st_size):
                     raise PatchError("Intermediate output failed verification at version " + target.version)
                 if previous != source:

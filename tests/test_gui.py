@@ -1,9 +1,11 @@
+import copy
 import os
 from pathlib import Path
 import unittest
 from unittest.mock import patch
 
 from retro_trans.gui import Application
+from retro_trans.catalog import Catalog
 
 
 @unittest.skipUnless(os.name == "nt", "Native Windows UI test")
@@ -61,6 +63,33 @@ class GuiTests(unittest.TestCase):
         app.file_box.current(0)
         app.select_found()
         self.assertIsNotNone(app.selection)
+
+    def test_unchanged_catalog_does_not_repeat_identification(self):
+        app = self.app
+        fresh = Catalog(copy.deepcopy(app.catalog.data))
+        node = next(iter(app.catalog.nodes.values()))
+        for selection in (None, (Path("large.iso"), node)):
+            app.selection = selection
+            app.busy = True
+            app.events.put(("catalog", None, fresh))
+            with patch.object(app, "scan") as scan, patch.object(app, "start") as start:
+                app.poll()
+                app.busy = False
+                app.poll()
+                scan.assert_not_called()
+                start.assert_not_called()
+                self.assertIsNone(app.pending_catalog)
+
+    def test_changed_catalog_still_rechecks_selected_file(self):
+        app = self.app
+        data = copy.deepcopy(app.catalog.data)
+        data["releases"][0]["manifest"]["game_name"] += " updated"
+        app.selection = (Path("large.iso"), next(iter(app.catalog.nodes.values())))
+        app.events.put(("catalog", None, Catalog(data)))
+        with patch.object(app, "start") as start:
+            app.poll()
+            start.assert_called_once()
+            self.assertEqual(start.call_args.args[1], "identify")
 
     def test_layout_at_150_and_200_percent_scaling(self):
         original_styles = Application.build_styles

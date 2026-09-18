@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from retro_trans.catalog import (Catalog, assert_immutable, recognize, scan_root,
-    validate_manifest, refresh_catalog, load_catalog, apply_plan)
+    validate_manifest, refresh_catalog, load_catalog, apply_plan, file_hashes)
 from retro_trans.core import PatchError, Cancelled
 
 
@@ -103,6 +103,19 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(recognize(self.path, cat)[0].version, "original")
         legacy["manifest"]["patches"][0]["source_sha256"] = "0" * 64
         self.assertEqual(recognize(self.path, catalog(legacy)), [])
+
+    def test_only_required_hashes_are_computed_in_one_pass(self):
+        strong = record()
+        strong["manifest"]["patches"][0]["source_sha1"] = hashlib.sha1(DATA["original"]).hexdigest()
+        with patch("retro_trans.catalog.file_hashes", wraps=file_hashes) as hash_file:
+            self.assertEqual(recognize(self.path, catalog(strong))[0].version, "original")
+            self.assertEqual(hash_file.call_count, 1)
+            self.assertEqual(hash_file.call_args.args[1], {"sha256"})
+        mixed = catalog(record(edition="legacy-edition", legacy=True), strong)
+        with patch("retro_trans.catalog.file_hashes", wraps=file_hashes) as hash_file:
+            self.assertEqual(len(recognize(self.path, mixed)), 2)
+            self.assertEqual(hash_file.call_count, 1)
+            self.assertEqual(hash_file.call_args.args[1], {"sha256", "sha1"})
 
     def test_manifest_rejections(self):
         m = record()["manifest"]

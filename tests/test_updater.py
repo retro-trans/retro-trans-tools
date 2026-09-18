@@ -34,7 +34,7 @@ class UpdateClient(GitHubClient):
 class UpdateTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
         self.target = self.root / "installed.exe"
         self.target.write_bytes(b"old executable")
         self.directory = self.root / "updates"

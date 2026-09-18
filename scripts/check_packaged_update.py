@@ -21,7 +21,7 @@ def main():
     if os.name != "nt" or not candidate.is_file():
         raise SystemExit("Build dist/Retro-Trans.exe on Windows first.")
     with tempfile.TemporaryDirectory(prefix="retro-trans-update-check-") as folder:
-        folder = Path(folder)
+        folder = Path(folder).resolve()
         hook = folder / "old_version.py"
         hook.write_text("import retro_trans\nretro_trans.__version__ = '0.0.0'\n", encoding="utf-8")
         # Only the isolated old-app fixture gets the overridden version.

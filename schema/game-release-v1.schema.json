@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/retro-trans/retro-trans-tools/main/schema/game-release-v1.schema.json",
+  "title": "Retro Trans game release v1",
+  "type": "object",
+  "required": ["schema_version", "game_id", "game_name", "platform", "version", "source_commit", "patches"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "game_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "game_name": {"type": "string", "minLength": 1, "maxLength": 200},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 200},
+    "version": {"$ref": "#/$defs/version"},
+    "source_commit": {"type": "string", "pattern": "^[a-fA-F0-9]{40}$"},
+    "patches": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/patch"}}
+  },
+  "$defs": {
+    "version": {"type": "string", "pattern": "^v?[0-9]+(\\.[0-9]+){1,3}$"},
+    "hash": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "bytes": {"type": "integer", "minimum": 0, "maximum": 17592186044416},
+    "format": {"type": "string", "pattern": "^[a-z0-9]{1,12}$"},
+    "patch": {
+      "type": "object",
+      "required": ["patch", "edition", "language", "source_version", "source_format", "target_format", "source_sha256", "source_bytes", "target_sha256", "target_bytes", "patch_sha256", "patch_bytes"],
+      "properties": {
+        "patch": {"type": "string", "maxLength": 200, "pattern": "^[^<>:\"/\\\\|?*\\u0000-\\u001f]+\\.(xdelta|vcdiff)$"},
+        "edition": {"type": "string", "minLength": 1, "maxLength": 200},
+        "language": {"type": "string", "minLength": 1, "maxLength": 200},
+        "source_version": {"anyOf": [{"const": "original"}, {"$ref": "#/$defs/version"}]},
+        "source_format": {"$ref": "#/$defs/format"},
+        "target_format": {"$ref": "#/$defs/format"},
+        "source_sha256": {"$ref": "#/$defs/hash"},
+        "target_sha256": {"$ref": "#/$defs/hash"},
+        "patch_sha256": {"$ref": "#/$defs/hash"},
+        "source_bytes": {"$ref": "#/$defs/bytes"},
+        "target_bytes": {"$ref": "#/$defs/bytes"},
+        "patch_bytes": {"$ref": "#/$defs/bytes"}
+      }
+    }
+  }
+}

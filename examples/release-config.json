@@ -1,0 +1,29 @@
+{
+  "game_id": "example-game",
+  "game_name": "Example Game",
+  "platform": "PS2",
+  "version": "1.2.0",
+  "source_commit": "0000000000000000000000000000000000000000",
+  "patches": [
+    {
+      "patch": "Example-English-v1.2.0.xdelta",
+      "edition": "original",
+      "language": "en",
+      "source_version": "original",
+      "source_format": "iso",
+      "target_format": "iso",
+      "source": "../private/original.iso",
+      "target": "../private/english-1.2.0.iso"
+    },
+    {
+      "patch": "Example-English-v1.1.0-to-v1.2.0.xdelta",
+      "edition": "original",
+      "language": "en",
+      "source_version": "1.1.0",
+      "source_format": "iso",
+      "target_format": "iso",
+      "source": "../private/english-1.1.0.iso",
+      "target": "../private/english-1.2.0.iso"
+    }
+  ]
+}

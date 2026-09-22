@@ -38,5 +38,7 @@ jobs:
         run: |
           gh release view '${{ github.ref_name }}' --repo '${{ github.repository }}' 2>$null
           if ($LASTEXITCODE -eq 0) { throw 'Release already exists. Publish a new version instead of overwriting it.' }
-          gh release create '${{ github.ref_name }}' dist/Retro-Trans.exe dist/Retro-Trans-Windows.zip dist/UPDATE.json --repo '${{ github.repository }}' --verify-tag --title 'Retro Trans ${{ github.ref_name }}' --generate-notes
+          $NotesPath = 'docs/releases/${{ github.ref_name }}.md'
+          $NotesArguments = if (Test-Path -LiteralPath $NotesPath) { @('--notes-file', $NotesPath) } else { @('--generate-notes') }
+          gh release create '${{ github.ref_name }}' dist/Retro-Trans.exe dist/Retro-Trans-Windows.zip dist/UPDATE.json --repo '${{ github.repository }}' --verify-tag --title 'Retro Trans ${{ github.ref_name }}' @NotesArguments
           if ($LASTEXITCODE -ne 0) { throw 'Release publishing failed.' }

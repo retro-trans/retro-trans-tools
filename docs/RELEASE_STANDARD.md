@@ -38,6 +38,13 @@ assets. The build report is evidence from the local round trip; GitHub validatio
 checks its agreement with the manifest and assets, and does not itself run a
 game-specific round trip without the original binaries.
 
+For CHD-compatible releases, build patches against the exact unpacked ISO/BIN
+and record that disc's format, full hashes and size. Do not substitute hashes
+of a compressed CHD. The app handles supported CHD extraction/recompression
+separately; include SHA-1 alongside required SHA-256 when available to enable
+fast DVD CHD selection. Extracted bytes are still verified before patching.
+Multi-track/audio and GD-ROM conversion are not supported by this contract.
+
 ## Manifest fields
 
 | Field | Meaning |

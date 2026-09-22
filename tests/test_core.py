@@ -72,10 +72,10 @@ class CoreTests(unittest.TestCase):
         release = dataclasses.replace(self.release, patches=(other, upgrade))
         self.assertEqual(identify_source(self.source, release), upgrade)
 
-    def test_chd_is_rejected(self):
+    def test_invalid_chd_is_rejected(self):
         source = self.root / "game.chd"
         source.write_bytes(b"original game")
-        with self.assertRaisesRegex(PatchError, "unpacked"):
+        with self.assertRaisesRegex(PatchError, "CHD header"):
             identify_source(source, self.release)
 
     def test_cancel_hash(self):

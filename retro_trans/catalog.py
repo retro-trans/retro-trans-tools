@@ -283,6 +283,26 @@ def recognize(path, catalog, cancel=None, progress=None):
     path = Path(path)
     if not path.is_file():
         raise PatchError("Select an existing binary.")
+    from .chd import is_chd, inspect_chd, prepared_source
+    if is_chd(path):
+        disc = inspect_chd(path)
+        candidates = [n for n in catalog.nodes.values() if n.format in ('iso', 'bin') and
+                      (n.size is None or n.size == disc.size)]
+        if not candidates:
+            return []
+        # DVD CHDs carry the extracted disc's SHA-1. This is a fast selection
+        # hint, never authorization to patch: apply_plan hashes extracted bytes.
+        if disc.sha1_hint and int(disc.sha1_hint, 16):
+            hinted = [n for n in candidates if n.hashes.get('sha1') == disc.sha1_hint]
+            if hinted:
+                report(progress, 'CHD identified; disc bytes will be verified before patching.', 1)
+                return sorted(hinted, key=lambda n: version_key(n.version), reverse=True)
+            if all('sha1' in n.hashes for n in candidates):
+                return []
+        with prepared_source(path, cancel=cancel, progress=progress) as (binary, disc):
+            hashes = file_hashes(binary, required_hashes(candidates), cancel, progress)
+            return sorted([n for n in candidates if matches(n, hashes, binary.stat().st_size)],
+                          key=lambda n: version_key(n.version), reverse=True)
     size = path.stat().st_size
     candidates = [n for n in catalog.nodes.values() if n.size is None or n.size == size]
     if not candidates:
@@ -293,6 +313,7 @@ def recognize(path, catalog, cancel=None, progress=None):
 
 
 def scan_root(root, catalog, cancel=None, progress=None):
+    from .chd import ChdError
     result = []
     for path in sorted(Path(root).iterdir()):
         check_cancel(cancel)
@@ -303,6 +324,8 @@ def scan_root(root, catalog, cancel=None, progress=None):
                 result.append((path, node))
         except (PermissionError, FileNotFoundError, OSError):
             continue
+        except ChdError as exc:
+            report(progress, 'Skipped ' + path.name + ': ' + str(exc), None)
     return result
 
 
@@ -341,7 +364,18 @@ def refresh_catalog(client=None, cache=None, cancel=None):
     return current
 
 
-def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None):
+def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False):
+    from .chd import prepared_source, companion_cue
+    source = Path(source).resolve()
+    output = output_path(output, (source,))
+    with prepared_source(source, output.parent, cancel, progress) as (binary, disc):
+        if not chd_output:
+            companion_cue(output, disc)
+        return _apply_plan_binary(binary, output, plan, catalog, client, cache, cancel, progress, chd_output, disc)
+
+
+def _apply_plan_binary(source, output, plan, catalog, client, cache, cancel, progress, chd_output, disc):
+    from .chd import output_disc, compress_verified, publish_disc
     source = Path(source).resolve()
     output = output_path(output, (source,))
     if not plan.edges:
@@ -354,7 +388,10 @@ def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=No
     sizes = [catalog.nodes[e.target].size for e in plan.edges]
     if any(s is None for s in sizes):
         raise PatchError("This legacy patch is missing its output size. Use manual Apply xdelta or update the catalog.")
+    layout = output_disc(source, sizes[-1], disc, plan.target.format) if chd_output else None
     peak = max(size + (sizes[i - 1] if i else 0) for i, size in enumerate(sizes))
+    if chd_output:
+        peak = max(peak, 3 * sizes[-1])  # patched disc, compressed CHD, round-trip disc
     if shutil.disk_usage(output.parent).free < peak + 64 * 1024 * 1024:
         raise PatchError("Not enough free space for the patch sequence and intermediate files.")
     client, cache = client or GitHubClient(), Path(cache) if cache else cache_directory()
@@ -376,6 +413,13 @@ def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=No
                     previous.unlink()
                 previous = temporary
             check_cancel(cancel)
-            publish_output(previous, output)
+            if chd_output:
+                packed = Path(stage) / 'verified.chd'
+                compress_verified(previous, packed, layout, cancel, progress)
+                previous = packed
+            if chd_output:
+                publish_output(previous, output)
+            else:
+                publish_disc(previous, output, disc)
     report(progress, "Saved and verified " + plan.target.version, 1)
     return output

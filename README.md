@@ -1,6 +1,6 @@
 # Retro Trans
 
-A compact Windows desktop patcher for translation releases from
+A compact Windows desktop toolkit for translation releases from
 [retro-trans](https://github.com/retro-trans). Download the standalone EXE or ZIP
 from [Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).
 No Python, Node.js, or .NET installation is needed to run it.
@@ -17,17 +17,57 @@ when several match, or **Browse** to a file in any other folder.
   patch is downloaded and verified, and every output in the chain is checked.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
-- **Create xdelta:** select an original and modified binary to generate a standard
-  xdelta patch. Both input files are kept intact.
+- **Z3 saves:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
+  both directions. Select both save folders and a new output folder, close both
+  emulators, then **Check saves** and **Convert saves**. Includes backups, verified
+  ZIPs, and import instructions. Works offline. Supports decrypted emulator saves
+  (NPJB00520 / PCSG00264); physical-console decryption and signing are not included.
+  See [save conversion instructions](retro_trans/resources/Z3-SAVE-CONVERSION.txt).
 
 The original files are never overwritten. Existing output files are refused.
 Cancelling a job removes unfinished output. Files stay on your computer and are
-never uploaded. ISO, BIN, VPK, and other binary formats are handled as exact bytes;
-the app does not extract CHD/archive contents or rebuild containers automatically.
+never uploaded. ISO, BIN, VPK, and other binary formats are handled as exact bytes.
+Supported CHDs are unpacked into temporary disc images for patching; ZIP, 7z and
+other archives still need to be extracted separately.
 
-The engine and initial catalog are bundled, so manual xdelta works offline from
+Both engines and the initial catalog are bundled, so manual xdelta and CHD conversion work offline from
 the first launch. Automatic mode can also use cached patches offline. Network
 access is needed for new catalogs, new patch downloads, and app updates.
+
+### CHD disc images
+
+Browse to a CHD or put it beside the EXE for automatic scanning. Choose **CHD**
+or **Original format** in the output selector; CHD inputs default to CHD output.
+The app extracts the disc, verifies its exact catalog identity, applies the
+patch route, and optionally compresses it back to CHD. A new CHD is extracted
+again and compared with the verified patched disc before it is saved. The
+original CHD is preserved. No separate chdman installation is needed.
+
+Supports standalone **CHD v5 DVDs** and **single data-track CDs** in MODE1/2048,
+MODE1/2352 or MODE2/2352, without gaps or subchannels. CD BIN output includes a
+new CUE sheet, and an existing CUE is also refused. Multi-track/audio CDs,
+GD-ROM, parent-dependent CHDs, hard disks and other layouts are rejected.
+In particular, Dreamcast GD-ROM images need a separate track-aware workflow.
+
+For known DVD identities, the embedded disc SHA-1 is a quick selection hint;
+the actual extracted bytes are always verified before patch downloads or patch
+execution. CD images and SHA-256-only identities may need extraction during
+identification. Compressed file size and filename are not binary identities.
+
+In **Apply xdelta**, leave **Unpack CHD input before patching** enabled for
+patches intended for the original ISO/BIN. Disable it only for a patch made
+against the compressed CHD file itself, and choose **Original format**. Manual
+mode retains xdelta checks; CHD round-trip checks do not add a catalog identity
+that the manual patch did not provide.
+
+Allow temporary space for the extracted source plus the largest pair of patch
+steps. CHD output also needs room for the final disc, compressed copy and
+verification extraction (conservatively three times the target disc size),
+plus 64 MiB. Preparation uses the output drive; identification that requires
+extraction uses the app's cache drive. Cancellation removes temporary images.
+
+The bundled official chdman 0.289 requires a CPU supporting x86-64-v2. Engine
+documentation: [MAME chdman](https://docs.mamedev.org/tools/chdman.html).
 
 ### Versions and routes
 
@@ -105,3 +145,19 @@ Tests cover real xdelta creation/apply and release-builder round trips, chain
 verification, scanning, edition separation, historical hashes, immutability,
 failure cleanup, update staging/rollback, and the native interface. Set
 `RETRO_TRANS_ONLINE_TEST=1` to additionally verify live SRW-Z downloads.
+
+CHD tests use synthetic DVD/CD images and the bundled engines, including
+recognition, extraction/patch/compression round trips, cancellation, unsupported
+layouts, false header hints, output preservation and offline operation. The
+pinned engine bundle is reproducible with `python scripts/bundle_chdman.py`
+(requires 7-Zip only on the build machine).
+
+The Z3 converter is maintained in `retro_trans/z3_saves.py`, migrated from the
+SRW Z3 project's standalone tool. Synthetic tests cover both directions, native
+checksums, metadata preservation, slot mapping, backups, cancellation, and
+changed-source rejection. Converted saves still need an in-game load/save test.
+For command-line use, omit `--write` to check without creating output:
+
+```powershell
+python -m retro_trans.z3_saves --ps3-save-root "D:/RPCS3/dev_hdd0/home/00000001/savedata" --vita-save-root "D:/Vita3K/ux0/user/00/savedata/PCSG00264" --output "D:/Converted/Z3-new" --direction both --write
+```

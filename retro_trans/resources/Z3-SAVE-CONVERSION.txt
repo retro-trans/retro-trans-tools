@@ -1,0 +1,68 @@
+SRW Z3 Jigoku-hen saves — RPCS3 ↔ Vita3K
+
+Use Retro Trans's Z3 saves tab. Conversion works offline and requires no
+additional software. Supports decrypted emulator saves for PS3 NPJB00520
+and Vita PCSG00264. It does not decrypt, resign, or install physical-console
+saves, and does not support Tengoku-hen.
+
+PREPARE
+
+1. In EACH emulator, create system data and at least one ordinary manual save
+   for Jigoku-hen. Both folders are needed even for one-way conversion: the
+   destination's existing saves provide its metadata and icons.
+2. Close both emulators and keep a backup of each complete game save profile.
+3. Open Retro Trans → Z3 saves. Choose PS3 → Vita, Vita → PS3, or Both directions.
+4. RPCS3 saves: select the savedata folder containing NPJB00520-SYS and
+   NPJB00520-STG-*. Usually RPCS3/dev_hdd0/home/00000001/savedata.
+5. Vita3K saves: select PCSG00264 beneath your configured storage's
+   ux0/user/00/savedata (the user number may differ).
+   Select save folders, not game installation folders or individual BIN files.
+6. Choose a NEW output folder. Browse selects its parent and supplies a fresh
+   timestamped name. You may also type a new folder path.
+7. Confirm both emulators are closed, then click Check saves. Review the slot
+   mappings in the status area. Click Convert saves, then Open output folder.
+
+WHAT IS CREATED
+
+The selected direction(s) produce folders and matching ZIPs:
+- rpcs3-to-vita3k: PS3 progress for Vita3K, inside a PCSG00264 folder.
+- vita3k-to-rpcs3: Vita progress for RPCS3, inside a savedata folder.
+- original-backups: unchanged source files from both profiles. Keep private.
+- CONVERSION_AUDIT.json: hashes and slot mappings; may contain private metadata.
+
+Originals are never modified and existing outputs are refused. Changed inputs
+require a fresh check. Cancel or a failed check removes unfinished temporary
+output. Nothing is installed automatically. Saves are never uploaded.
+
+These are whole-profile conversions, not a merge of two playthroughs. System
+data includes settings and global progress. Both directions creates two
+independent exports from the original profiles; it does not swap live saves.
+
+IMPORT AND VERIFY
+
+Keep the destination emulator closed. Move its existing Z3 game save folders
+to a backup OUTSIDE savedata; leave all other games alone.
+
+Vita3K: copy the converted PCSG00264 folder directly under ux0/user/00/savedata.
+Do not nest PCSG00264 inside another PCSG00264 folder.
+
+RPCS3: copy the converted NPJB00520-* folders from the package's savedata
+directory into your user's savedata directory.
+
+Load each manual slot and compare chapter, route, funds, units and pilots.
+Play a battle, save to a spare slot, close the emulator, restart and reload.
+Test Suspend/Continue separately; system data cannot recreate a missing
+manual save. If anything is wrong, close the emulator and restore the entire
+original game profile. Keep your only backup intact.
+
+CHECKS AND LIMITS
+
+Unknown layouts and damaged checksums are rejected. STAGE.BIN and SYSTEM.BIN
+retain their progress bodies and stored checksums; only the native size field
+(bytes 4–7) changes byte order. Every conversion passes an exact reverse
+conversion check. Destination metadata is preserved from your own templates.
+PS3's zero-based manual slot folders map to Vita's one-based slot folders.
+Output files and ZIP contents are read back and verified before completion.
+
+These checks verify the file format, not gameplay behavior. Perform the
+in-game load/save/reload check before relying on converted saves.

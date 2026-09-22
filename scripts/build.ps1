@@ -21,6 +21,8 @@ if (Test-Path -LiteralPath $TkLicense) {
 }
 Copy-Item -LiteralPath README.md,THIRD_PARTY_NOTICES.md -Destination $OutputDirectory
 Copy-Item -LiteralPath 'retro_trans\resources\XDELTA-LICENSE.txt' -Destination $LicensesDirectory
+& $BuildPython -c "from retro_trans.chd import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'chdman')
+if ($LASTEXITCODE -ne 0) { throw "Could not package CHD engine notices." }
 & $BuildPython scripts\make_update_metadata.py $OutputDirectory
 if ($LASTEXITCODE -ne 0) { throw "Could not generate update metadata." }
 $PackageFiles = @('Retro-Trans.exe', 'README.md', 'THIRD_PARTY_NOTICES.md', 'licenses') | ForEach-Object { Join-Path $OutputDirectory $_ }

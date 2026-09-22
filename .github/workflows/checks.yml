@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Test catalog, releases, UI, xdelta and updater
+      - name: Test catalog, releases, UI, xdelta, CHD, saves and updater
         run: python -m unittest discover -s tests -v
-      - name: Validate bundled catalog and engine
+      - name: Validate bundled catalog and offline engines
         run: python launch.py --health-check health.json

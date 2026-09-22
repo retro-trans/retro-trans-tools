@@ -1,0 +1,7 @@
+chdman 0.289 (unmodified official Windows x64 build)
+Copyright Aaron Giles, MAMEdev and contributors. Tool source: BSD-3-Clause.
+Source: https://github.com/mamedev/mame/tree/mame0289
+Binary archive: https://github.com/mamedev/mame/releases/download/mame0289/mame0289b_x64.exe
+Archive SHA-256: a1aa7912168c9d1b05e611906bc21b8b9be3935822aead36d12a1da363150b7d
+Original distribution notices: COPYING and docs/legal/.
+Windows 10+; x86-64-v2 CPU required by the official MAME build.

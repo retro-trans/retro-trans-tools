@@ -5,6 +5,8 @@ from retro_trans.catalog import atomic_json, load_catalog
 from retro_trans.core import engine_context
 from retro_trans.gui import Application, main
 from retro_trans.updater import helper_main, maybe_install_pending
+from retro_trans.z3_saves import GUIDE
+from retro_trans import chd
 
 
 def diagnose(path):
@@ -14,6 +16,8 @@ def diagnose(path):
         app = Application(startup=False, visible=False)
         app.update_idletasks()
         catalog = load_catalog()
+        if not GUIDE.read_text(encoding="utf-8").strip():
+            raise RuntimeError("Bundled Z3 save instructions are missing.")
         import tempfile
         import subprocess
         with tempfile.TemporaryDirectory() as cache:
@@ -22,8 +26,14 @@ def diagnose(path):
                     creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
                 if result.returncode != 0:
                     raise RuntimeError("Bundled engine did not start.")
+            from pathlib import Path
+            source = Path(cache) / 'health.iso'
+            source.write_bytes(bytes(range(256)) * 64)
+            chd.compress_verified(source, Path(cache) / 'health.chd', chd.Disc('dvd', source.stat().st_size))
         report.update(ok=True, tk=app.tk.call("info", "patchlevel"),
-            window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges))
+            window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
+            tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
+            chd_round_trip=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:

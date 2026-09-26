@@ -156,14 +156,19 @@ class Catalog:
     def __init__(self, data):
         if not isinstance(data, dict) or type(data.get("schema_version")) is not int or data["schema_version"] != 1 or not isinstance(data.get("releases"), list):
             raise PatchError("Unsupported catalog format.")
-        self.data, self.nodes, self.edges = data, {}, []
+        withdrawn = data.get("withdrawn_releases", [])
+        if not isinstance(withdrawn, list):
+            raise PatchError("Invalid withdrawn release records.")
+        self.data, self.nodes, self.edges, self.withdrawn_edges = data, {}, [], []
         identities = {}
         seen_releases = set()
-        for release in data["releases"]:
+        for retired, release in [(False, r) for r in data["releases"]] + [(True, r) for r in withdrawn]:
             try:
+                if retired:
+                    text_field(release["reason"], "withdrawal reason")
                 repo = validate_repo(release["repo"])
                 tag = text_field(release["tag"], "tag")
-                key = (repo, tag)
+                key = (retired, repo, tag)
                 if key in seen_releases:
                     raise PatchError("Duplicate catalog release.")
                 seen_releases.add(key)
@@ -179,12 +184,14 @@ class Catalog:
                         raise PatchError("Patch URL does not match its release asset.")
                     asset = Asset(p["patch"], url, p["patch_bytes"], p["patch_sha256"].lower())
                     identity = (asset.size, asset.sha256)
-                    if url in identities and identities[url] != identity:
-                        raise PatchError("A published patch identity has changed.")
+                    if url in identities:
+                        raise PatchError("A patch URL occurs more than once, or is both active and withdrawn.")
                     identities[url] = identity
-                    self.edges.append(Edge(source.id, target.id, asset, "https://github.com/{}/releases/tag/{}".format(repo, tag)))
+                    (self.withdrawn_edges if retired else self.edges).append(
+                        Edge(source.id, target.id, asset, "https://github.com/{}/releases/tag/{}".format(repo, tag)))
             except (KeyError, TypeError, AttributeError) as exc:
                 raise PatchError("Incomplete catalog release.") from exc
+        self.available_ids = {node for edge in self.edges for node in (edge.source, edge.target)}
 
     def add_binary(self, manifest, patch, side, version):
         key = (manifest["game_id"], patch["edition"], patch["language"], version)
@@ -286,7 +293,7 @@ def recognize(path, catalog, cancel=None, progress=None):
     from .chd import is_chd, inspect_chd, prepared_source
     if is_chd(path):
         disc = inspect_chd(path)
-        candidates = [n for n in catalog.nodes.values() if n.format in ('iso', 'bin') and
+        candidates = [n for n in catalog.nodes.values() if n.id in catalog.available_ids and n.format in ('iso', 'bin') and
                       (n.size is None or n.size == disc.size)]
         if not candidates:
             return []
@@ -304,7 +311,7 @@ def recognize(path, catalog, cancel=None, progress=None):
             return sorted([n for n in candidates if matches(n, hashes, binary.stat().st_size)],
                           key=lambda n: version_key(n.version), reverse=True)
     size = path.stat().st_size
-    candidates = [n for n in catalog.nodes.values() if n.size is None or n.size == size]
+    candidates = [n for n in catalog.nodes.values() if n.id in catalog.available_ids and (n.size is None or n.size == size)]
     if not candidates:
         return []
     algorithms = required_hashes(candidates)
@@ -334,8 +341,10 @@ def application_root():
 
 
 def assert_immutable(previous, current):
-    old = {e.asset.url: e for e in previous.edges}
-    new = {e.asset.url: e for e in current.edges}
+    old = {e.asset.url: e for e in previous.edges + previous.withdrawn_edges}
+    new = {e.asset.url: e for e in current.edges + current.withdrawn_edges}
+    if not {e.asset.url for e in previous.withdrawn_edges} <= {e.asset.url for e in current.withdrawn_edges}:
+        raise PatchError("Catalog reactivated or removed a withdrawn patch record.")
     for url, edge in old.items():
         if url not in new or new[url] != edge:
             raise PatchError("Catalog removed or changed an existing patch: " + edge.asset.name)

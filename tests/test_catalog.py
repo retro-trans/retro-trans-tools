@@ -149,6 +149,43 @@ class CatalogTests(unittest.TestCase):
             refresh_catalog(Client(), self.root)
         self.assertEqual(len(load_catalog(self.root).edges), 3)
 
+    def test_withdrawal_preserves_identity_but_removes_routes_and_recognition(self):
+        old = catalog(record(edition="withdrawn"), record(edition="kept"))
+        data = copy.deepcopy(old.data)
+        release = data["releases"][0]
+        withdrawn = copy.deepcopy(release)
+        withdrawn["reason"] = "Maintainer discontinued this edition."
+        for item, edition in ((release, "kept"), (withdrawn, "withdrawn")):
+            item["manifest"]["patches"] = [p for p in item["manifest"]["patches"] if p["edition"] == edition]
+            item["assets"] = {p["patch"]: item["assets"][p["patch"]] for p in item["manifest"]["patches"]}
+        data["withdrawn_releases"] = [withdrawn]
+        current = Catalog(data)
+        assert_immutable(old, current)
+        self.assertEqual([n.edition for n in recognize(self.path, current)], ["kept"])
+        self.assertEqual(len(current.edges), 1)
+        self.assertEqual(len(current.withdrawn_edges), 1)
+        self.assertEqual(len(current.nodes), len(old.nodes))
+        self.assertEqual(current.plan(recognize(self.path, current)[0]).target.edition, "kept")
+        with self.assertRaises(PatchError):
+            assert_immutable(current, old)  # Reactivation is not allowed.
+        broken = copy.deepcopy(data)
+        broken["withdrawn_releases"][0]["manifest"]["patches"][0]["patch_sha256"] = "0" * 64
+        with self.assertRaises(PatchError):
+            assert_immutable(old, Catalog(broken))
+        del broken["withdrawn_releases"]
+        with self.assertRaises(PatchError):
+            assert_immutable(old, Catalog(broken))
+
+    def test_withdrawal_requires_reason_and_cannot_duplicate_active_asset(self):
+        data = copy.deepcopy(self.cat.data)
+        withdrawn = copy.deepcopy(data["releases"][0])
+        data["withdrawn_releases"] = [withdrawn]
+        with self.assertRaises(PatchError):
+            Catalog(data)
+        withdrawn["reason"] = "Withdrawn by maintainer."
+        with self.assertRaises(PatchError):
+            Catalog(data)
+
     def test_source_changed_and_low_disk_fail_before_download(self):
         plan = self.cat.plan(self.original)
         self.path.write_bytes(b"differentfile")

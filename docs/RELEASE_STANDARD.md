@@ -102,6 +102,21 @@ catalog generator grants that status only to already-reviewed catalog records.
 Readers retain support for the historical versioned SRW-Z manifests through
 the legacy catalog and the existing single-release compatibility reader.
 
+## Withdrawn patches
+
+When a maintainer explicitly withdraws a patch, move its exact catalog record
+from `releases` to `withdrawn_releases`, adding a nonempty `reason`. A release
+may have separate active and withdrawn records, each containing only its own
+patches and asset URLs. Keep every binary hash, asset hash, size and URL intact.
+These records preserve identity evidence but are excluded from recognition,
+automatic routes and download validation. They cannot be removed, altered or
+reactivated by a later catalog refresh. Changed game output still requires a
+new version and patch URL.
+
+Update the live release manifest, validation report and checksums to list only
+the remaining assets. Older clients predating withdrawal support must update
+to Retro Trans 0.3.1 or later before refreshing a catalog with withdrawals.
+
 ## Application releases
 
 Set `retro_trans.__version__` and push a matching stable `vX.Y.Z` tag. The Windows

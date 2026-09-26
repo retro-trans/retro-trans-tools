@@ -82,6 +82,8 @@ def build_catalog(previous, client=None):
             if record:
                 records[key] = record
     result = {"schema_version": 1, "releases": [records[k] for k in sorted(records)]}
+    if previous.get("withdrawn_releases"):
+        result["withdrawn_releases"] = copy.deepcopy(previous["withdrawn_releases"])
     assert_immutable(old, Catalog(result))
     return result
 

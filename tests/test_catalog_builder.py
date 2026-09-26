@@ -67,6 +67,16 @@ class CatalogBuilderTests(unittest.TestCase):
             build_catalog(old, client)
         self.assertEqual(old, saved)
 
+    def test_withdrawn_records_preserved_without_downloading_removed_assets(self):
+        retired = record(edition="retired")
+        retired["reason"] = "Edition discontinued."
+        previous = {"schema_version": 1, "releases": [], "withdrawn_releases": [retired]}
+        saved = copy.deepcopy(previous)
+        result = build_catalog(previous, ReleaseClient())
+        self.assertEqual(result["withdrawn_releases"], saved["withdrawn_releases"])
+        self.assertEqual(previous, saved)
+        self.assertEqual(len(result["releases"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

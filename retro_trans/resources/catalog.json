@@ -567,6 +567,52 @@
         "SRWZ-English-v0.9.79-to-v0.9.83.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.83/SRWZ-English-v0.9.79-to-v0.9.83.xdelta",
         "SRWZ-English-v0.9.83.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.83/SRWZ-English-v0.9.83.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/SRW-Z3",
+      "tag": "v0.6.21",
+      "manifest": {
+        "game_id": "srw-z3-jigoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Jigoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.6.21",
+        "source_commit": "418c709ad973f02c1dd4fe641cdcec3e9aee9e3b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-PS3-English-0.6.21-from-original.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1b45cdd1651b98fe24b544223488289790ae87d5f82f1db272285fb4e4dffa89",
+            "source_bytes": 4431872000,
+            "target_sha256": "b67c0a23924e79ab31d28c9b726535473087eee9bf8e5dd4758ce4c6ec64c3e0",
+            "target_bytes": 5011013632,
+            "patch_sha256": "5ba685348e2accb99a8c4a64c53c6ae54d10e5bb5ba30b59c35d56e26b7d969d",
+            "patch_bytes": 154763400
+          },
+          {
+            "patch": "SRW-Z3-PS3-English-0.6.19-to-0.6.21.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "0.6.19",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "8b4a32671862073d5c2097fc19b91fe47046659f972d7b0b43d2065c8d9935e4",
+            "source_bytes": 5010685952,
+            "target_sha256": "b67c0a23924e79ab31d28c9b726535473087eee9bf8e5dd4758ce4c6ec64c3e0",
+            "target_bytes": 5011013632,
+            "patch_sha256": "40c63927c3cc94edb4cf65ed8e2d32b92d3beeb391e9be83d665b57b4f2860d5",
+            "patch_bytes": 21234653
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-PS3-English-0.6.21-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.6.21/SRW-Z3-PS3-English-0.6.21-from-original.xdelta",
+        "SRW-Z3-PS3-English-0.6.19-to-0.6.21.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.6.21/SRW-Z3-PS3-English-0.6.19-to-0.6.21.xdelta"
+      }
     }
   ]
 }

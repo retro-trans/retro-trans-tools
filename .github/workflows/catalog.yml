@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
+    inputs:
+      repository:
+        description: "Optional repository to validate; preserve all other catalog entries"
+        required: false
+        type: string
 permissions:
   contents: write
 concurrency:
@@ -19,7 +24,13 @@ jobs:
       - name: Validate releases and generate catalog
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python -m retro_trans.catalog_builder
+          CATALOG_REPOSITORY: ${{ inputs.repository }}
+        run: |
+          if [ -n "$CATALOG_REPOSITORY" ]; then
+            python -m retro_trans.catalog_builder --repo "$CATALOG_REPOSITORY"
+          else
+            python -m retro_trans.catalog_builder
+          fi
       - name: Commit validated changes
         shell: bash
         run: |

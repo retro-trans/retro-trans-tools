@@ -9,7 +9,7 @@ import shutil
 import tempfile
 import urllib.parse
 
-from .core import GitHubClient, PatchError, Asset, safe_name
+from .core import GitHubClient, PatchError, Asset, safe_name, validate_repo
 from .catalog import Catalog, RESOURCE_DIR, assert_immutable, atomic_json, validate_manifest
 from .release import validate_directory
 
@@ -59,11 +59,12 @@ def release_record(repo, release, client):
             "assets": {p["patch"]: assets[p["patch"]]["browser_download_url"] for p in manifest["patches"]}}
 
 
-def build_catalog(previous, client=None):
+def build_catalog(previous, client=None, repositories=None):
     client = client or GitHubClient()
     old = Catalog(previous)
     records = {(r["repo"], r["tag"]): copy.deepcopy(r) for r in previous["releases"]}
-    for repo in client.repositories():
+    selected = client.repositories() if repositories is None else [validate_repo(r) for r in repositories]
+    for repo in selected:
         if repo == "retro-trans/retro-trans-tools":
             continue
         for release in client.releases(repo):
@@ -91,11 +92,12 @@ def build_catalog(previous, client=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", default=str(RESOURCE_DIR / "catalog.json"))
+    parser.add_argument("--repo", action="append", help="Validate only this repository; preserve other catalog entries.")
     args = parser.parse_args()
     path = Path(args.output)
     try:
         previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"schema_version": 1, "releases": []}
-        result = build_catalog(previous)
+        result = build_catalog(previous, repositories=args.repo)
         atomic_json(path, result)
         print("Catalog validated:", len(result["releases"]), "releases")
     except (PatchError, OSError, ValueError, KeyError) as exc:

@@ -125,3 +125,13 @@ checks its offline startup, and publishes `Retro-Trans.exe`, the distribution ZI
 and `UPDATE.json`. The update metadata contains schema version, app version,
 platform, asset filename, byte size and SHA-256. Existing app releases are never
 overwritten. Patch-catalog updates do not require a new application version.
+
+## Scoped catalog maintenance
+
+A manual **Refresh patch catalog** run can set its optional `repository` input,
+for example `retro-trans/ACE-3`. The equivalent CLI is
+`python -m retro_trans.catalog_builder --repo retro-trans/ACE-3`.
+This runs all manifest, asset-download, checksum and identity checks for that
+repository and preserves every other catalog record unchanged. It does not
+approve or import unselected releases. Scheduled runs still validate all
+repositories; unrelated malformed release metadata remains an error there.

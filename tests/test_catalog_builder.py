@@ -40,6 +40,24 @@ class CatalogBuilderTests(unittest.TestCase):
         self.assertEqual(result["releases"][0]["manifest"]["version"], "1.1")
         self.assertEqual(build_catalog(result, ReleaseClient()), result)
 
+    def test_scoped_refresh_preserves_other_records_and_validates_selected_assets(self):
+        client = ReleaseClient()
+        other = record(edition="kept")
+        other["repo"] = "retro-trans/kept"
+        other["assets"] = {k: v.replace("retro-trans/test/", "retro-trans/kept/") for k, v in other["assets"].items()}
+        previous = {"schema_version": 1, "releases": [other]}
+        saved = copy.deepcopy(previous)
+        def no_discovery():
+            raise AssertionError("Scoped refresh must not enumerate unrelated repositories")
+        client.repositories = no_discovery
+        result = build_catalog(previous, client, repositories=["retro-trans/test"])
+        self.assertIn(other, result["releases"])
+        self.assertEqual(len(result["releases"]), 2)
+        self.assertEqual(previous, saved)
+        client.files[client.record["manifest"]["patches"][0]["patch"]] = b"corrupt"
+        with self.assertRaises(PatchError):
+            build_catalog(previous, client, repositories=["retro-trans/test"])
+
     def test_missing_extra_and_corrupt_assets_rejected(self):
         for failure in ("missing", "extra", "corrupt", "report", "url"):
             client = ReleaseClient()

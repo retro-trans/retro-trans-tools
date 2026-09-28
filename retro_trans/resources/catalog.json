@@ -769,6 +769,124 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z",
+      "tag": "v0.9.86",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "srw-z",
+        "game_name": "Super Robot Wars Z",
+        "platform": "PS2",
+        "version": "0.9.86",
+        "source_commit": "d766bc7c4d37e3989b2b0bd14b0ca8450cc8edd4",
+        "patches": [
+          {
+            "patch": "SRWZ-English-v0.9.86.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ddbedefc0061213c50928fb213a7fb277c0345f01dab7386adc0383638a78cd2",
+            "source_sha1": "e8dbe37e88afe8f82d48889b0775274ccde3cf99",
+            "source_bytes": 3758358528,
+            "target_sha256": "8ce18fc847be10368969ea73c9d219a61d53b1c4beae2eece2fbe10d0f51f24a",
+            "target_sha1": "1d2db4e117150c25954591eea3d94a0dbe88e599",
+            "target_bytes": 3758358528,
+            "patch_sha256": "b3f340f57711e4edadaece5c459d090f743b2c22da77ef83831829c94a7302b6",
+            "patch_bytes": 7394794
+          },
+          {
+            "patch": "SRWZ-English-v0.9.85-to-v0.9.86.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.9.85",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "8299318b990baa3f811f3e8375b8d12315b71af350a72e01c29088584faa5f73",
+            "source_sha1": "56161ee75e95bc63236309b4c0369a1f730c7d7c",
+            "source_bytes": 3758358528,
+            "target_sha256": "8ce18fc847be10368969ea73c9d219a61d53b1c4beae2eece2fbe10d0f51f24a",
+            "target_sha1": "1d2db4e117150c25954591eea3d94a0dbe88e599",
+            "target_bytes": 3758358528,
+            "patch_sha256": "146d543c6e05b98841ccda1253c1f42fc49d7ff22863cf395f41a8a0e827f627",
+            "patch_bytes": 833446
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.86.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "950e2759d0d7482387d97d6df31325d9e352097a23e0bb4724073d1538d8cf77",
+            "source_sha1": "2ebadb5c8fa764135206eaec2044ea5482dd4d6b",
+            "source_bytes": 3755081728,
+            "target_sha256": "33b7ae2043aba9031a804f7f2e85739116ddf861effbbaba5a9c9372d90e06c3",
+            "target_sha1": "77d550a1f3ca3e85cf1c3883ffe18a0dce7344d9",
+            "target_bytes": 3755081728,
+            "patch_sha256": "ea3816d01ccdf6bb0183b4b3d36eb35eda8d59ec3af280800a6bc3109caf9e63",
+            "patch_bytes": 6346468
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.85-to-v0.9.86.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "0.9.85",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ca39316ccde7dd0959c2308c7a3032317d33981214f485343e1070084f309e9d",
+            "source_sha1": "55c128c83f2abc046dfce20c35d83922cd068ae9",
+            "source_bytes": 3755081728,
+            "target_sha256": "33b7ae2043aba9031a804f7f2e85739116ddf861effbbaba5a9c9372d90e06c3",
+            "target_sha1": "77d550a1f3ca3e85cf1c3883ffe18a0dce7344d9",
+            "target_bytes": 3755081728,
+            "patch_sha256": "fb68cb09482f7c97977b179c73e1cfed832df28596d00853724ab2b8256eac23",
+            "patch_bytes": 853612
+          }
+        ],
+        "build_provenance": {
+          "repository_snapshot_note": "The source_commit identifies the upstream repository snapshot. Local cumulative repair inputs are identified separately below; the snapshot alone is not a complete reproducible build recipe.",
+          "base_images": [
+            {
+              "edition": "original",
+              "sha256": "d974bc8d1ddf83d3c6191f761c58cd1faed0c25734d5c8f38a9d27eccd5f236a"
+            },
+            {
+              "edition": "best",
+              "sha256": "353b99112dbd41b89b5c2a0b7613bf3517d5689641458da63d32d584af20b0e9"
+            }
+          ],
+          "local_tool_sha256": {
+            "_work/release-v0.9.86/build.py": "eca052832e6820c3ab0cc5c98d90e49848a788ee67d360613bc72f4ca8201fc7",
+            "_work/release-v0.9.86/package.py": "273c1ea1ea640c310fcb55da03f5eadb9957247251e5bbfd2ad521ee721b7af8",
+            "_work/tools/patch_world_map_labels.py": "6451e1b1324b923e48477500f4306ebeb5a04051040259e337d724d9a1e8e867",
+            "_work/tools/world_map_labels.json": "be60614933de8e6f73028252be2838371b4697ee0b2176b6a8052b331c53491c",
+            "_work/tools/patch_chapter_stage_layout.py": "77b5ff7298d8b4dd178e0063d126c735484fe29cf2ba4b7abc71871112d78ce2",
+            "best_adapter/stage.py": "39ff5f21d4cbfd90b5ef965e93a9896feb268c89c3d1b3b81a26c5f796d29b73",
+            "_work/release-v0.9.86-pilot-info-2026-09-28/package.py": "af7fe832021b6739c4db762833dd320b414534ac1d13a37bbf8564173843027e",
+            "_work/asakim-pilot-best-2026-09-28/repair.py": "2c3e7063623f34d52bdef1990cbdc0f2883c37f748ec3bfd7344d185b51f875d",
+            "best_adapter/archive_tables.py": "f83e43fe80b3903939d42240227db0128342900ef5b1c381f3501f15c6cc9b54",
+            "best_adapter/archive_probe.py": "281d679a24c69e394acd8c105a719a05b1a568b95e8b7a6f19be3797d25b2e8c",
+            "best_adapter/layout.json": "1c67241abac5a281a9cc9abfd7066e4efc04ca650028b9916a26acd3b366c5fe",
+            "best_adapter/pack.py": "d4156919807420683ac79bc9e77c6688e0071b4b81da3bc91ce45deeb7db7abe",
+            "best_adapter/verify.py": "d82f19602bb9cd76ffa74337e911f5c5b687351ec14a0bdc98d9815386f20749"
+          },
+          "pilot_info_repair": {
+            "base_best_sha256": "a4cb04434a590e3dcf234761f1d077ca087030edabf0424ee2de9df2bdbbb106",
+            "changed_bytes": 7,
+            "archive_endpoints_repaired": 3,
+            "runtime_testing": "Pending fresh-boot user test"
+          }
+        }
+      },
+      "assets": {
+        "SRWZ-English-v0.9.86.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.86/SRWZ-English-v0.9.86.xdelta",
+        "SRWZ-English-v0.9.85-to-v0.9.86.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.86/SRWZ-English-v0.9.85-to-v0.9.86.xdelta",
+        "SRWZ-English-Best-v0.9.86.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.86/SRWZ-English-Best-v0.9.86.xdelta",
+        "SRWZ-English-Best-v0.9.85-to-v0.9.86.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.86/SRWZ-English-Best-v0.9.85-to-v0.9.86.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3",
       "tag": "v0.6.21",
       "manifest": {

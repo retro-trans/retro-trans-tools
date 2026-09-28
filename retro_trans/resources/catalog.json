@@ -951,6 +951,52 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z3",
+      "tag": "v0.6.22",
+      "manifest": {
+        "game_id": "srw-z3-jigoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Jigoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.6.22",
+        "source_commit": "b1ee14962b0601a1d9d26e9b9ae465d1643c0210",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-PS3-English-0.6.22-from-original.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1b45cdd1651b98fe24b544223488289790ae87d5f82f1db272285fb4e4dffa89",
+            "source_bytes": 4431872000,
+            "target_sha256": "553a85e458843eb4b28cd0c7105776ed56576cf42c1564f2e7a375d2cc6afbfd",
+            "target_bytes": 5018877952,
+            "patch_sha256": "2da30d7f112a46501e28a431dbd42a7b4097300ace110cc8eda8d2a3c101dc53",
+            "patch_bytes": 155522047
+          },
+          {
+            "patch": "SRW-Z3-PS3-English-0.6.21-to-0.6.22.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "0.6.21",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b67c0a23924e79ab31d28c9b726535473087eee9bf8e5dd4758ce4c6ec64c3e0",
+            "source_bytes": 5011013632,
+            "target_sha256": "553a85e458843eb4b28cd0c7105776ed56576cf42c1564f2e7a375d2cc6afbfd",
+            "target_bytes": 5018877952,
+            "patch_sha256": "0252468ff4754c6ef054e7fd0bca5451724e5e990e6222c67ad5b2d0bfa44b04",
+            "patch_bytes": 22069326
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-PS3-English-0.6.22-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.6.22/SRW-Z3-PS3-English-0.6.22-from-original.xdelta",
+        "SRW-Z3-PS3-English-0.6.21-to-0.6.22.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.6.22/SRW-Z3-PS3-English-0.6.21-to-0.6.22.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Summon-Night-3",
       "tag": "v0.1.35",
       "manifest": {

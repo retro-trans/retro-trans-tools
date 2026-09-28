@@ -635,6 +635,90 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z",
+      "tag": "v0.9.85",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "srw-z",
+        "game_name": "Super Robot Wars Z",
+        "platform": "PS2",
+        "version": "0.9.85",
+        "source_commit": "e1d3c1d15e16c955042371947e50cdc2be72dfdb",
+        "patches": [
+          {
+            "patch": "SRWZ-English-v0.9.85.xdelta",
+            "edition": "original",
+            "source_version": "original",
+            "source_sha256": "ddbedefc0061213c50928fb213a7fb277c0345f01dab7386adc0383638a78cd2",
+            "source_bytes": 3758358528,
+            "target_sha256": "8299318b990baa3f811f3e8375b8d12315b71af350a72e01c29088584faa5f73",
+            "target_bytes": 3758358528,
+            "patch_sha256": "ebc2832916162eae6c407afa96d322d9bafad178d4f5eae13668bb7f2f8a20d4",
+            "patch_bytes": 6575536,
+            "language": "en",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha1": "e8dbe37e88afe8f82d48889b0775274ccde3cf99",
+            "target_sha1": "56161ee75e95bc63236309b4c0369a1f730c7d7c"
+          },
+          {
+            "patch": "SRWZ-English-v0.9.83-to-v0.9.85.xdelta",
+            "edition": "original",
+            "source_version": "0.9.83",
+            "source_sha256": "98a5b419e197752bd2070f9e8edf5b6fcd5184c21f235551370063ece4049ecb",
+            "source_bytes": 3758358528,
+            "target_sha256": "8299318b990baa3f811f3e8375b8d12315b71af350a72e01c29088584faa5f73",
+            "target_bytes": 3758358528,
+            "patch_sha256": "84648f8e114abbe5c0016d7bcb347054d934fc6f3377c8ce1371a259009e9834",
+            "patch_bytes": 1157026,
+            "language": "en",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha1": "53ce7ee5750c13c30b3e729b1776f4644988e6a9",
+            "target_sha1": "56161ee75e95bc63236309b4c0369a1f730c7d7c"
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.85.xdelta",
+            "edition": "best",
+            "source_version": "original",
+            "source_sha256": "950e2759d0d7482387d97d6df31325d9e352097a23e0bb4724073d1538d8cf77",
+            "source_bytes": 3755081728,
+            "target_sha256": "ca39316ccde7dd0959c2308c7a3032317d33981214f485343e1070084f309e9d",
+            "target_bytes": 3755081728,
+            "patch_sha256": "bb6dd676cbe5ccb5f7ee022eee18c5bb607a4f7e448c7d2e2c105923f678208b",
+            "patch_bytes": 5550194,
+            "language": "en",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha1": "2ebadb5c8fa764135206eaec2044ea5482dd4d6b",
+            "target_sha1": "55c128c83f2abc046dfce20c35d83922cd068ae9"
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.83-to-v0.9.85.xdelta",
+            "edition": "best",
+            "source_version": "0.9.83",
+            "source_sha256": "dddba2fe77e62772c007bef792f0c7a98fdc0da974e834c9abc260c1ffddf24d",
+            "source_bytes": 3755081728,
+            "target_sha256": "ca39316ccde7dd0959c2308c7a3032317d33981214f485343e1070084f309e9d",
+            "target_bytes": 3755081728,
+            "patch_sha256": "eb911b457fe896ae7c3943c53f88294d2aaffd7c72d324a6385c20bf5ff58103",
+            "patch_bytes": 583172,
+            "language": "en",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha1": "3d3c1ac26cbb674c47f164248f38e69772df3b75",
+            "target_sha1": "55c128c83f2abc046dfce20c35d83922cd068ae9"
+          }
+        ]
+      },
+      "assets": {
+        "SRWZ-English-v0.9.85.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.85/SRWZ-English-v0.9.85.xdelta",
+        "SRWZ-English-v0.9.83-to-v0.9.85.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.85/SRWZ-English-v0.9.83-to-v0.9.85.xdelta",
+        "SRWZ-English-Best-v0.9.85.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.85/SRWZ-English-Best-v0.9.85.xdelta",
+        "SRWZ-English-Best-v0.9.83-to-v0.9.85.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.85/SRWZ-English-Best-v0.9.83-to-v0.9.85.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3",
       "tag": "v0.6.21",
       "manifest": {

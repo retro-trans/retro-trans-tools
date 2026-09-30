@@ -1301,42 +1301,12 @@
             "target_bytes": 1676666880,
             "patch_sha256": "4c778164e0088992dca865ba025b80a923ae6eb632de0fcbc43d3e8ccc0491ef",
             "patch_bytes": 46340
-          },
-          {
-            "patch": "SN3-English-v0.1.42-to-v0.1.52.xdelta",
-            "edition": "Japanese NPJH50380",
-            "language": "en",
-            "source_version": "0.1.42",
-            "source_format": "iso",
-            "target_format": "iso",
-            "source_sha256": "68b31f4e285e43885a5918583cc8732cba30cb2b3db489d3678bfafead8d34ca",
-            "source_bytes": 1672142848,
-            "target_sha256": "cfb7e7171e87b528ac91ea345c3ac37853eb345b3486fffd2c0a47c99b2f38f7",
-            "target_bytes": 1676666880,
-            "patch_sha256": "1dbe877e4d00d272410d32550933900022de8e01f226dc8fd8b4655af9448ab1",
-            "patch_bytes": 45473
-          },
-          {
-            "patch": "SN3-English-v0.1.51-to-v0.1.52.xdelta",
-            "edition": "Japanese NPJH50380",
-            "language": "en",
-            "source_version": "0.1.51",
-            "source_format": "iso",
-            "target_format": "iso",
-            "source_sha256": "9bc40ad1556187abad2b4235880e316780b11841903595547a409376c91a12db",
-            "source_bytes": 1676666880,
-            "target_sha256": "cfb7e7171e87b528ac91ea345c3ac37853eb345b3486fffd2c0a47c99b2f38f7",
-            "target_bytes": 1676666880,
-            "patch_sha256": "2bffd837db213287272a47f6eee72aab8e4411625310aa0a82a12d9601a188fc",
-            "patch_bytes": 5811
           }
         ]
       },
       "assets": {
         "SN3-English-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.52.xdelta",
-        "SN3-English-v0.1.41-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.41-to-v0.1.52.xdelta",
-        "SN3-English-v0.1.42-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.42-to-v0.1.52.xdelta",
-        "SN3-English-v0.1.51-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.51-to-v0.1.52.xdelta"
+        "SN3-English-v0.1.41-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.41-to-v0.1.52.xdelta"
       }
     }
   ],
@@ -1391,6 +1361,53 @@
         "ACE3-English-0.1.35-to-0.1.42.xdelta": "https://github.com/retro-trans/ACE-3/releases/download/v0.1.42/ACE3-English-0.1.35-to-0.1.42.xdelta"
       },
       "reason": "Maintainer discontinued the Original prologue edition; English prologue remains supported."
+    },
+    {
+      "repo": "retro-trans/Summon-Night-3",
+      "tag": "v0.1.52",
+      "manifest": {
+        "game_id": "summon-night-3",
+        "game_name": "Summon Night 3",
+        "platform": "PSP",
+        "version": "0.1.52",
+        "source_commit": "1df372420f4dae509fc63eeec73f1350867dec82",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SN3-English-v0.1.42-to-v0.1.52.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "0.1.42",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "68b31f4e285e43885a5918583cc8732cba30cb2b3db489d3678bfafead8d34ca",
+            "source_bytes": 1672142848,
+            "target_sha256": "cfb7e7171e87b528ac91ea345c3ac37853eb345b3486fffd2c0a47c99b2f38f7",
+            "target_bytes": 1676666880,
+            "patch_sha256": "1dbe877e4d00d272410d32550933900022de8e01f226dc8fd8b4655af9448ab1",
+            "patch_bytes": 45473
+          },
+          {
+            "patch": "SN3-English-v0.1.51-to-v0.1.52.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "0.1.51",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "9bc40ad1556187abad2b4235880e316780b11841903595547a409376c91a12db",
+            "source_bytes": 1676666880,
+            "target_sha256": "cfb7e7171e87b528ac91ea345c3ac37853eb345b3486fffd2c0a47c99b2f38f7",
+            "target_bytes": 1676666880,
+            "patch_sha256": "2bffd837db213287272a47f6eee72aab8e4411625310aa0a82a12d9601a188fc",
+            "patch_bytes": 5811
+          }
+        ]
+      },
+      "assets": {
+        "SN3-English-v0.1.42-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.42-to-v0.1.52.xdelta",
+        "SN3-English-v0.1.51-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.51-to-v0.1.52.xdelta"
+      },
+      "reason": "Maintainer requested only the original patch and upgrade from the preceding published release; local test-build upgrades withdrawn."
     }
   ]
 }

@@ -995,11 +995,28 @@
             "patch_bytes": 17018934,
             "source_sha1": "e1e484ff65688313b6acaea117b115d7ba6bfbc4",
             "target_sha1": "5833c27eeb5c68ef547af2c173621568819b1af5"
+          },
+          {
+            "patch": "SRWZ-SP-English-v0.3.0-to-v0.3.16.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "0.3.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ca444e5c078a6f3cb23a96c5b6d676de1df068cfa4219ecbc06e71cbea4186ec",
+            "source_bytes": 3791781888,
+            "target_sha256": "38199a3be48e759e2b887c369609b404afe9376a6f28a91d02036bfca914f5a7",
+            "target_bytes": 3791781888,
+            "patch_sha256": "2b350c16581b2842b782795272b4756515c6aa0689f5726c570d8c01e22552e2",
+            "patch_bytes": 8767143,
+            "source_sha1": "aec2b234675630ed26ad3bf6bdc7240d9882a9f5",
+            "target_sha1": "5833c27eeb5c68ef547af2c173621568819b1af5"
           }
         ]
       },
       "assets": {
-        "SRWZ-SP-English-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.16.xdelta"
+        "SRWZ-SP-English-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.16.xdelta",
+        "SRWZ-SP-English-v0.3.0-to-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.0-to-v0.3.16.xdelta"
       }
     },
     {

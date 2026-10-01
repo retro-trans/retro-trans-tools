@@ -1308,6 +1308,52 @@
         "SN3-English-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.52.xdelta",
         "SN3-English-v0.1.41-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.41-to-v0.1.52.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/Summon-Night-3",
+      "tag": "v0.1.54",
+      "manifest": {
+        "game_id": "summon-night-3",
+        "game_name": "Summon Night 3",
+        "platform": "PSP",
+        "version": "0.1.54",
+        "source_commit": "f97ada9eff52f1f1ed4363dcc34c8eef67e8d247",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SN3-English-v0.1.54.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "00b9fe052e7f516a2975cb3e625682640ec17edb7bd23f3a785f6c73d4bbefda",
+            "source_bytes": 1658159104,
+            "target_sha256": "cdf3899bb3aeec87e03cc979b203c56edcbcd1b270036397dfdd37b00488b8c5",
+            "target_bytes": 1676941312,
+            "patch_sha256": "9f2ef821247b90175e623cac71c87e1751a5e96e0ed8174f283f03a9ed1b68c9",
+            "patch_bytes": 9652638
+          },
+          {
+            "patch": "SN3-English-v0.1.52-to-v0.1.54.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "0.1.52",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "cfb7e7171e87b528ac91ea345c3ac37853eb345b3486fffd2c0a47c99b2f38f7",
+            "source_bytes": 1676666880,
+            "target_sha256": "cdf3899bb3aeec87e03cc979b203c56edcbcd1b270036397dfdd37b00488b8c5",
+            "target_bytes": 1676941312,
+            "patch_sha256": "11f5eaf230bce398de864a042253100cef3b3f6e4ebffd1669e53d35f87688d4",
+            "patch_bytes": 1950029
+          }
+        ]
+      },
+      "assets": {
+        "SN3-English-v0.1.54.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.54/SN3-English-v0.1.54.xdelta",
+        "SN3-English-v0.1.52-to-v0.1.54.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.54/SN3-English-v0.1.52-to-v0.1.54.xdelta"
+      }
     }
   ],
   "withdrawn_releases": [

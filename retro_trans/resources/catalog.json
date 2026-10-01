@@ -970,6 +970,39 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z-Special-Disc",
+      "tag": "v0.3.16",
+      "manifest": {
+        "game_id": "srw-z-special-disc",
+        "game_name": "Super Robot Taisen Z Special Disc",
+        "platform": "PS2",
+        "version": "0.3.16",
+        "source_commit": "963db1774b5ffc11d2e0c714812285840aefd8f7",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWZ-SP-English-v0.3.16.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c3bd8c1af4e411e5ab2ae2d4be877170b6ab1ea9b51fa62bc0b91a51ba1a2952",
+            "source_bytes": 3791781888,
+            "target_sha256": "38199a3be48e759e2b887c369609b404afe9376a6f28a91d02036bfca914f5a7",
+            "target_bytes": 3791781888,
+            "patch_sha256": "d1a2da72fa6311c9b20a94e2265c6ec7edda7d68033a18314ede58dfbc34a285",
+            "patch_bytes": 17018934,
+            "source_sha1": "e1e484ff65688313b6acaea117b115d7ba6bfbc4",
+            "target_sha1": "5833c27eeb5c68ef547af2c173621568819b1af5"
+          }
+        ]
+      },
+      "assets": {
+        "SRWZ-SP-English-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.16.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3",
       "tag": "v0.6.21",
       "manifest": {

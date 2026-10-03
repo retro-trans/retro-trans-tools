@@ -1,11 +1,12 @@
-# Game release standard v1
+# Game release standard
 
 Each game release publishes exactly one `BUILD-MANIFEST.json`, the xdelta assets
 it lists, `SHA256SUMS.txt`, and `VALIDATION.json`. Optional texture packs, source
 archives, screenshots and documentation are separate assets. Do not include any
 original or complete translated game binaries in the release directory.
 
-The normative JSON Schema is `schema/game-release-v1.schema.json`. The shared
+Single-file releases use `schema/game-release-v1.schema.json`; releases declaring
+multi-file solutions use `schema/game-release-v2.schema.json`. The shared
 validator additionally checks unique asset names, matching release tags, asset
 sizes and hashes, round-trip reports, and immutable binary identities.
 
@@ -44,12 +45,13 @@ of a compressed CHD. The app handles supported CHD extraction/recompression
 separately; include SHA-1 alongside required SHA-256 when available to enable
 fast DVD CHD selection. Extracted bytes are still verified before patching.
 Multi-track/audio and GD-ROM conversion are not supported by this contract.
+Unpacked multi-track sets can use the multi-file solution contract below.
 
 ## Manifest fields
 
 | Field | Meaning |
 | --- | --- |
-| `schema_version` | Integer `1` |
+| `schema_version` | Integer `1`, or `2` for multi-file solutions |
 | `game_id` | Stable lowercase slug; never reuse it for another game |
 | `game_name` | Display name |
 | `platform` | Console/platform label |
@@ -74,6 +76,76 @@ possible only when a release explicitly provides a reverse-compatible edge.
 
 `SHA256SUMS.txt` covers the protocol assets: patches, manifest and validation
 report. Optional extras may provide their own separate checksum file.
+
+## Multi-file patch solutions (manifest v2)
+
+Use this when several binaries must be patched together, such as Marionette
+Handler 2's raw Track 3 and Track 17. The existing `patches` rows still describe
+individual xdelta operations with their complete source/target identities.
+Keep a distinct, stable component `edition` for each track; do not encode a
+file set as alternatives under one edition or infer dependencies from names.
+
+Add `solutions` to the local builder configuration (see
+`examples/multi-file-release-config.json`). The builder emits schema version 2
+automatically. Use Retro Trans Tools 0.4.0 or later (or `python -m pip install .`
+from an updated checkout). Each solution contains:
+
+| Field | Meaning |
+| --- | --- |
+| `id` | Stable lowercase slug, unique within game and language |
+| `name`, `edition`, `language` | Human-readable solution name, disc edition and language |
+| `files` | At least two required components, each with `edition` and `output_name` |
+| `copy_files` | Optional unchanged files, each with published `name`, `bytes` and `sha256` |
+
+A component references the patch rows with its edition and the solution's
+language in this release. All those rows must produce identical target bytes.
+Multiple incoming rows can provide full and incremental routes for a component.
+The solution's target version is the manifest's version. Keep its set of
+component identities stable across versions; use a new solution ID if that set
+changes. Output names are flat Windows-safe filenames, unique without regard
+to case across both lists. Paths, subfolders and device names are rejected.
+
+In the local configuration only, an unchanged file has `name` and `source`
+(a local path). The builder replaces `source` with its SHA-256 and byte count,
+and rechecks it after all xdelta round trips. It never packages the unchanged
+game files, full target binaries, or local paths. Include **every** unchanged
+track and the original CUE/GDI in this list to produce a complete disc folder.
+Ensure the descriptor refers to the exact declared output filenames. The
+example lists only a few unchanged files; extend it for the actual disc.
+
+In Automatic mode, select the folder, a required track, or its CUE/GDI. Required
+components are found by size and hash, so patched inputs can be renamed. The
+unchanged files must retain their declared names. Only immediate children are
+scanned. Missing or duplicate matching components disable patching; put one
+copy of each input in the chosen folder. Grouped components are not offered
+individually in Automatic mode. Manual Apply xdelta remains available.
+
+Latest selects the newest solution reachable by **all** components. Next version
+only selects the earliest newer set requiring at most one xdelta per component.
+Specific versions use explicit compatible routes. Mixed input versions are
+allowed; already-current or byte-identical components are verified and copied.
+Route details list the source file and full patch chain for every component.
+Each component route prefers fewer operations, then smaller downloads.
+
+Patch revalidates all sources, checks space for the complete output plus
+intermediates, verifies and copies the declared unchanged files, then applies
+and verifies every xdelta step. The app stages the entire set on the output
+drive and publishes a new folder only after every component succeeds. Existing
+destinations are refused, originals are preserved, and cancellation/failure
+removes the staged folder. Unrelated source files are never copied. Multi-file
+CHD extraction/recompression and descriptor rewriting are not included.
+
+The catalog generator validates v2 releases using the same uploaded-asset and
+round-trip-report checks as v1. Published solution membership, output names and
+unchanged-file identities are immutable. Withdraw a solution with all its
+component records together, preserving its definition in `withdrawn_releases`.
+
+Clients older than 0.4.0 reject these manifests and retain
+their previous catalog; their separate app update check continues. Release the
+updated application before publishing v2 game manifests. Existing v1 releases
+remain valid single-file releases. Do not silently guess a group from a list
+of xdelta assets or replace historical patch bytes; add explicit reviewed
+metadata or publish a new version with a v2 manifest.
 
 ## Publishing and catalog updates
 

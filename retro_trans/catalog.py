@@ -47,7 +47,7 @@ def validate_manifest(data, legacy=False):
     required = ("game_id", "game_name", "platform", "version", "patches")
     if any(k not in data for k in required):
         raise PatchError("Missing required release fields.")
-    if not legacy and (type(data.get("schema_version")) is not int or data["schema_version"] != 1):
+    if not legacy and (type(data.get("schema_version")) is not int or data["schema_version"] not in (1, 2)):
         raise PatchError("Unsupported manifest schema version.")
     for name in ("game_id", "game_name", "platform"):
         text_field(data[name], name)
@@ -92,6 +92,8 @@ def validate_manifest(data, legacy=False):
                     raise PatchError("Missing binary SHA-256: " + side)
         except (KeyError, TypeError) as exc:
             raise PatchError("Incomplete patch metadata.") from exc
+    from .solutions import validate_solutions
+    validate_solutions(data, legacy)
     return data
 
 
@@ -192,6 +194,8 @@ class Catalog:
             except (KeyError, TypeError, AttributeError) as exc:
                 raise PatchError("Incomplete catalog release.") from exc
         self.available_ids = {node for edge in self.edges for node in (edge.source, edge.target)}
+        from .solutions import load_solutions
+        load_solutions(self)
 
     def add_binary(self, manifest, patch, side, version):
         key = (manifest["game_id"], patch["edition"], patch["language"], version)
@@ -216,11 +220,17 @@ class Catalog:
         return node
 
     def versions(self, source):
+        from .solutions import SolutionSource, solution_versions
+        if isinstance(source, SolutionSource):
+            return solution_versions(self, source)
         published = {e.target for e in self.edges}
         return sorted((n for n in self.nodes.values() if n.id in published and n.id[:3] == source.id[:3] and n.version != "original"),
                       key=lambda n: version_key(n.version), reverse=True)
 
     def plan(self, source, target="Latest"):
+        from .solutions import SolutionSource, plan_solution
+        if isinstance(source, SolutionSource):
+            return plan_solution(self, source, target)
         # Dijkstra with a lexicographic (operations, download bytes) cost.
         best = {source.id: (0, 0)}
         paths = {source.id: ()}
@@ -286,7 +296,7 @@ def required_hashes(nodes):
     return {"sha256" if "sha256" in node.hashes else "sha1" for node in nodes}
 
 
-def recognize(path, catalog, cancel=None, progress=None):
+def _recognize_binary(path, catalog, cancel=None, progress=None):
     path = Path(path)
     if not path.is_file():
         raise PatchError("Select an existing binary.")
@@ -319,7 +329,17 @@ def recognize(path, catalog, cancel=None, progress=None):
     return sorted([n for n in candidates if matches(n, hashes, size)], key=lambda n: version_key(n.version), reverse=True)
 
 
+def recognize(path, catalog, cancel=None, progress=None):
+    from .solutions import recognize_selection
+    if catalog.solutions:
+        return recognize_selection(path, catalog, cancel, progress)
+    return _recognize_binary(path, catalog, cancel, progress)
+
+
 def scan_root(root, catalog, cancel=None, progress=None):
+    from .solutions import scan_folder
+    if catalog.solutions:
+        return scan_folder(root, catalog, cancel, progress)
     from .chd import ChdError
     result = []
     for path in sorted(Path(root).iterdir()):
@@ -352,6 +372,9 @@ def assert_immutable(previous, current):
         updated = current.nodes.get(key)
         if updated is None or any(updated.hashes.get(a) != v for a, v in node.hashes.items()) or (node.size is not None and updated.size != node.size):
             raise PatchError("Catalog changed a known binary identity.")
+    for key, solution in previous.solutions.items():
+        if current.solutions.get(key) != solution:
+            raise PatchError("Catalog removed or changed a published patch solution.")
 
 
 def load_catalog(cache=None):
@@ -374,6 +397,13 @@ def refresh_catalog(client=None, cache=None, cancel=None):
 
 
 def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False):
+    from .solutions import SolutionPlan, apply_solution
+    if isinstance(plan, SolutionPlan):
+        if chd_output:
+            raise PatchError("Multi-file solutions save a folder of tracks; CHD conversion is not supported.")
+        return apply_solution(source, output, plan, catalog, client, cache, cancel, progress)
+    if plan.source.id[:3] in catalog.grouped_families:
+        raise PatchError("This file belongs to a multi-file solution. Select its complete folder.")
     from .chd import prepared_source, companion_cue
     source = Path(source).resolve()
     output = output_path(output, (source,))

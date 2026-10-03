@@ -10,6 +10,9 @@ from retro_trans.gui import Application
 from retro_trans.catalog import Catalog
 from retro_trans import z3_saves
 from test_z3_saves import inputs
+from test_solutions import grouped_record, content, make_catalog
+from retro_trans.catalog import scan_root
+from retro_trans.solutions import SolutionPlan
 
 
 @unittest.skipUnless(os.name == "nt", "Native Windows UI test")
@@ -259,6 +262,61 @@ class GuiTests(unittest.TestCase):
             self.assertTrue(run.call_args.kwargs['unpack_chd'])
             self.assertTrue(run.call_args.kwargs['chd_output'])
             self.assertIn('Patched disc SHA-256', message)
+
+    def test_grouped_folder_selection_route_and_patch_worker(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, app = Path(temporary), self.app
+            for track in (3, 17):
+                (root / 'renamed{}.bin'.format(track)).write_bytes(content(track, 'original'))
+            app.catalog = make_catalog(grouped_record())
+            with patch('retro_trans.gui.filedialog.askdirectory', return_value=temporary):
+                app.choose_folder()
+            self.finish_worker()
+            self.assertIsInstance(app.plan, SolutionPlan)
+            self.assertEqual(app.selection[0], root)
+            self.assertEqual(len(app.found), 1)
+            self.assertEqual(str(app.apply_button['state']), 'normal')
+            self.assertEqual(app.output_format_box['values'], ('Original format',))
+            self.assertEqual(app.auto_output_label['text'], 'New folder:')
+            self.assertEqual(Path(app.output.get()), root / 'japan-disc-v1.1')
+            app.change_output_format()
+            self.assertEqual(Path(app.output.get()), root / 'japan-disc-v1.1')
+            with patch.object(app, 'start') as start, patch('retro_trans.gui.apply_plan') as run:
+                app.apply()
+                work = start.call_args.args[0]
+                result, message = work(None, None)
+                self.assertIsInstance(run.call_args.args[2], SolutionPlan)
+                self.assertFalse(run.call_args.kwargs['chd_output'])
+                self.assertIn('Complete patch solution', message)
+            # Browse to either member also selects its complete containing set.
+            with patch('retro_trans.gui.filedialog.askopenfilename', return_value=str(root / 'renamed3.bin')):
+                app.choose_source()
+            self.finish_worker()
+            self.assertEqual(app.selection[0], root)
+            (root / 'renamed17.bin').unlink()
+            app.events.put(('done', app.job_id, ('identify', scan_root(root, app.catalog))))
+            app.poll()
+            self.assertIsNone(app.plan)
+            self.assertEqual(str(app.apply_button['state']), 'disabled')
+            self.assertIn('incomplete', app.route.get())
+
+    def test_many_missing_companion_files_keep_compact_layout(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, app = Path(temporary), self.app
+            for track in (3, 17):
+                (root / 'track{}.bin'.format(track)).write_bytes(content(track, 'original'))
+            record = grouped_record()
+            record['manifest']['solutions'][0]['copy_files'] = [
+                dict(name='Missing disc track {:02d}.bin'.format(i), bytes=123, sha256='a' * 64) for i in range(15)]
+            app.catalog = make_catalog(record)
+            app.events.put(('done', app.job_id, ('identify', scan_root(root, app.catalog))))
+            app.poll()
+            app.update()
+            self.assertIsNone(app.plan)
+            self.assertIn('Missing disc track 14.bin', app.detail.get())
+            self.assertLess(len(app.route.get()), 100)
+            self.assertLessEqual(app.cancel_button.winfo_rooty() + app.cancel_button.winfo_height(),
+                                 app.winfo_rooty() + app.winfo_height())
 
 
 if __name__ == "__main__":

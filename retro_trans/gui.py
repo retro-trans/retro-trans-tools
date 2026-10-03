@@ -15,6 +15,7 @@ from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_
 from .updater import stage_update, update_status
 from . import z3_saves
 from .chd import is_chd, inspect_chd
+from .solutions import SolutionSource, SolutionPlan
 
 TEXT, MUTED, ACCENT, ERROR = "#202020", "#606060", "#166534", "#a4262c"
 
@@ -33,6 +34,7 @@ class Application(tk.Tk):
         self.job_id, self.job_kind = 0, ""
         self.busy, self.closing, self.refresh_running = False, False, False
         self.selection, self.plan, self.saved_output = None, None, None
+        self.plan_problem = ''
         self.found, self.controls, self.readonly_controls, self.selection_buttons = [], [], [], []
         self.status = tk.StringVar(value="Ready.")
         self.detail = tk.StringVar(value="Select a binary, apply a local patch, or convert Z3 saves.")
@@ -112,7 +114,7 @@ class Application(tk.Tk):
             self.notebook.add(page, text=title)
             self.tabs.append(page)
         auto = self.tabs[0]
-        ttk.Label(auto, text="Binary:").grid(row=0, column=0, sticky="w", padx=(0, 8))
+        ttk.Label(auto, text="Input:").grid(row=0, column=0, sticky="w", padx=(0, 8))
         self.file_box = ttk.Combobox(auto, textvariable=self.file_label, state="readonly", width=1)
         self.file_box.grid(row=0, column=1, sticky="ew")
         self.controls.append(self.file_box)
@@ -122,9 +124,11 @@ class Application(tk.Tk):
         actions.grid(row=0, column=2, padx=(8, 0))
         browse = self.button(actions, "Browse…", self.choose_source)
         browse.pack(side="left")
+        folder = self.button(actions, "Folder…", self.choose_folder)
+        folder.pack(side="left", padx=(4, 0))
         scan = self.button(actions, "Scan", self.scan)
         scan.pack(side="left", padx=(4, 0))
-        self.selection_buttons.extend([browse, scan])
+        self.selection_buttons.extend([browse, folder, scan])
         ttk.Label(auto, text="Detected:").grid(row=1, column=0, sticky="w", pady=5)
         self.detected_label = ttk.Label(auto, textvariable=self.detected, style="Muted.TLabel")
         self.detected_label.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
@@ -137,7 +141,7 @@ class Application(tk.Tk):
         self.button(auto, "Route details", self.route_details).grid(row=2, column=2, sticky="ew", padx=(8, 0))
         self.route_label = ttk.Label(auto, textvariable=self.route, style="Muted.TLabel")
         self.route_label.grid(row=3, column=0, columnspan=3, sticky="ew", pady=5)
-        self.path_row(auto, 4, "Patched copy:", self.output, save=True)
+        self.auto_output_label, self.auto_output_button = self.path_row(auto, 4, "Patched copy:", self.output, save=True)
         self.output_format_box = self.format_row(auto, 5, self.output_format, lambda: self.change_output_format())
         self.path_row(self.tabs[1], 0, "Original file:", self.apply_source)
         self.path_row(self.tabs[1], 1, "Patch file:", self.apply_delta, extension=".xdelta")
@@ -196,12 +200,14 @@ class Application(tk.Tk):
         self.bind("<Escape>", lambda event: self.cancel_work() if self.busy else None)
 
     def path_row(self, page, row, title, variable, save=False, extension=""):
-        ttk.Label(page, text=title).grid(row=row, column=0, sticky="w", padx=(0, 8), pady=3)
+        label = ttk.Label(page, text=title)
+        label.grid(row=row, column=0, sticky="w", padx=(0, 8), pady=3)
         entry = ttk.Entry(page, textvariable=variable, width=1)
         entry.grid(row=row, column=1, sticky="ew", pady=3)
         self.controls.append(entry)
-        self.button(page, "Save as…" if save else "Browse…", lambda: self.pick_path(variable, save, extension)).grid(
-            row=row, column=2, sticky="ew", padx=(8, 0), pady=3)
+        button = self.button(page, "Save as…" if save else "Browse…", lambda: self.pick_path(variable, save, extension))
+        button.grid(row=row, column=2, sticky="ew", padx=(8, 0), pady=3)
+        return label, button
 
     def format_row(self, page, row, variable, command):
         ttk.Label(page, text='Output format:').grid(row=row, column=0, sticky='w', pady=3)
@@ -219,6 +225,9 @@ class Application(tk.Tk):
         self.change_output_format(manual=True)
 
     def change_output_format(self, manual=False):
+        if not manual and isinstance(self.plan, SolutionPlan):
+            self.output_format.set('Original format')
+            return
         variable = self.apply_output if manual else self.output
         mode = self.manual_format if manual else self.output_format
         if manual:
@@ -236,6 +245,11 @@ class Application(tk.Tk):
             variable.set(str(Path(variable.get()).with_suffix('.chd' if mode.get() == 'CHD' else extension)))
 
     def pick_path(self, variable, save=False, extension=""):
+        if save and variable is self.output and isinstance(self.plan, SolutionPlan):
+            parent = filedialog.askdirectory(title='Choose where to create the patched folder', mustexist=True)
+            if parent:
+                variable.set(str(Path(parent) / Path(variable.get()).name))
+            return parent
         options = {"initialdir": self.settings.get("last_browse_folder", str(application_root())),
                    "filetypes": [("All files", "*.*")]}
         if extension:
@@ -332,6 +346,16 @@ class Application(tk.Tk):
             catalog = self.catalog
             self.start(lambda cancel, progress: [(Path(path), n) for n in recognize(path, catalog, cancel, progress)], "identify")
 
+    def choose_folder(self):
+        path = filedialog.askdirectory(title='Choose the folder containing all required game files', mustexist=True,
+            initialdir=self.settings.get('last_browse_folder', str(application_root())))
+        if path:
+            self.selection, self.plan = None, None
+            self.file_label.set(path)
+            self.detected.set('Identifying file set…')
+            catalog = self.catalog
+            self.start(lambda cancel, progress: scan_root(path, catalog, cancel, progress), 'identify')
+
     def scan(self):
         self.selection, self.plan = None, None
         self.file_label.set("")
@@ -343,6 +367,8 @@ class Application(tk.Tk):
         index = self.file_box.current()
         if 0 <= index < len(self.found):
             self.selection = self.found[index]
+            if isinstance(self.selection[1], SolutionSource):
+                self.selection = (self.selection[1].root, self.selection[1])
             chd = is_chd(self.selection[0]) if self.selection[0].is_file() else False
             self.detected.set(self.selection[1].label + (' • CHD (disc verified on Patch)' if chd else ''))
             self.output_format.set('CHD' if chd else 'Original format')
@@ -353,11 +379,22 @@ class Application(tk.Tk):
 
     def plan_selection(self):
         self.plan = None
+        self.plan_problem = ''
+        self.detail.set('Your originals are preserved. The route runs only when you click Patch.')
+        grouped = self.selection and isinstance(self.selection[1], SolutionSource)
+        self.auto_output_label.configure(text='New folder:' if grouped else 'Patched copy:')
+        self.auto_output_button.configure(text='Folder…' if grouped else 'Save as…')
         if self.selection:
             try:
                 self.plan = self.catalog.plan(self.selection[1], self.target.get())
                 self.route.set(self.plan.summary if self.plan.edges else "Already at the selected version. " + self.plan.summary)
                 path = self.selection[0]
+                if isinstance(self.plan, SolutionPlan):
+                    self.output_format_box.configure(values=['Original format'])
+                    self.output_format.set('Original format')
+                    self.output.set(str(path / (self.plan.target.id[1] + '-v' + self.plan.target.version)))
+                    self.update_action()
+                    return
                 can_pack = self.plan.target.format == 'iso' or (self.plan.target.format == 'bin' and
                     path.is_file() and is_chd(path))
                 self.output_format_box.configure(values=['Original format', 'CHD'] if can_pack else ['Original format'])
@@ -366,12 +403,28 @@ class Application(tk.Tk):
                 extension = 'chd' if self.output_format.get() == 'CHD' else self.plan.target.format
                 self.output.set(str(path.with_name(path.stem + "-v" + self.plan.target.version + "." + extension)))
             except PatchError as exc:
-                self.route.set(str(exc))
+                self.plan_problem = str(exc)
+                self.route.set('No complete patch route. See the missing-file details below.'
+                               if grouped and len(str(exc)) > 160 else str(exc))
+                self.detail.set(self.plan_problem)
         self.update_action()
 
     def route_details(self):
         if self.plan:
-            messagebox.showinfo("Patch route", self.plan.summary + "\n\n" + "\n".join(e.asset.name for e in self.plan.edges))
+            if isinstance(self.plan, SolutionPlan):
+                dialog = tk.Toplevel(self)
+                dialog.title('Patch solution')
+                dialog.transient(self)
+                text = tk.Text(dialog, wrap='word', width=76, height=20, padx=10, pady=10)
+                bar = ttk.Scrollbar(dialog, command=text.yview)
+                bar.pack(side='right', fill='y')
+                text.pack(fill='both', expand=True)
+                text.configure(yscrollcommand=bar.set)
+                text.insert('1.0', self.plan.details)
+                text.configure(state='disabled')
+                dialog.bind('<Escape>', lambda event: dialog.destroy())
+            else:
+                messagebox.showinfo("Patch route", self.plan.summary + "\n\n" + "\n".join(e.asset.name for e in self.plan.edges))
 
     def update_detail(self, *args):
         self.detail_text.configure(state="normal")
@@ -462,6 +515,8 @@ class Application(tk.Tk):
             chd_output = self.output_format.get() == 'CHD'
             def work(cancel, progress):
                 apply_plan(source, output, plan, catalog, self.client, cancel=cancel, progress=progress, chd_output=chd_output)
+                if isinstance(plan, SolutionPlan):
+                    return (Path(output), 'Complete patch solution verified. Patched files and required unchanged files saved together.')
                 return (Path(output), 'Every patch step was verified.' +
                         (' The CHD was extracted again and matched the verified disc.' if chd_output else ' Final disc bytes verified.'))
         else:
@@ -518,15 +573,16 @@ class Application(tk.Tk):
                         self.found = value[1]
                         self.file_box.configure(values=["{} — {}".format(p.name, n.label) for p, n in self.found])
                         self.selection, self.plan = None, None
+                        self.plan_problem = ''
                         if len(self.found) == 1:
                             self.file_box.current(0)
                             self.select_found()
                         else:
                             self.file_label.set("")
                             self.detected.set("Choose a recognized file" if self.found else "No recognized binary")
-                            self.route.set("Select a file above." if self.found else "Browse to another file, or use Apply xdelta for a local patch.")
+                            self.route.set("Select a file set above." if self.found else "Browse to another file or folder, or use Apply xdelta for a local patch.")
                         self.status.set("{} matching file/version entries found.".format(len(self.found)))
-                        self.detail.set("Your original is preserved. The route runs only when you click Patch.")
+                        self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
                         self.update_action()
                     elif value[0] == 'save_check':
                         if self.cancel.is_set():

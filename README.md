@@ -11,10 +11,16 @@ Run **Retro-Trans.exe** on 64-bit Windows 10/11. The app scans files directly
 beside its EXE and identifies supported originals and previously patched versions.
 It selects a file automatically only when one match is found. Use the selector
 when several match, or **Browse** to a file in any other folder.
+For a release that requires several files, use **Folder…** to select the disc
+folder, or browse to one of its tracks or its CUE/GDI. The app selects the
+complete patch solution and checks every required component.
 
 - **Automatic:** choose Latest, Next version only, or a specific published version.
   Review the route, choose a new output filename, and click Patch. Every required
   patch is downloaded and verified, and every output in the chain is checked.
+  Multi-file solutions save a new folder containing all verified patched tracks
+  and the declared unchanged tracks and descriptor. **Route details** shows each
+  file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
 - **Z3 saves:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
@@ -47,7 +53,8 @@ Supports standalone **CHD v5 DVDs** and **single data-track CDs** in MODE1/2048,
 MODE1/2352 or MODE2/2352, without gaps or subchannels. CD BIN output includes a
 new CUE sheet, and an existing CUE is also refused. Multi-track/audio CDs,
 GD-ROM, parent-dependent CHDs, hard disks and other layouts are rejected.
-In particular, Dreamcast GD-ROM images need a separate track-aware workflow.
+Unpacked Dreamcast tracks are supported through explicit multi-file solutions;
+multi-track/GD-ROM CHD extraction and recompression are not supported.
 
 For known DVD identities, the embedded disc SHA-1 is a quick selection hint;
 the actual extracted bytes are always verified before patch downloads or patch

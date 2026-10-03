@@ -1,0 +1,46 @@
+{
+  "game_id": "example-disc",
+  "game_name": "Example Multi-track Game",
+  "platform": "Dreamcast",
+  "version": "1.1.0",
+  "source_commit": "0000000000000000000000000000000000000000",
+  "patches": [
+    {
+      "patch": "Track03-English-1.1.0.xdelta",
+      "edition": "Japan / Track 3 raw MODE1/2352",
+      "language": "en",
+      "source_version": "original",
+      "source_format": "bin",
+      "target_format": "bin",
+      "source": "../private/original/Track03.bin",
+      "target": "../private/translated/Track03.bin"
+    },
+    {
+      "patch": "Track17-English-1.1.0.xdelta",
+      "edition": "Japan / Track 17 raw MODE1/2352",
+      "language": "en",
+      "source_version": "original",
+      "source_format": "bin",
+      "target_format": "bin",
+      "source": "../private/original/Track17.bin",
+      "target": "../private/translated/Track17.bin"
+    }
+  ],
+  "solutions": [
+    {
+      "id": "japan-disc",
+      "name": "Complete English disc",
+      "edition": "Japan",
+      "language": "en",
+      "files": [
+        {"edition": "Japan / Track 3 raw MODE1/2352", "output_name": "Track03.bin"},
+        {"edition": "Japan / Track 17 raw MODE1/2352", "output_name": "Track17.bin"}
+      ],
+      "copy_files": [
+        {"name": "Track01.bin", "source": "../private/original/Track01.bin"},
+        {"name": "Track02.bin", "source": "../private/original/Track02.bin"},
+        {"name": "Game.cue", "source": "../private/original/Game.cue"}
+      ]
+    }
+  ]
+}

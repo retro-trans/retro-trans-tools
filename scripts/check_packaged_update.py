@@ -1,4 +1,5 @@
 """Exercise a real next-launch update using two isolated packaged executables."""
+import argparse
 import hashlib
 import json
 import os
@@ -17,9 +18,12 @@ from retro_trans.updater import update_directory
 
 
 def main():
-    candidate = (ROOT / "dist" / "Retro-Trans.exe").resolve()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--candidate', type=Path, default=ROOT / 'dist' / 'Retro-Trans.exe',
+                        help='Packaged EXE to test (also accepts a version-specific build folder).')
+    candidate = parser.parse_args().candidate.resolve()
     if os.name != "nt" or not candidate.is_file():
-        raise SystemExit("Build dist/Retro-Trans.exe on Windows first.")
+        raise SystemExit("Build a Windows EXE first, then select it with --candidate if needed.")
     with tempfile.TemporaryDirectory(prefix="retro-trans-update-check-") as folder:
         folder = Path(folder).resolve()
         hook = folder / "old_version.py"

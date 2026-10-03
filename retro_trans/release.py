@@ -5,6 +5,7 @@ python -m retro_trans.release validate release-directory
 """
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -24,7 +25,7 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None):
         raise PatchError("Release directory already exists. Use a new directory; published versions are immutable.")
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = {k: config[k] for k in ("game_id", "game_name", "platform", "version", "source_commit")}
-    manifest.update(schema_version=1, patches=[])
+    manifest.update(schema_version=2 if 'solutions' in config else 1, patches=[])
     inputs = []
     digests = {}
     names = set()
@@ -47,6 +48,18 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None):
                      patch_sha256="0" * 64, patch_bytes=0)
         manifest["patches"].append(entry)
         inputs.append((source, target))
+    unchanged = []
+    if 'solutions' in config:
+        manifest['solutions'] = copy.deepcopy(config['solutions'])
+        for solution in manifest['solutions']:
+            for item in solution.get('copy_files', []):
+                source = (config_path.parent / item.pop('source')).resolve()
+                if not source.is_file():
+                    raise PatchError('A configured unchanged file does not exist.')
+                if source not in digests:
+                    digests[source] = (sha256_file(source, cancel, progress), source.stat().st_size)
+                item['sha256'], item['bytes'] = digests[source]
+                unchanged.append((source, item['sha256'], item['bytes']))
     validate_manifest(manifest)
     largest = max(p["target_bytes"] for p in manifest["patches"])
     if shutil.disk_usage(output.parent).free < largest * 2 + 64 * 1024 * 1024:
@@ -67,6 +80,9 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None):
                 decoded.unlink()
                 entry["patch_sha256"] = sha256_file(delta, cancel)
                 entry["patch_bytes"] = delta.stat().st_size
+        for source, digest, size in unchanged:
+            if source.stat().st_size != size or sha256_file(source, cancel) != digest:
+                raise PatchError('An unchanged solution file changed during the build.')
         atomic_json(stage / "BUILD-MANIFEST.json", manifest)
         atomic_json(stage / "VALIDATION.json", {"schema_version": 1, "manifest_sha256": sha256_file(stage / "BUILD-MANIFEST.json"),
             "patches": [{"patch": p["patch"], "roundtrip_verified": True, "target_sha256": p["target_sha256"]} for p in manifest["patches"]]})

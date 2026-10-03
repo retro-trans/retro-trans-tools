@@ -569,6 +569,12 @@ class Application(tk.Tk):
                         self.status.set("Cancelled." if isinstance(value, Cancelled) else "Could not complete this step.")
                         self.status_label.configure(foreground=MUTED if isinstance(value, Cancelled) else ERROR)
                         self.detail.set(str(value))
+                        if self.job_kind in ('scan', 'identify'):
+                            self.selection, self.plan, self.found = None, None, []
+                            self.file_box.configure(values=[])
+                            self.detected.set('Identification cancelled.' if isinstance(value, Cancelled) else 'Could not identify this file set.')
+                            self.route.set('See the details below.')
+                            self.update_action()
                     elif value[0] in ("scan", "identify"):
                         self.found = value[1]
                         self.file_box.configure(values=["{} — {}".format(p.name, n.label) for p, n in self.found])

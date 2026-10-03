@@ -9,12 +9,12 @@ import shutil
 import tempfile
 import urllib.parse
 
-from .core import GitHubClient, PatchError, Asset, safe_name, validate_repo
+from .core import GitHubClient, PatchError, Asset, safe_name, validate_repo, valid_hash
 from .catalog import Catalog, RESOURCE_DIR, assert_immutable, atomic_json, validate_manifest
 from .release import validate_directory
 
 
-def release_record(repo, release, client):
+def release_record(repo, release, client, reviewed=None):
     tag = release["tag_name"]
     assets = {a["name"]: a for a in release["assets"]}
     manifests = [name for name in assets if name.startswith("BUILD-MANIFEST") and name.endswith(".json")]
@@ -43,6 +43,20 @@ def release_record(repo, release, client):
             return raw
         raw = read_verified("BUILD-MANIFEST.json")
         manifest = validate_manifest(json.loads(raw))
+        imported = None
+        if reviewed and 'solution_import' in reviewed:
+            evidence = reviewed['solution_import']
+            if (not isinstance(evidence, dict) or type(evidence.get('schema_version')) is not int
+                    or evidence['schema_version'] != 1 or not isinstance(evidence.get('reason'), str)
+                    or not evidence['reason'].strip()):
+                raise PatchError('Invalid reviewed solution import.')
+            digest = valid_hash(evidence.get('manifest_sha256'))
+            if manifest['schema_version'] != 1 or hashlib.sha256(raw).hexdigest() != digest:
+                raise PatchError('The published manifest changed since its solution metadata was reviewed.')
+            imported = copy.deepcopy(manifest)
+            imported['schema_version'] = 2
+            imported['solutions'] = copy.deepcopy(reviewed['manifest'].get('solutions'))
+            validate_manifest(imported)
         if {p["patch"] for p in manifest["patches"]} != {n for n in assets if n.lower().endswith((".xdelta", ".vcdiff"))}:
             raise PatchError("Uploaded patches do not exactly match the manifest.")
         (directory / "BUILD-MANIFEST.json").write_bytes(raw)
@@ -55,8 +69,11 @@ def release_record(repo, release, client):
             path = client.download(Asset(patch["patch"], url, a["size"], patch["patch_sha256"]), directory / "cache")
             shutil.copyfile(path, directory / patch["patch"])
         validate_directory(directory)
-    return {"repo": repo, "tag": tag, "manifest": manifest,
-            "assets": {p["patch"]: assets[p["patch"]]["browser_download_url"] for p in manifest["patches"]}}
+    record = {"repo": repo, "tag": tag, "manifest": imported or manifest,
+              "assets": {p["patch"]: assets[p["patch"]]["browser_download_url"] for p in manifest["patches"]}}
+    if imported:
+        record['solution_import'] = copy.deepcopy(reviewed['solution_import'])
+    return record
 
 
 def build_catalog(previous, client=None, repositories=None):
@@ -79,7 +96,7 @@ def build_catalog(previous, client=None, repositories=None):
                     if not asset or asset["size"] != p["patch_bytes"] or (asset.get("digest") and asset["digest"] != "sha256:" + p["patch_sha256"]):
                         raise PatchError("A historical release asset changed: " + p["patch"])
                 continue
-            record = release_record(repo, release, client)
+            record = release_record(repo, release, client, reviewed=existing)
             if record:
                 records[key] = record
     result = {"schema_version": 1, "releases": [records[k] for k in sorted(records)]}

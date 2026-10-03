@@ -174,6 +174,22 @@ catalog generator grants that status only to already-reviewed catalog records.
 Readers retain support for the historical versioned SRW-Z manifests through
 the legacy catalog and the existing single-release compatibility reader.
 
+A reviewed v1 release can gain an explicit multi-file solution in the central
+catalog without replacing any published assets. Keep its original manifest
+fields and patch records, set the catalog copy's `schema_version` to 2, and add
+verified `solutions`. Include a release-level `solution_import` object with
+`schema_version: 1`, the SHA-256 of the exact published `BUILD-MANIFEST.json`
+bytes in `manifest_sha256`, and a nonempty `reason` pointing to the review record.
+Document the component mapping, unchanged-file hashes, and local complete-disc
+verification. Never infer this grouping from asset names alone.
+
+On each refresh, the generator requires that exact original v1 manifest and
+validates all its published assets, checksums, and round-trip report before
+reapplying the reviewed solution. A changed manifest or invalid asset rejects
+the refresh. The imported solution is subject to the same immutable membership,
+output-name, and file-identity rules as a published v2 solution. See the
+[MH2 v0.1.17 review](catalog-imports/marionette-handler-2-v0.1.17.md) for an example.
+
 ## Withdrawn patches
 
 When a maintainer explicitly withdraws a patch, move its exact catalog record

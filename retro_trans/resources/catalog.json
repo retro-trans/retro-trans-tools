@@ -310,7 +310,7 @@
         "platform": "Dreamcast",
         "version": "0.1.17",
         "source_commit": "9df2908baaafab875c9e8a0de27ee965b6d559d9",
-        "schema_version": 1,
+        "schema_version": 2,
         "patches": [
           {
             "patch": "Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta",
@@ -340,11 +340,116 @@
             "patch_sha256": "9ee923ae3d6b1b01c4b9f5ffd7fcf1398f7e057594afa41d9e050c8dd0ba167c",
             "patch_bytes": 102873
           }
+        ],
+        "solutions": [
+          {
+            "id": "japan-disc",
+            "name": "Complete English disc",
+            "edition": "Japan",
+            "language": "en",
+            "files": [
+              {
+                "edition": "Japan / Track 3 raw MODE1/2352",
+                "output_name": "Marionette Handler 2 (Japan) (Track 03).bin"
+              },
+              {
+                "edition": "Japan / Track 17 raw MODE1/2352",
+                "output_name": "Marionette Handler 2 (Japan) (Track 17).bin"
+              }
+            ],
+            "copy_files": [
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 01).bin",
+                "sha256": "2db3f77c96faac14205961c8d7a32fb28c8c346b2a09356fc0567c3fb0f7090a",
+                "bytes": 2234400
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 02).bin",
+                "sha256": "2fbbf984d3efb08c39cf18f14fc20d5fb599e04b0292e5db83dae83519da44a5",
+                "bytes": 2302608
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 04).bin",
+                "sha256": "e6c673ce01efabb79ace978faf67a316fdac710b91744d2656f72c8bee35e980",
+                "bytes": 19796784
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 05).bin",
+                "sha256": "cc0ae7ccd9542f280dbbe760a6ee061b90439fbe0d14ebf96541a5181f99cd9b",
+                "bytes": 28012320
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 06).bin",
+                "sha256": "4d0dff5750c87c72a64f18326c38b9ca13393f84d4e7358a66588d5b23a5ef40",
+                "bytes": 29555232
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 07).bin",
+                "sha256": "4ed1bf30d2918822671ca6f8bcc9e35b2e6b99aa5ee060cf063985c7a6e7a7f9",
+                "bytes": 33099696
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 08).bin",
+                "sha256": "4ddeeee42b6caee3bf197240e37f8acab0deca3eb658502135ce1292f03af165",
+                "bytes": 29357664
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 09).bin",
+                "sha256": "5918d9c289a09a4a6aa45e100a8abbde0e4e3219bbfd618719ef3ea74145b74b",
+                "bytes": 32521104
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 10).bin",
+                "sha256": "f8a5888847c94ab0343c03d9a7cf959463c0196de6b9a6e0b8631e967fe8b25e",
+                "bytes": 28386288
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 11).bin",
+                "sha256": "c36ecf076d256e4dbf70b10410fa3da7636686239714496bdc218f6a11ce3adb",
+                "bytes": 18573744
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 12).bin",
+                "sha256": "6032d72ed6b346821f990e0d96870f7aac2bad039bb0f9e342c8a5fcd29b74c3",
+                "bytes": 18479664
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 13).bin",
+                "sha256": "e5f74aa11959e643e07c7ac0b61ca119253ad3bc8ef16409787b560471c72306",
+                "bytes": 1444128
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 14).bin",
+                "sha256": "df6bf8066bcbd0cc04575457f129aaf9c1c9ba5c938967e3a611764fb357e22b",
+                "bytes": 20852832
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 15).bin",
+                "sha256": "e9fb70b3d73c4648f3dd567af21d594a7d70f0c6569ecd33b486cbd91951726c",
+                "bytes": 29404704
+              },
+              {
+                "name": "Marionette Handler 2 (Japan) (Track 16).bin",
+                "sha256": "4c5dbd57d71c1300bdf0cceeac7d9553c6a8088258753bab39ee0bc7736cc526",
+                "bytes": 2627184
+              },
+              {
+                "name": "Marionette Handler 2 (Japan).cue",
+                "sha256": "de38b5d5ee24ec03ef3e1be11c71d70533427267a5011e3b3f7d98dafc0e94f2",
+                "bytes": 2108
+              }
+            ]
+          }
         ]
       },
       "assets": {
         "Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta": "https://github.com/retro-trans/Marionnete-Handler-2/releases/download/v0.1.17/Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta",
         "Marionette-Handler-2-Japan-Track17-English-0.1.17.xdelta": "https://github.com/retro-trans/Marionnete-Handler-2/releases/download/v0.1.17/Marionette-Handler-2-Japan-Track17-English-0.1.17.xdelta"
+      },
+      "solution_import": {
+        "schema_version": 1,
+        "manifest_sha256": "9353bbd223acb3d0cb5562d3fa56c23a8b9c505fa9a6c576045c3b22bc27e21e",
+        "reason": "Reviewed complete Japan disc: patch Tracks 03 and 17, preserve 15 verified tracks and the CUE. Both published patches were applied locally and all 18 output files verified. See docs/catalog-imports/marionette-handler-2-v0.1.17.md."
       }
     },
     {

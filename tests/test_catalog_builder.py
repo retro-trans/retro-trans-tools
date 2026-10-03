@@ -10,30 +10,68 @@ from test_catalog import record
 
 
 class ReleaseClient(GitHubClient):
-    def __init__(self):
-        self.record = record()
+    def __init__(self, release=None):
+        self.record = copy.deepcopy(release) if release else record()
         manifest = json.dumps(self.record["manifest"]).encode()
         report = json.dumps({"schema_version": 1, "manifest_sha256": hashlib.sha256(manifest).hexdigest(),
-            "patches": [{"patch": self.record["manifest"]["patches"][0]["patch"],
-                "roundtrip_verified": True, "target_sha256": self.record["manifest"]["patches"][0]["target_sha256"]}]}).encode()
-        self.files = {"BUILD-MANIFEST.json": manifest, "VALIDATION.json": report,
-            self.record["manifest"]["patches"][0]["patch"]: b"delta"}
+            "patches": [{"patch": p["patch"], "roundtrip_verified": True,
+                         "target_sha256": p["target_sha256"]} for p in self.record['manifest']['patches']]}).encode()
+        self.files = {"BUILD-MANIFEST.json": manifest, "VALIDATION.json": report}
+        self.files.update({p['patch']: b'delta' for p in self.record['manifest']['patches']})
         self.files["SHA256SUMS.txt"] = "".join(hashlib.sha256(v).hexdigest() + "  " + k + "\n" for k, v in self.files.items()).encode()
-        self.prefix = "https://github.com/retro-trans/test/releases/download/v1.1/"
+        self.prefix = 'https://github.com/{}/releases/download/{}/'.format(self.record['repo'], self.record['tag'])
         self.assets = [{"name": name, "size": len(data), "digest": "sha256:" + hashlib.sha256(data).hexdigest(),
             "browser_download_url": self.prefix + name} for name, data in self.files.items()]
 
     def repositories(self):
-        return ["retro-trans/test"]
+        return [self.record['repo']]
 
     def releases(self, repo):
-        return [{"tag_name": "v1.1", "assets": self.assets}]
+        return [{"tag_name": self.record['tag'], "assets": self.assets}]
 
     def open(self, url):
         return io.BytesIO(self.files[url[len(self.prefix):]])
 
 
 class CatalogBuilderTests(unittest.TestCase):
+    def reviewed_solution(self):
+        from test_solutions import grouped_record
+        imported = grouped_record(copies=True)
+        published = copy.deepcopy(imported)
+        published['manifest']['schema_version'] = 1
+        del published['manifest']['solutions']
+        client = ReleaseClient(published)
+        imported['solution_import'] = dict(schema_version=1,
+            manifest_sha256=hashlib.sha256(client.files['BUILD-MANIFEST.json']).hexdigest(),
+            reason='Reviewed complete two-track disc with verified unchanged files.')
+        return client, dict(schema_version=1, releases=[imported])
+
+    def test_reviewed_v1_solution_survives_refresh_with_all_asset_checks(self):
+        client, previous = self.reviewed_solution()
+        saved = copy.deepcopy(previous)
+        self.assertEqual(build_catalog(previous, client), previous)
+        self.assertEqual(previous, saved)
+        client.files[client.record['manifest']['patches'][0]['patch']] = b'wrong'
+        with self.assertRaises(PatchError):
+            build_catalog(previous, client)
+        self.assertEqual(previous, saved)
+
+    def test_reviewed_solution_rejects_changed_manifest_and_invalid_evidence(self):
+        for problem in ('manifest', 'digest', 'reason', 'schema'):
+            client, previous = self.reviewed_solution()
+            if problem == 'manifest':
+                client.files['BUILD-MANIFEST.json'] += b'\n'
+                for asset in client.assets:
+                    if asset['name'] == 'BUILD-MANIFEST.json':
+                        raw = client.files[asset['name']]
+                        asset.update(size=len(raw), digest='sha256:' + hashlib.sha256(raw).hexdigest())
+            else:
+                field, value = {'digest': ('manifest_sha256', '0' * 64),
+                                'reason': ('reason', ''), 'schema': ('schema_version', 99)}[problem]
+                previous['releases'][0]['solution_import'][field] = value
+            with self.subTest(problem=problem), self.assertRaises(PatchError):
+                build_catalog(previous, client)
+
     def test_verified_standard_release_import(self):
         result = build_catalog({"schema_version": 1, "releases": []}, ReleaseClient())
         self.assertEqual(len(result["releases"]), 1)

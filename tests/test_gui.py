@@ -318,6 +318,32 @@ class GuiTests(unittest.TestCase):
             self.assertLessEqual(app.cancel_button.winfo_rooty() + app.cancel_button.winfo_height(),
                                  app.winfo_rooty() + app.winfo_height())
 
+    def test_cue_without_group_metadata_shows_error_and_refresh_can_recognize_it(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, app = Path(temporary).resolve(), self.app
+            cue = root / 'disc.cue'
+            cue.write_bytes(b'descriptor')
+            for track in (3, 17):
+                (root / 'track{}.bin'.format(track)).write_bytes(content(track, 'original'))
+            legacy = grouped_record()
+            legacy['manifest']['schema_version'] = 1
+            del legacy['manifest']['solutions']
+            app.catalog = make_catalog(legacy)
+            with patch('retro_trans.gui.filedialog.askopenfilename', return_value=str(cue)):
+                app.choose_source()
+            self.finish_worker()
+            self.assertIn('Refresh catalog', app.detail.get())
+            self.assertNotEqual(app.detected.get(), 'Identifying…')
+            self.assertIsNone(app.plan)
+            self.assertEqual(str(app.apply_button['state']), 'disabled')
+            app.catalog = make_catalog(grouped_record())
+            with patch('retro_trans.gui.filedialog.askopenfilename', return_value=str(cue)):
+                app.choose_source()
+            self.finish_worker()
+            self.assertIsInstance(app.plan, SolutionPlan)
+            self.assertEqual(app.selection[0], root)
+            self.assertEqual(len(app.plan.edges), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

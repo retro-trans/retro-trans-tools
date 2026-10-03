@@ -259,7 +259,12 @@ def recognize_selection(path, catalog, cancel=None, progress=None):
     if any(n.id[:3] in catalog.grouped_families for n in nodes):
         return [n for _, n in scan_folder(path.parent, catalog, cancel, progress, path, {path: nodes})]
     if path.suffix.lower() in ('.cue', '.gdi') and not nodes:
-        return [n for _, n in scan_folder(path.parent, catalog, cancel, progress) if isinstance(n, SolutionSource)]
+        if not catalog.active_solutions:
+            raise PatchError('The current catalog has no complete disc patches. Click Refresh catalog, then select the CUE/GDI again.')
+        groups = [n for _, n in scan_folder(path.parent, catalog, cancel, progress) if isinstance(n, SolutionSource)]
+        if not groups:
+            raise PatchError('No supported disc set was found beside this CUE/GDI. Keep the descriptor and its tracks in the same folder, and refresh the catalog.')
+        return groups
     return [n for n in nodes if n.id[:3] not in catalog.grouped_families]
 
 

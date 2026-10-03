@@ -331,7 +331,7 @@ def _recognize_binary(path, catalog, cancel=None, progress=None):
 
 def recognize(path, catalog, cancel=None, progress=None):
     from .solutions import recognize_selection
-    if catalog.solutions:
+    if catalog.solutions or Path(path).suffix.lower() in ('.cue', '.gdi'):
         return recognize_selection(path, catalog, cancel, progress)
     return _recognize_binary(path, catalog, cancel, progress)
 
@@ -347,7 +347,7 @@ def scan_root(root, catalog, cancel=None, progress=None):
         if not path.is_file() or path.is_symlink() or path.resolve() == Path(sys.executable).resolve():
             continue
         try:
-            for node in recognize(path, catalog, cancel, progress):
+            for node in _recognize_binary(path, catalog, cancel, progress):
                 result.append((path, node))
         except (PermissionError, FileNotFoundError, OSError):
             continue

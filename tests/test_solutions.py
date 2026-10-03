@@ -136,6 +136,22 @@ class SolutionTests(unittest.TestCase):
             recognize(path, self.cat)
         self.assertEqual(sum(call.args[0] == path for call in hashing.call_args_list), 1)
 
+    def test_descriptors_without_matching_solution_explain_the_problem(self):
+        old = grouped_record()
+        old['manifest']['schema_version'] = 1
+        del old['manifest']['solutions']
+        for suffix in ('cue', 'gdi'):
+            path = self.root / ('disc.' + suffix)
+            path.write_bytes(b'descriptor')
+            with self.subTest(suffix=suffix), self.assertRaisesRegex(PatchError, 'Refresh catalog'):
+                recognize(path, make_catalog(old))
+        # A folder scan still returns ordinary v1 binaries, skipping descriptors.
+        self.assertEqual(len(scan_root(self.root, make_catalog(old))), 2)
+        for track in (3, 17):
+            (self.root / 'renamed{}.bin'.format(track)).unlink()
+        with self.assertRaisesRegex(PatchError, 'No supported disc set'):
+            recognize(self.root / 'disc.cue', self.cat)
+
     def test_automatic_backend_refuses_applying_only_one_group_component(self):
         source = recognize(self.root, self.cat)[0]
         path, node = source.found['Track 3']

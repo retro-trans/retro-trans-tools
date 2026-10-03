@@ -302,6 +302,52 @@
       }
     },
     {
+      "repo": "retro-trans/Marionnete-Handler-2",
+      "tag": "v0.1.17",
+      "manifest": {
+        "game_id": "marionette-handler-2",
+        "game_name": "Marionette Handler 2 — English",
+        "platform": "Dreamcast",
+        "version": "0.1.17",
+        "source_commit": "9df2908baaafab875c9e8a0de27ee965b6d559d9",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta",
+            "edition": "Japan / Track 3 raw MODE1/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "a802edfb1cda3704d2011cdab70ee5ee05c7f86e2d26125839ef3fcac544a5b6",
+            "source_bytes": 845348784,
+            "target_sha256": "7e1758188a0a5d7bd9d5359e07165b88f77b6f521e096b518d5bdc93729faadd",
+            "target_bytes": 845348784,
+            "patch_sha256": "a07446689f70963623ccd9eb83abac2fac03f5cecd6f5c7a6de1e263f01fbb38",
+            "patch_bytes": 3325
+          },
+          {
+            "patch": "Marionette-Handler-2-Japan-Track17-English-0.1.17.xdelta",
+            "edition": "Japan / Track 17 raw MODE1/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "9d550b3a995f68a766f8ea9cdc87fe125441ea4f4a60184a8bf815e0a18809fc",
+            "source_bytes": 48300672,
+            "target_sha256": "e466decab869f6b5e65d5256e91f2e78e01272dfbfb2a65f79a097850c98eab3",
+            "target_bytes": 48300672,
+            "patch_sha256": "9ee923ae3d6b1b01c4b9f5ffd7fcf1398f7e057594afa41d9e050c8dd0ba167c",
+            "patch_bytes": 102873
+          }
+        ]
+      },
+      "assets": {
+        "Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta": "https://github.com/retro-trans/Marionnete-Handler-2/releases/download/v0.1.17/Marionette-Handler-2-Japan-Track3-English-0.1.17.xdelta",
+        "Marionette-Handler-2-Japan-Track17-English-0.1.17.xdelta": "https://github.com/retro-trans/Marionnete-Handler-2/releases/download/v0.1.17/Marionette-Handler-2-Japan-Track17-English-0.1.17.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z",
       "tag": "v0.9.0",
       "legacy": true,

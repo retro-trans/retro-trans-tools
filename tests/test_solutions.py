@@ -47,7 +47,7 @@ def make_catalog(*records):
 class SolutionTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         for track in (3, 17):
             (self.root / 'renamed{}.bin'.format(track)).write_bytes(content(track, 'original'))
         self.cat = make_catalog(grouped_record(), grouped_record('1.1', '1.2'))
@@ -217,7 +217,7 @@ class SolutionTests(unittest.TestCase):
 class SolutionRoundTrips(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.inputs = self.root / 'inputs'
         self.inputs.mkdir()
         for track in (3, 17):

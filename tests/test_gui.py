@@ -265,7 +265,7 @@ class GuiTests(unittest.TestCase):
 
     def test_grouped_folder_selection_route_and_patch_worker(self):
         with tempfile.TemporaryDirectory() as temporary:
-            root, app = Path(temporary), self.app
+            root, app = Path(temporary).resolve(), self.app
             for track in (3, 17):
                 (root / 'renamed{}.bin'.format(track)).write_bytes(content(track, 'original'))
             app.catalog = make_catalog(grouped_record())
@@ -302,7 +302,7 @@ class GuiTests(unittest.TestCase):
 
     def test_many_missing_companion_files_keep_compact_layout(self):
         with tempfile.TemporaryDirectory() as temporary:
-            root, app = Path(temporary), self.app
+            root, app = Path(temporary).resolve(), self.app
             for track in (3, 17):
                 (root / 'track{}.bin'.format(track)).write_bytes(content(track, 'original'))
             record = grouped_record()

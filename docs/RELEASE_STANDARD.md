@@ -87,7 +87,7 @@ file set as alternatives under one edition or infer dependencies from names.
 
 Add `solutions` to the local builder configuration (see
 `examples/multi-file-release-config.json`). The builder emits schema version 2
-automatically. Use Retro Trans Tools 0.4.0 or later (or `python -m pip install .`
+automatically. Use Retro Trans Tools 0.4.1 or later (or `python -m pip install .`
 from an updated checkout). Each solution contains:
 
 | Field | Meaning |
@@ -140,7 +140,7 @@ round-trip-report checks as v1. Published solution membership, output names and
 unchanged-file identities are immutable. Withdraw a solution with all its
 component records together, preserving its definition in `withdrawn_releases`.
 
-Clients older than 0.4.0 reject these manifests and retain
+Clients older than 0.4.1 reject these manifests and retain
 their previous catalog; their separate app update check continues. Release the
 updated application before publishing v2 game manifests. Existing v1 releases
 remain valid single-file releases. Do not silently guess a group from a list

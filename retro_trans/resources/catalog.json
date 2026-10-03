@@ -306,7 +306,7 @@
       "tag": "v0.1.17",
       "manifest": {
         "game_id": "marionette-handler-2",
-        "game_name": "Marionette Handler 2 — English",
+        "game_name": "Marionette Handler 2 \u2014 English",
         "platform": "Dreamcast",
         "version": "0.1.17",
         "source_commit": "9df2908baaafab875c9e8a0de27ee965b6d559d9",
@@ -481,37 +481,6 @@
       },
       "assets": {
         "SRWMX-English-v0.4.1.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.1/SRWMX-English-v0.4.1.xdelta"
-      }
-    },
-    {
-      "repo": "retro-trans/SRW-MX-Portable",
-      "tag": "v0.4.2",
-      "manifest": {
-        "game_id": "srw-mx-portable",
-        "game_name": "Super Robot Taisen MX Portable",
-        "platform": "PSP",
-        "version": "0.4.2",
-        "source_commit": "036a619be3c23b3abdfe8ee18182a47523ddeedf",
-        "schema_version": 1,
-        "patches": [
-          {
-            "patch": "SRWMX-English-v0.4.2.xdelta",
-            "edition": "ULJS-00041",
-            "language": "en",
-            "source_version": "original",
-            "source_format": "iso",
-            "target_format": "iso",
-            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
-            "source_bytes": 1295122432,
-            "target_sha256": "6e1ad4c24a092a2c60e3fa66369caf4ad4640d0d1ca8357d6ac59bcfd2fdfed6",
-            "target_bytes": 1313292288,
-            "patch_sha256": "74f5f3f4114e26414f61a37a5723a71b4df336aad4870d156897c33c607c8d96",
-            "patch_bytes": 1574947
-          }
-        ]
-      },
-      "assets": {
-        "SRWMX-English-v0.4.2.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.2/SRWMX-English-v0.4.2.xdelta"
       }
     },
     {
@@ -1905,6 +1874,38 @@
         "SN3-English-v0.1.51-to-v0.1.52.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.52/SN3-English-v0.1.51-to-v0.1.52.xdelta"
       },
       "reason": "Maintainer requested only the original patch and upgrade from the preceding published release; local test-build upgrades withdrawn."
+    },
+    {
+      "repo": "retro-trans/SRW-MX-Portable",
+      "tag": "v0.4.2",
+      "manifest": {
+        "game_id": "srw-mx-portable",
+        "game_name": "Super Robot Taisen MX Portable",
+        "platform": "PSP",
+        "version": "0.4.2",
+        "source_commit": "036a619be3c23b3abdfe8ee18182a47523ddeedf",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWMX-English-v0.4.2.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
+            "source_bytes": 1295122432,
+            "target_sha256": "6e1ad4c24a092a2c60e3fa66369caf4ad4640d0d1ca8357d6ac59bcfd2fdfed6",
+            "target_bytes": 1313292288,
+            "patch_sha256": "74f5f3f4114e26414f61a37a5723a71b4df336aad4870d156897c33c607c8d96",
+            "patch_bytes": 1574947
+          }
+        ]
+      },
+      "assets": {
+        "SRWMX-English-v0.4.2.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.2/SRWMX-English-v0.4.2.xdelta"
+      },
+      "reason": "Maintainer requested withholding GitHub releases until explicit approval; v0.4.2 returned to an unpublished draft."
     }
   ]
 }

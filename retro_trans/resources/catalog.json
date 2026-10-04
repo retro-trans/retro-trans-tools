@@ -557,11 +557,26 @@
             "target_bytes": 1314539520,
             "patch_sha256": "117ffed761b914d675ccd86d27aaa3ef463fd2df3311e80e10f6e4b607079161",
             "patch_bytes": 2391967
+          },
+          {
+            "patch": "SRWMX-English-v0.4.1-to-v0.4.9.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "0.4.1",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "cf4af0243dadd37718866d7ee1a6f1f8d8974d5f55dd827644227f4e58d1c7d5",
+            "source_bytes": 1313292288,
+            "target_sha256": "3ddfe20a125fde4932d977c6a2c23a87c6e31e4bf3c021fe99f58180a4e9d2d5",
+            "target_bytes": 1314539520,
+            "patch_sha256": "d5d8d5bc6f0a9cbc34a739df55631452f7f37a9fc81be896d283cabb6171b2da",
+            "patch_bytes": 853344
           }
         ]
       },
       "assets": {
-        "SRWMX-English-v0.4.9.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.9/SRWMX-English-v0.4.9.xdelta"
+        "SRWMX-English-v0.4.9.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.9/SRWMX-English-v0.4.9.xdelta",
+        "SRWMX-English-v0.4.1-to-v0.4.9.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.9/SRWMX-English-v0.4.1-to-v0.4.9.xdelta"
       }
     },
     {

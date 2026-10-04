@@ -534,6 +534,37 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-MX-Portable",
+      "tag": "v0.4.9",
+      "manifest": {
+        "game_id": "srw-mx-portable",
+        "game_name": "Super Robot Taisen MX Portable",
+        "platform": "PSP",
+        "version": "0.4.9",
+        "source_commit": "ce426bd4676df5c7ad24ea8d93605368dfed48af",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWMX-English-v0.4.9.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
+            "source_bytes": 1295122432,
+            "target_sha256": "3ddfe20a125fde4932d977c6a2c23a87c6e31e4bf3c021fe99f58180a4e9d2d5",
+            "target_bytes": 1314539520,
+            "patch_sha256": "117ffed761b914d675ccd86d27aaa3ef463fd2df3311e80e10f6e4b607079161",
+            "patch_bytes": 2391967
+          }
+        ]
+      },
+      "assets": {
+        "SRWMX-English-v0.4.9.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.9/SRWMX-English-v0.4.9.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z",
       "tag": "v0.9.0",
       "legacy": true,

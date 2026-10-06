@@ -535,6 +535,52 @@
     },
     {
       "repo": "retro-trans/SRW-MX-Portable",
+      "tag": "v0.4.12",
+      "manifest": {
+        "game_id": "srw-mx-portable",
+        "game_name": "Super Robot Taisen MX Portable",
+        "platform": "PSP",
+        "version": "0.4.12",
+        "source_commit": "2674cdb8e7a825290f8aab36253359c9be3ac7d0",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWMX-English-v0.4.12.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
+            "source_bytes": 1295122432,
+            "target_sha256": "80f9d24f682884059742c89b0e60ab3a53f611ee384e0cb46b068b4478d9acae",
+            "target_bytes": 1317414912,
+            "patch_sha256": "bf005b8345d7ad44e852f42c3f2a03ec641574da2598c32f6583f572acd53d2d",
+            "patch_bytes": 2408753
+          },
+          {
+            "patch": "SRWMX-English-v0.4.9-to-v0.4.12.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "0.4.9",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "3ddfe20a125fde4932d977c6a2c23a87c6e31e4bf3c021fe99f58180a4e9d2d5",
+            "source_bytes": 1314539520,
+            "target_sha256": "80f9d24f682884059742c89b0e60ab3a53f611ee384e0cb46b068b4478d9acae",
+            "target_bytes": 1317414912,
+            "patch_sha256": "ec53e056890da11ee9d405d19353874d7d95a70c4cf37dfbccbb47265ee434a2",
+            "patch_bytes": 69033
+          }
+        ]
+      },
+      "assets": {
+        "SRWMX-English-v0.4.12.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.12/SRWMX-English-v0.4.12.xdelta",
+        "SRWMX-English-v0.4.9-to-v0.4.12.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.12/SRWMX-English-v0.4.9-to-v0.4.12.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-MX-Portable",
       "tag": "v0.4.9",
       "manifest": {
         "game_id": "srw-mx-portable",

@@ -24,6 +24,8 @@
       "properties": {
         "patch": {"type": "string", "maxLength": 200, "pattern": "^[^<>:\"/\\\\|?*\\u0000-\\u001f]+\\.(xdelta|vcdiff)$"},
         "edition": {"type": "string", "minLength": 1, "maxLength": 200},
+        "platform": {"type": "string", "minLength": 1, "maxLength": 200},
+        "game_name": {"type": "string", "minLength": 1, "maxLength": 200},
         "language": {"type": "string", "minLength": 1, "maxLength": 200},
         "source_version": {"anyOf": [{"const": "original"}, {"$ref": "#/$defs/version"}]},
         "source_format": {"$ref": "#/$defs/format"},

@@ -80,6 +80,30 @@ class CatalogTests(unittest.TestCase):
         cat = catalog(record(), record("1.1", "1.2", edition="best"))
         self.assertEqual(cat.plan(cat.nodes[self.original.id]).target.version, "1.1")
 
+    def test_platform_editions_preserve_existing_routes(self):
+        old = catalog(record())
+        additional = record(edition="ps2")
+        additional['manifest']['patches'][0].update(platform="PS2", game_name="Test Game PS2")
+        current = catalog(record(), additional)
+        assert_immutable(old, current)
+        self.assertEqual(current.nodes[('test', 'original', 'en', '1.1')].platform, 'Test')
+        ps2 = current.nodes[('test', 'ps2', 'en', 'original')]
+        self.assertEqual(ps2.platform, 'PS2')
+        self.assertEqual(ps2.game_name, 'Test Game PS2')
+        self.assertEqual(current.plan(ps2).target.platform, 'PS2')
+        self.assertEqual(len(current.plan(ps2).edges), 1)
+
+    def test_platform_override_must_be_valid_and_consistent(self):
+        for value in ('', 'PS2\n', 42, None):
+            row = record()
+            row['manifest']['patches'][0]['platform'] = value
+            with self.assertRaises(PatchError):
+                catalog(row)
+        first, second = record(), record('1.1', '1.2')
+        second['manifest']['patches'][0]['platform'] = 'PS2'
+        with self.assertRaisesRegex(PatchError, 'Conflicting platform'):
+            catalog(first, second)
+
     def test_scan_zero_one_many_and_no_subfolders(self):
         nested = self.root / "subfolder"
         nested.mkdir()

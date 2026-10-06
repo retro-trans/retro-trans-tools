@@ -32,6 +32,15 @@ encodes the patch, decodes it to a temporary file, verifies the entire target,
 and rechecks that its inputs did not change during the build. It stops before
 producing a final release directory if any operation fails.
 
+For releases containing separate platform editions, a patch row can override
+`platform` and `game_name`. Omitted fields inherit the manifest defaults. Keep
+the release's stable `game_id` and distinct edition IDs; each edition has its
+own source/output identities and upgrade route. This allows one release tag
+to list bare PSP and PS2 xdelta files with accurate catalog labels. Older apps
+can still apply these files manually; update the app for platform-specific
+Automatic labels. Existing patch bytes and binary identities must be preserved
+when adding another edition to a published release.
+
 The release directory must not already exist. Inputs are never modified. Large
 files are streamed; allow disk space for the target verification copy and patch
 assets. Temporary verification images and private configuration are not release

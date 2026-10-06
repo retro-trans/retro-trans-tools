@@ -61,6 +61,23 @@ class ReleaseTests(unittest.TestCase):
             manual_patch(source, delta, self.root / "manual.vpk", cache=self.root / "cache")
         self.assertEqual((self.root / "manual.vpk").read_bytes(), output.read_bytes())
 
+    def test_builder_preserves_platform_editions(self):
+        config = {'game_id':'fixture', 'game_name':'Fixture PSP', 'platform':'PSP',
+                  'version':'1.1', 'source_commit':'a'*40, 'patches':[]}
+        for edition in ('psp', 'ps2'):
+            row = dict(patch=edition+'.xdelta', edition=edition, language='en',
+                       source_version='original', source_format='vpk', target_format='vpk',
+                       source='original.vpk', target='1.1.vpk')
+            if edition == 'ps2': row.update(platform='PS2', game_name='Fixture PS2')
+            config['patches'].append(row)
+        path = self.root/'mixed.json'
+        path.write_text(json.dumps(config), encoding='utf8')
+        output = self.root/'mixed-release'
+        manifest = build_release(path, output, cache=self.root/'cache')
+        self.assertEqual(manifest['patches'][1]['platform'], 'PS2')
+        self.assertEqual(manifest['patches'][1]['game_name'], 'Fixture PS2')
+        self.assertEqual(validate_directory(output), manifest)
+
     def test_failed_intermediate_output_and_cancel_leave_no_final(self):
         r1, d1 = self.build("original", "1.1")
         r2, d2 = self.build("1.1", "1.2")

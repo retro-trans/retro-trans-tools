@@ -43,6 +43,7 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None):
             if path not in digests:
                 digests[path] = (sha256_file(path, cancel, progress), path.stat().st_size)
         entry = {k: row[k] for k in ("patch", "edition", "language", "source_version", "source_format", "target_format")}
+        entry.update({k: row[k] for k in ("platform", "game_name") if k in row})
         entry.update(source_sha256=digests[source][0], source_bytes=digests[source][1],
                      target_sha256=digests[target][0], target_bytes=digests[target][1],
                      patch_sha256="0" * 64, patch_bytes=0)

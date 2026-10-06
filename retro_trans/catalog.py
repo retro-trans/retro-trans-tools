@@ -72,6 +72,9 @@ def validate_manifest(data, legacy=False):
             names.add(name.casefold())
             for key in ("edition", "language", "source_format", "target_format"):
                 text_field(p[key], key)
+            for key in ("platform", "game_name"):
+                if key in p:
+                    text_field(p[key], key)
             for key in ("source_format", "target_format"):
                 if not re.fullmatch(r"[a-z0-9]{1,12}", p[key]):
                     raise PatchError("Binary formats must be simple file extensions.")
@@ -199,11 +202,13 @@ class Catalog:
 
     def add_binary(self, manifest, patch, side, version):
         key = (manifest["game_id"], patch["edition"], patch["language"], version)
+        platform = patch.get("platform", manifest["platform"])
+        game_name = patch.get("game_name", manifest["game_name"])
         hashes = {algorithm: patch[side + "_" + algorithm].lower() for algorithm in ("sha256", "sha1") if patch.get(side + "_" + algorithm)}
         size = patch.get(side + "_bytes")
         if key in self.nodes:
             node = self.nodes[key]
-            if node.platform != manifest["platform"] or node.format != patch[side + "_format"]:
+            if node.platform != platform or node.format != patch[side + "_format"]:
                 raise PatchError("Conflicting platform or format for binary " + node.label)
             if node.size is not None and size is not None and node.size != size:
                 raise PatchError("Conflicting sizes for binary " + node.label)
@@ -214,7 +219,7 @@ class Catalog:
             if node.size is None:
                 node.size = size
             return node
-        node = Binary(key, manifest["game_name"], manifest["platform"], version,
+        node = Binary(key, game_name, platform, version,
             patch["edition"], patch["language"], patch[side + "_format"], size, hashes)
         self.nodes[key] = node
         return node

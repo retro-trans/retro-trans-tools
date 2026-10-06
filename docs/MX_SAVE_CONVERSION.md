@@ -5,7 +5,7 @@ Save conversion tab. It includes a CLI, authenticated PSP mode-3 reads, native
 record packing, PPSSPP plaintext output, PS2 PSU export, verified ZIPs, backups
 and an audit. The user reported that the first PS2 -> PSP save loads and plays
 in PPSSPP. **PS2 loading and a full save/reload cycle are still unverified.**
-This is an opt-in experimental feature in Retro Trans 0.5.0, not a general
+This is an opt-in experimental feature in Retro Trans 0.5.1, not a general
 whole-campaign converter. The existing Z3 workflow remains available.
 
 ## Scope and decisions
@@ -246,4 +246,4 @@ boundaries, system-state interactions and non-default settings.
 The original emulator installations, settings and saves have not been edited.
 `scripts/launch_mx_test.py` opens the local converter without a startup scan or
 update check; it remains the entry point for separately named experimental
-test EXEs. The standard 0.5.0 app includes the same opt-in MX converter.
+test EXEs. The standard 0.5.1 app includes the same opt-in MX converter.

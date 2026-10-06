@@ -370,7 +370,7 @@ class GuiTests(unittest.TestCase):
 
     def test_chd_output_defaults_and_format_switching(self):
         with tempfile.TemporaryDirectory() as temporary:
-            app, root = self.app, Path(temporary)
+            app, root = self.app, Path(temporary).resolve()
             source = root / 'game.chd'
             source.write_bytes(b'MComprHD')
             item = record()

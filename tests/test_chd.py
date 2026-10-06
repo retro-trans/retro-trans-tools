@@ -87,6 +87,84 @@ class ChdTests(unittest.TestCase):
                 self.assertEqual(recognize(self.base / name, cat)[0].version, 'original')
         self.assertEqual(list((self.root / 'cache/chd').iterdir()), [])
 
+    def test_deferred_scans_and_browsing_never_extract_chds(self):
+        from test_solutions import grouped_record
+        for name in ('dvd.chd', 'cd.chd'):
+            (self.root / name).write_bytes((self.base / name).read_bytes())
+        for cat in (self.cat, Catalog({'schema_version': 1, 'releases': [self.record, grouped_record()]})):
+            with patch.object(chd, 'extract', side_effect=AssertionError('scan unpacked without asking')):
+                found = scan_root(self.root, cat, defer_chd=True)
+                self.assertEqual(len(found), 2)
+                self.assertTrue(all(isinstance(n, chd.ChdSource) for _, n in found))
+                self.assertIsInstance(recognize(self.root / 'dvd.chd', cat, defer_chd=True)[0], chd.ChdSource)
+
+    def test_persistent_extraction_reused_for_identification_and_patching(self):
+        for name in ('dvd.chd', 'cd.chd'):
+            source = self.root / name
+            source.write_bytes((self.base / name).read_bytes())
+            destination = chd.extraction_folder(source)
+            with patch.object(chd, 'extract', wraps=chd.extract) as extract:
+                binary = chd.unpack_to_folder(source, destination)
+                self.assertEqual(binary.read_bytes(), self.original)
+                node = recognize(binary, self.cat, defer_chd=True)[0]
+                output = destination / 'patched.iso'
+                apply_plan(binary, output, self.cat.plan(node), self.cat, self.client, cache=self.root / 'cache')
+                self.assertEqual(output.read_bytes(), self.translated)
+                manual_patch(binary, self.delta, destination / 'manual.iso', cache=self.root / 'cache')
+                extract.assert_called_once()  # Neither recognition nor patching unpacks this source again.
+            packed = destination / 'patched.chd'
+            with patch.object(chd, 'extract', wraps=chd.extract) as extract:
+                apply_plan(binary, packed, self.cat.plan(node), self.cat, self.client,
+                           cache=self.root / 'cache', chd_output=True)
+                extract.assert_called_once()  # Only the newly compressed output's verification round trip.
+            self.assertEqual(chd.inspect_chd(packed).kind, chd.inspect_chd(source).kind)
+            self.assertEqual(binary.read_bytes(), self.original)
+            self.assertEqual(source.read_bytes(), (self.base / name).read_bytes())
+        self.assert_clean()
+
+    def test_persistent_extraction_cancellation_space_and_existing_folders(self):
+        source = self.root / 'game.chd'
+        source.write_bytes((self.base / 'dvd.chd').read_bytes())
+        destination = chd.extraction_folder(source)
+        cancel = threading.Event()
+        def progress(message, fraction):
+            if message.startswith('Extracting'):
+                cancel.set()
+        with self.assertRaises(Cancelled):
+            chd.unpack_to_folder(source, destination, cancel, progress)
+        self.assertFalse(destination.exists())
+        self.assert_clean()
+        with patch.object(chd.shutil, 'disk_usage', return_value=SimpleNamespace(free=0)), self.assertRaises(chd.ChdError):
+            chd.unpack_to_folder(source, destination)
+        self.assertFalse(destination.exists())
+        destination.mkdir()
+        keep = destination / 'keep.txt'
+        keep.write_bytes(b'keep')
+        with self.assertRaises(chd.ChdError):
+            chd.unpack_to_folder(source, destination)
+        self.assertEqual(keep.read_bytes(), b'keep')
+        self.assertEqual(chd.extraction_folder(source).name, 'game-unpacked-2')
+        self.assertEqual(source.read_bytes(), (self.base / 'dvd.chd').read_bytes())
+
+    def test_persistent_extraction_failure_and_publish_race_leave_existing_data(self):
+        source = self.root / 'disc.chd'
+        source.write_bytes((self.base / 'dvd.chd').read_bytes())
+        destination = chd.extraction_folder(source)
+        with patch.object(chd, 'extract', side_effect=PatchError('corrupt data')), self.assertRaises(PatchError):
+            chd.unpack_to_folder(source, destination)
+        self.assertFalse(destination.exists())
+        self.assert_clean()
+        real_extract = chd.extract
+        def raced(*args):
+            output = real_extract(*args)
+            destination.mkdir()
+            (destination / 'keep').write_bytes(b'existing')
+            return output
+        with patch.object(chd, 'extract', side_effect=raced), self.assertRaises(OSError):
+            chd.unpack_to_folder(source, destination)
+        self.assertEqual((destination / 'keep').read_bytes(), b'existing')
+        self.assert_clean()
+
     def test_chd_inputs_patch_to_verified_iso_and_chd_offline(self):
         with patch('retro_trans.core.GitHubClient.open', side_effect=AssertionError('network used')):
             for name in ('dvd.chd', 'cd.chd'):
@@ -265,8 +343,10 @@ class ChdTests(unittest.TestCase):
             source = original.with_suffix('.chd')
             with chd.engine_context() as engine:
                 chd.run(engine, ['createcd', '-i', cue, '-o', source], 'Raw CD fixture')
+            extracted = chd.unpack_to_folder(source, chd.extraction_folder(source))
+            self.assertEqual(extracted.read_bytes(), original.read_bytes())
             output = self.root / (name + '-patched.chd')
-            manual_patch(source, delta, output, cache=self.root / 'cache', chd_output=True)
+            manual_patch(extracted, delta, output, cache=self.root / 'cache', chd_output=True)
             self.assertEqual(chd.inspect_chd(output).cue_mode, mode)
             with chd.prepared_source(output, self.root) as (binary, layout):
                 self.assertEqual(binary.read_bytes(), target.read_bytes())

@@ -42,6 +42,25 @@ distribution of the packaged application.
 - Tcl/Tk: https://www.tcl-lang.org/software/tcltk/license.html
 - PyInstaller: https://pyinstaller.org/en/stable/license.html
 
+## PS2 memory-card format reference
+
+The read-only card reader follows the allocation and directory formats documented
+by Ross Ridge's public-domain [mymc](https://github.com/ps2dev/mymc), particularly
+`ps2mc.py` and `ps2mc_dir.py`. PSU packaging follows `ps2save.py`'s public-domain
+EMS container format. It does not include mymc's card writer or ECC engine.
+
+## MX Portable savedata format references
+
+The independently written MX mode-3 reader follows the format described by
+PPSSPP's [sceChnnlsv.cpp](https://github.com/hrydgard/ppsspp/blob/master/Core/HLE/sceChnnlsv.cpp)
+and [SavedataParam.cpp](https://github.com/hrydgard/ppsspp/blob/master/Core/Dialog/SavedataParam.cpp).
+PPSSPP source and executable code are not bundled or linked. AES uses Windows
+CNG. No game or KIRK key material is distributed: the experimental reader requires
+the user's hash-identified game and installed PPSSPP executable. The app reads
+selected key material in memory only. These keys are not saved in reports,
+caches, or conversion outputs. The development-only native layout verifier
+optionally uses Unicorn, which is not part of the application runtime.
+
 ## Translation patches
 
 Patches retain the terms published by their respective repositories. No game

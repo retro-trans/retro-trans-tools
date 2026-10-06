@@ -296,13 +296,15 @@ def required_hashes(nodes):
     return {"sha256" if "sha256" in node.hashes else "sha1" for node in nodes}
 
 
-def _recognize_binary(path, catalog, cancel=None, progress=None):
+def _recognize_binary(path, catalog, cancel=None, progress=None, *, defer_chd=False):
     path = Path(path)
     if not path.is_file():
         raise PatchError("Select an existing binary.")
-    from .chd import is_chd, inspect_chd, prepared_source
+    from .chd import ChdSource, is_chd, inspect_chd, prepared_source
     if is_chd(path):
         disc = inspect_chd(path)
+        if defer_chd:
+            return [ChdSource()]
         candidates = [n for n in catalog.nodes.values() if n.id in catalog.available_ids and n.format in ('iso', 'bin') and
                       (n.size is None or n.size == disc.size)]
         if not candidates:
@@ -329,17 +331,17 @@ def _recognize_binary(path, catalog, cancel=None, progress=None):
     return sorted([n for n in candidates if matches(n, hashes, size)], key=lambda n: version_key(n.version), reverse=True)
 
 
-def recognize(path, catalog, cancel=None, progress=None):
+def recognize(path, catalog, cancel=None, progress=None, *, defer_chd=False):
     from .solutions import recognize_selection
     if catalog.solutions or Path(path).suffix.lower() in ('.cue', '.gdi'):
-        return recognize_selection(path, catalog, cancel, progress)
-    return _recognize_binary(path, catalog, cancel, progress)
+        return recognize_selection(path, catalog, cancel, progress, defer_chd=defer_chd)
+    return _recognize_binary(path, catalog, cancel, progress, defer_chd=defer_chd)
 
 
-def scan_root(root, catalog, cancel=None, progress=None):
+def scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
     from .solutions import scan_folder
     if catalog.solutions:
-        return scan_folder(root, catalog, cancel, progress)
+        return scan_folder(root, catalog, cancel, progress, defer_chd=defer_chd)
     from .chd import ChdError
     result = []
     for path in sorted(Path(root).iterdir()):
@@ -347,7 +349,7 @@ def scan_root(root, catalog, cancel=None, progress=None):
         if not path.is_file() or path.is_symlink() or path.resolve() == Path(sys.executable).resolve():
             continue
         try:
-            for node in _recognize_binary(path, catalog, cancel, progress):
+            for node in _recognize_binary(path, catalog, cancel, progress, defer_chd=defer_chd):
                 result.append((path, node))
         except (PermissionError, FileNotFoundError, OSError):
             continue

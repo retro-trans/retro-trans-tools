@@ -36,6 +36,12 @@ class Disc:
     sha1_hint: str = ''
 
 
+@dataclass(frozen=True)
+class ChdSource:
+    """A scan candidate, not a recognized or verified game identity."""
+    label: str = 'CHD — unpack to identify'
+
+
 def is_chd(path):
     path = Path(path)
     if path.suffix.lower() == '.chd':
@@ -155,11 +161,69 @@ def extract(source, stage, disc, cancel=None, progress=None):
     return output
 
 
+def extraction_folder(source):
+    source = Path(source).resolve()
+    destination = source.parent / (source.stem + '-unpacked')
+    suffix = 2
+    while os.path.lexists(destination):
+        destination = source.parent / (source.stem + '-unpacked-' + str(suffix))
+        suffix += 1
+    return destination
+
+
+def unpack_to_folder(source, destination, cancel=None, progress=None):
+    """Keep a complete extraction beside the CHD; publish no partial folder."""
+    from .solutions import publish_directory
+    source, destination = Path(source).resolve(), Path(destination).absolute()
+    if destination.parent.resolve() != source.parent or os.path.lexists(destination):
+        raise ChdError('Choose a new child folder beside the CHD. Existing folders are never replaced.')
+    before = source.stat()
+    disc = inspect_chd(source)
+    check_cancel(cancel)
+    require_space(source.parent, disc.size)
+    with tempfile.TemporaryDirectory(prefix='.retro-unpack-', dir=str(source.parent)) as temporary:
+        stage = Path(temporary) / 'complete'
+        stage.mkdir()
+        binary = extract(source, stage, disc, cancel, progress)
+        name = source.stem + ('.iso' if disc.sector_size == 2048 else '.bin')
+        if binary != stage / name:
+            binary.rename(stage / name)
+        if disc.kind == 'cd':
+            (stage / 'disc.cue').unlink(missing_ok=True)
+            (stage / name).with_suffix('.cue').write_bytes(cue_bytes(name, disc))
+        after = source.stat()
+        if (before.st_size, before.st_mtime_ns, before.st_ino) != (after.st_size, after.st_mtime_ns, after.st_ino):
+            raise ChdError('The CHD changed during extraction. Select it again.')
+        check_cancel(cancel)
+        publish_directory(stage, destination)
+    return destination / name
+
+
+def unpacked_layout(source):
+    """Recover our single-track CD layout when reusing an extracted ISO/BIN."""
+    source = Path(source)
+    if source.suffix.lower() not in ('.iso', '.bin'):
+        return None
+    try:
+        cue = source.with_suffix('.cue')
+        if cue.stat().st_size > 4096:
+            return None
+        data = cue.read_bytes().replace(b'\r\n', b'\n')
+        size = source.stat().st_size
+        for sector, mode in CD_MODES.values():
+            disc = Disc('cd', size, sector, mode)
+            if size > 0 and size % sector == 0 and data == cue_bytes(source.name, disc):
+                return disc
+    except OSError:
+        pass
+    return None
+
+
 @contextmanager
 def prepared_source(source, folder=None, cancel=None, progress=None):
     source = Path(source)
     if not is_chd(source):
-        yield source, None
+        yield source, unpacked_layout(source)
         return
     disc = inspect_chd(source)
     folder = Path(folder) if folder else cache_directory() / 'chd'

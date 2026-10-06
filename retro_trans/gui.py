@@ -13,8 +13,9 @@ from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_p
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves
-from .chd import is_chd, inspect_chd
+from . import z3_saves, mx_converter
+from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
+from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
 
 TEXT, MUTED, ACCENT, ERROR = "#202020", "#606060", "#166534", "#a4262c"
@@ -25,7 +26,7 @@ class Application(tk.Tk):
         super().__init__()
         if not visible:
             self.withdraw()
-        self.title("Retro Trans")
+        self.title("Retro Trans " + __version__)
         self.geometry("700x440")
         self.client, self.catalog = GitHubClient(), load_catalog()
         self.pending_catalog = None
@@ -35,9 +36,10 @@ class Application(tk.Tk):
         self.busy, self.closing, self.refresh_running = False, False, False
         self.selection, self.plan, self.saved_output = None, None, None
         self.plan_problem = ''
+        self.extracted_inputs, self.declined_chds = set(), set()
         self.found, self.controls, self.readonly_controls, self.selection_buttons = [], [], [], []
         self.status = tk.StringVar(value="Ready.")
-        self.detail = tk.StringVar(value="Select a binary, apply a local patch, or convert Z3 saves.")
+        self.detail = tk.StringVar(value="Select a binary, apply a local patch, or convert saves.")
         self.catalog_status = tk.StringVar(value="Catalog: {} patches".format(len(self.catalog.edges)))
         self.app_update_status = update_status()
         self.detected = tk.StringVar(value="No binary selected")
@@ -62,10 +64,28 @@ class Application(tk.Tk):
                 self.settings = {}
         except (ValueError, OSError):
             self.settings = {}
+        self.save_game = tk.StringVar(value='Z3 Jigoku-hen')
+        self.previous_save_game = self.save_game.get()
+        self.save_paths = {}
+        self.mx_slot = tk.StringVar(value='')
+        self.mx_boot = tk.StringVar(value=self.settings.get('mx_game_file', ''))
+        self.mx_ppsspp = tk.StringVar(value=self.settings.get('mx_ppsspp',
+            str(Path(os.environ.get('ProgramFiles', 'C:/Program Files')) / 'PPSSPP' / 'PPSSPPWindows64.exe')))
+        self.mx_psp_difficulty = tk.BooleanVar(value=True)
+        self.mx_ps2_output_difficulty = True
+        self.mx_source_difficulty = None
+        self.mx_syncing_difficulty = False
+        self.mx_difficulty_note = tk.StringVar()
+        self.mx_difficulty_caption = tk.StringVar(value='PSP difficulty on PS2')
+        self.mx_difficulty_checkbox = None
+        self.mx_experimental = tk.BooleanVar(value=False)
         self.build_styles()
         self.build_layout()
-        for variable in (self.save_ps3, self.save_vita, self.save_output, self.save_direction, self.save_closed):
+        for variable in (self.save_ps3, self.save_vita, self.save_output, self.save_direction, self.save_closed,
+                         self.mx_slot, self.mx_boot, self.mx_ppsspp, self.mx_experimental):
             variable.trace_add('write', self.invalidate_saves)
+        self.mx_psp_difficulty.trace_add('write', self.change_mx_difficulty)
+        self.save_game.trace_add('write', self.change_save_game)
         self.update_idletasks()
         scale = self.winfo_fpixels("1i") / 96
         width, height = max(round(700 * scale), self.winfo_reqwidth()), max(round(440 * scale), self.winfo_reqheight())
@@ -108,7 +128,7 @@ class Application(tk.Tk):
         self.notebook = ttk.Notebook(outer)
         self.notebook.pack(fill="x")
         self.tabs = []
-        for title in ("Automatic", "Apply xdelta", "Z3 saves"):
+        for title in ("Automatic", "Apply xdelta", "Save conversion"):
             page = ttk.Frame(self.notebook, padding=10)
             page.columnconfigure(1, weight=1)
             self.notebook.add(page, text=title)
@@ -151,22 +171,34 @@ class Application(tk.Tk):
                                  command=self.manual_chd_mode)
         unpack.grid(row=4, column=0, columnspan=3, sticky='w', pady=3)
         self.controls.append(unpack)
-        ttk.Label(self.tabs[1], text="Local xdelta checks; no catalog match required.",
+        ttk.Label(self.tabs[1], text="Local xdelta checks; no catalog match required.\n" + MANUAL_REMINDER,
                   style="Muted.TLabel").grid(row=5, column=0, columnspan=3, sticky="w", pady=3)
         saves = self.tabs[2]
         ttk.Label(saves, text='Convert:').grid(row=0, column=0, sticky='w')
-        direction = ttk.Combobox(saves, textvariable=self.save_direction,
+        choices = ttk.Frame(saves)
+        choices.grid(row=0, column=1, sticky='ew')
+        choices.columnconfigure((0, 1), weight=1)
+        game = ttk.Combobox(choices, textvariable=self.save_game,
+                           values=['Z3 Jigoku-hen', 'MX (experimental)'], state='readonly', width=1)
+        game.grid(row=0, column=0, sticky='ew', padx=(0, 6))
+        self.controls.append(game)
+        self.readonly_controls.append(game)
+        direction = ttk.Combobox(choices, textvariable=self.save_direction,
                                 values=list(self.save_directions), state='readonly', width=1)
         direction.grid(row=0, column=1, sticky='ew')
+        self.save_direction_box = direction
         self.controls.append(direction)
         self.readonly_controls.append(direction)
         self.button(saves, 'Instructions', self.save_help).grid(row=0, column=2, sticky='ew', padx=(8, 0))
-        self.save_folder_row(saves, 1, 'RPCS3 saves:', self.save_ps3)
-        self.save_folder_row(saves, 2, 'Vita3K saves:', self.save_vita)
+        self.save_first_label = self.save_folder_row(saves, 1, 'RPCS3 saves:', self.save_ps3)
+        self.save_second_label = self.save_folder_row(saves, 2, 'Vita3K saves:', self.save_vita)
         self.save_folder_row(saves, 3, 'New output:', self.save_output, output=True)
         closed = ttk.Checkbutton(saves, text='Both emulators are closed.', variable=self.save_closed)
-        closed.grid(row=4, column=0, columnspan=3, sticky='w', pady=3)
+        closed.grid(row=4, column=0, columnspan=2, sticky='w', pady=3)
         self.controls.append(closed)
+        self.mx_options_button = self.button(saves, 'MX options…', self.mx_options)
+        self.mx_options_button.grid(row=4, column=2, sticky='ew', padx=(8, 0), pady=3)
+        self.mx_options_button.grid_remove()
         ttk.Label(saves, textvariable=self.save_summary, style='Muted.TLabel').grid(
             row=5, column=0, columnspan=3, sticky='w', pady=(3, 0))
         self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
@@ -273,11 +305,13 @@ class Application(tk.Tk):
                 atomic_json(self.settings_path, self.settings)
             except OSError:
                 pass
+            if variable is self.apply_source and chd and self.unpack_chd.get():
+                self.prepare_chd(path, manual=True)
         return path
 
     @staticmethod
     def next_save_output(parent):
-        stem = 'Z3-saves-' + datetime.now().strftime('%Y%m%d-%H%M%S')
+        stem = 'Converted-saves-' + datetime.now().strftime('%Y%m%d-%H%M%S')
         path, suffix = parent / stem, 1
         while path.exists():
             path = parent / (stem + '-' + str(suffix))
@@ -285,14 +319,36 @@ class Application(tk.Tk):
         return path
 
     def save_folder_row(self, page, row, title, variable, output=False):
-        ttk.Label(page, text=title).grid(row=row, column=0, sticky='w', padx=(0, 8), pady=3)
+        label = ttk.Label(page, text=title)
+        label.grid(row=row, column=0, sticky='w', padx=(0, 8), pady=3)
         entry = ttk.Entry(page, textvariable=variable, width=1)
         entry.grid(row=row, column=1, sticky='ew', pady=3)
         self.controls.append(entry)
         self.button(page, 'Browse…', lambda: self.pick_save_folder(variable, output)).grid(
             row=row, column=2, sticky='ew', padx=(8, 0), pady=3)
+        return label
 
     def pick_save_folder(self, variable, output=False):
+        if self.save_game.get().startswith('MX') and not output:
+            if variable is self.save_ps3:
+                menu = tk.Menu(self, tearoff=False)
+                def choose_file():
+                    path = filedialog.askopenfilename(title='Choose the PS2 card or exported PSU',
+                        filetypes=[('PS2 saves', '*.ps2 *.psu'), ('All files', '*.*')])
+                    if path:
+                        variable.set(path)
+                def choose_folder():
+                    path = filedialog.askdirectory(title='Choose an extracted BISLPS-25345Sxx manual save', mustexist=True)
+                    if path:
+                        variable.set(path)
+                menu.add_command(label='Memory card or PSU file…', command=choose_file)
+                menu.add_command(label='Extracted save folder…', command=choose_folder)
+                menu.tk_popup(self.winfo_pointerx(), self.winfo_pointery())
+                return
+            path = filedialog.askdirectory(title='Choose the PPSSPP MX manual slot (ULJS00041xxxx)', mustexist=True)
+            if path:
+                variable.set(path)
+            return
         path = filedialog.askdirectory(title='Choose where to create a new output folder' if output else
             ('Choose RPCS3 savedata (contains NPJB00520 folders)' if variable is self.save_ps3 else
              'Choose Vita3K PCSG00264 save folder'), mustexist=True)
@@ -301,19 +357,132 @@ class Application(tk.Tk):
 
     def invalidate_saves(self, *args):
         self.save_checked = None
-        self.save_summary.set('Both save folders need system data and a manual save.')
+        self.mx_source_difficulty = None
+        self.refresh_mx_difficulty()
+        self.save_summary.set('Experimental • Early Hugo intermission only • Review MX options.' if
+                              self.save_game.get().startswith('MX') else 'Both save folders need system data and a manual save.')
         self.update_action()
+
+    def change_mx_difficulty(self, *args):
+        if self.mx_syncing_difficulty:
+            return
+        self.mx_ps2_output_difficulty = self.mx_psp_difficulty.get()
+        self.invalidate_saves()
+
+    def refresh_mx_difficulty(self):
+        source = self.save_direction.get() == 'PS2 → PSP'
+        self.mx_syncing_difficulty = True
+        try:
+            self.mx_psp_difficulty.set(self.mx_source_difficulty == 'psp' if source else self.mx_ps2_output_difficulty)
+        finally:
+            self.mx_syncing_difficulty = False
+        self.mx_difficulty_caption.set('PSP difficulty on PS2' + (' (source save)' if source else ''))
+        if source:
+            self.mx_difficulty_note.set({
+                None: 'Check saves will detect the PS2 source difficulty. PSP output always uses PSP difficulty.',
+                'original': 'Detected PS2 Original. Converting to PSP changes the difficulty to PSP.',
+                'psp': 'Detected PSP difficulty in the PS2 save. No difficulty change is needed.'
+            }[self.mx_source_difficulty])
+        else:
+            self.mx_difficulty_note.set('Checked: PSP difficulty. Unticked: PS2 Original.\n'
+                'The PSP source always uses PSP difficulty; untick to change the PS2 output.' +
+                (' PSP output always uses PSP difficulty.' if self.save_direction.get() == 'Both directions' else ''))
+        box = self.mx_difficulty_checkbox
+        if box is not None and box.winfo_exists():
+            box.configure(state='disabled' if source else 'normal')
+            box.state(['alternate' if source and self.mx_source_difficulty is None else '!alternate'])
+
+    def change_save_game(self, *args):
+        self.save_paths[self.previous_save_game] = (self.save_ps3.get(), self.save_vita.get())
+        selected = self.save_game.get()
+        self.previous_save_game = selected
+        first, second = self.save_paths.get(selected, ('', ''))
+        self.save_ps3.set(first)
+        self.save_vita.set(second)
+        self.save_closed.set(False)
+        mx = selected.startswith('MX')
+        self.save_directions = ({'PS2 → PSP': 'ps2-to-psp', 'PSP → PS2': 'psp-to-ps2', 'Both directions': 'both'} if mx else
+            {'PS3 → Vita': 'rpcs3-to-vita3k', 'Vita → PS3': 'vita3k-to-rpcs3', 'Both directions': 'both'})
+        self.save_direction_box.configure(values=list(self.save_directions))
+        self.save_direction.set(next(iter(self.save_directions)))
+        self.save_first_label.configure(text='PS2 save/card:' if mx else 'RPCS3 saves:')
+        self.save_second_label.configure(text='PSP manual save:' if mx else 'Vita3K saves:')
+        self.mx_options_button.grid() if mx else self.mx_options_button.grid_remove()
+        self.invalidate_saves()
+
+    def mx_options(self):
+        if self.busy:
+            return
+        dialog = tk.Toplevel(self)
+        dialog.title('MX conversion — experimental profile')
+        dialog.transient(self)
+        body = ttk.Frame(dialog, padding=12)
+        body.pack(fill='both', expand=True)
+        body.columnconfigure(1, weight=1)
+        ttk.Label(body, text='PS2 English port 0.1.18 ↔ MX Portable 0.4.9\n'
+                  'Early Hugo / Cerberus intermission only; use a separate test card/profile.',
+                  wraplength=550).grid(row=0, column=0, columnspan=3, sticky='w', pady=(0, 10))
+        self.mx_difficulty_checkbox = ttk.Checkbutton(body, textvariable=self.mx_difficulty_caption,
+                                                     variable=self.mx_psp_difficulty)
+        self.mx_difficulty_checkbox.grid(row=1, column=0, columnspan=3, sticky='w')
+        ttk.Label(body, textvariable=self.mx_difficulty_note, wraplength=550).grid(
+            row=2, column=0, columnspan=3, sticky='w', pady=(4, 8))
+        self.refresh_mx_difficulty()
+        advanced = ttk.Frame(body)
+        advanced.columnconfigure(1, weight=1)
+        advanced.grid(row=4, column=0, columnspan=3, sticky='ew')
+        advanced.grid_remove()
+        def toggle_files():
+            expanded = bool(advanced.grid_info())
+            advanced.grid_remove() if expanded else advanced.grid()
+            files_button.configure(text=('Show' if expanded else 'Hide') + ' game files and slot…')
+        files_button = ttk.Button(body, text='Show game files and slot…', command=toggle_files)
+        files_button.grid(row=3, column=0, columnspan=3, sticky='w', pady=4)
+        for row, label, variable in ((1, 'PS2 slot directory:', self.mx_slot),
+                                    (2, 'PSP ISO / BOOT.BIN:', self.mx_boot),
+                                    (3, 'PPSSPP 1.20.4 EXE:', self.mx_ppsspp)):
+            ttk.Label(advanced, text=label).grid(row=row, column=0, sticky='w', padx=(0, 8), pady=4)
+            widget = ttk.Entry(advanced, textvariable=variable, width=38)
+            widget.grid(row=row, column=1, sticky='ew', pady=4)
+            if row in (2, 3):
+                def browse(var=variable):
+                    path = filedialog.askopenfilename(parent=dialog, filetypes=[('All files', '*.*')])
+                    if path:
+                        var.set(path)
+                ttk.Button(advanced, text='Browse…', command=browse).grid(row=row, column=2, padx=(8, 0))
+        ttk.Label(advanced, text='Slot example: BISLPS-25345S01. Leave blank when there is only one manual save.\n'
+                  'Game files are needed for encrypted PSP saves and PSP music defaults.',
+                  wraplength=550).grid(row=4, column=0, columnspan=3, sticky='w', pady=6)
+        ttk.Label(body, text='All favorite-series choices and existing funds are kept.\n'
+                  'Option toggles reset. System/gallery and battle saves are not converted.\n'
+                  'PSP output is for PPSSPP only. PS2 loading and save/reload still need testing.',
+                  wraplength=550).grid(row=5, column=0, columnspan=3, sticky='w', pady=8)
+        ttk.Checkbutton(body, text='My saves match this test profile; I understand the experimental limits.',
+                        variable=self.mx_experimental).grid(row=6, column=0, columnspan=3, sticky='w')
+        def close():
+            self.settings.update(mx_game_file=self.mx_boot.get(), mx_ppsspp=self.mx_ppsspp.get())
+            try:
+                atomic_json(self.settings_path, self.settings)
+            except OSError:
+                pass
+            dialog.destroy()
+        ttk.Button(body, text='Done', command=close).grid(row=7, column=2, sticky='e', pady=(10, 0))
+        dialog.protocol('WM_DELETE_WINDOW', close)
+        dialog.bind('<Return>', lambda event: (close(), 'break')[-1])
+        dialog.bind('<Escape>', lambda event: close())
+        dialog.grab_set()
 
     def save_help(self):
         dialog = tk.Toplevel(self)
-        dialog.title('Z3 save conversion instructions')
+        mx = self.save_game.get().startswith('MX')
+        dialog.title(('MX' if mx else 'Z3') + ' save conversion instructions')
         dialog.transient(self)
         text = tk.Text(dialog, wrap='word', width=78, height=24, padx=12, pady=12)
         bar = ttk.Scrollbar(dialog, command=text.yview)
         bar.pack(side='right', fill='y')
         text.pack(fill='both', expand=True)
         text.configure(yscrollcommand=bar.set)
-        text.insert('1.0', z3_saves.GUIDE.read_text(encoding='utf-8'))
+        text.insert('1.0', (mx_converter.GUIDE if mx else z3_saves.GUIDE).read_text(encoding='utf-8'))
         text.configure(state='disabled')
         dialog.bind('<Escape>', lambda event: dialog.destroy())
 
@@ -325,6 +494,9 @@ class Application(tk.Tk):
         direction = self.save_directions[self.save_direction.get()]
         checked = self.save_checked
         self.save_checked = None
+        if self.save_game.get().startswith('MX'):
+            self.convert_mx(ps3, vita, output, direction, checked)
+            return
         if checked is None:
             self.start(lambda cancel, progress: z3_saves.build(ps3, vita, output,
                 direction=direction, cancel=cancel, progress=progress), 'save_check')
@@ -336,15 +508,67 @@ class Application(tk.Tk):
                         'Use the included instructions to import and test them in the destination emulator.')
             self.start(work, 'save_convert')
 
+    def convert_mx(self, ps2, psp, output, direction, checked):
+        options = dict(direction=direction, ps2_slot=self.mx_slot.get().strip() or None,
+                       boot_path=self.mx_boot.get().strip() or None, ppsspp_path=self.mx_ppsspp.get().strip() or None,
+                       balance='keep' if direction == 'ps2-to-psp' else ('psp' if self.mx_psp_difficulty.get() else 'original'),
+                       experimental=self.mx_experimental.get())
+        if checked is None:
+            self.start(lambda cancel, progress: mx_converter.build(ps2, psp, output,
+                cancel=cancel, progress=progress, **options), 'save_check')
+        else:
+            def work(cancel, progress):
+                mx_converter.build(ps2, psp, output, write=True, expected_sources=checked['source_files'],
+                                   cancel=cancel, progress=progress, **options)
+                return Path(output), ('Experimental MX saves created with verified files, backups and import instructions.\n'
+                                      'Game load, next battle and save/reload still need testing on a separate profile/card.')
+            self.start(work, 'save_convert')
+
     def choose_source(self):
         path = self.pick_path(tk.StringVar())
         if path:
-            self.apply_source.set(path)
+            self.identify_source(path)
+
+    def identify_source(self, path):
+        self.apply_source.set(str(path))
+        self.selection, self.plan = None, None
+        self.file_label.set(str(path))
+        self.detected.set('Identifying…')
+        catalog = self.catalog
+        self.start(lambda cancel, progress: [(Path(path), n) for n in recognize(
+            path, catalog, cancel, progress, defer_chd=True)], 'identify')
+
+    def prepare_chd(self, path, manual=False, automatic=False):
+        """Ask on the UI thread; extract once in the background and keep the result."""
+        path = Path(path).resolve()
+        if not manual:
             self.selection, self.plan = None, None
-            self.file_label.set(path)
-            self.detected.set("Identifying…")
-            catalog = self.catalog
-            self.start(lambda cancel, progress: [(Path(path), n) for n in recognize(path, catalog, cancel, progress)], "identify")
+            self.apply_source.set(str(path))
+            self.file_label.set(str(path))
+            self.detected.set('CHD — extraction required to identify the disc')
+            self.route.set('Select this CHD to unpack it, or browse to an already extracted ISO/BIN.')
+            self.update_action()
+        if automatic and path in self.declined_chds:
+            return
+        try:
+            disc, destination = inspect_chd(path), extraction_folder(path)
+        except (OSError, PatchError) as exc:
+            self.status.set('Could not prepare this CHD.')
+            self.detail.set(str(exc))
+            return
+        if not messagebox.askyesno('Unpack CHD once?',
+                'Extract this CHD into a new child folder?\n\n' + str(destination) +
+                '\n\nThe extracted disc needs {:.2f} GiB of space. This may take a while.\n'
+                'The app will select the extracted ISO/BIN and use it for patching, without '
+                'unpacking the source again. The CHD and completed extraction are kept.\n\n'
+                'Unpack now?'.format(disc.size / (1024 ** 3)), parent=self):
+            self.declined_chds.add(path)
+            self.status.set('CHD extraction not started.')
+            self.detail.set('Nothing was unpacked. Select the CHD again to retry, or browse to an extracted ISO/BIN.')
+            return
+        self.declined_chds.discard(path)
+        self.start(lambda cancel, progress: (path, unpack_to_folder(path, destination, cancel, progress)),
+                   'unpack_manual' if manual else 'unpack_auto')
 
     def choose_folder(self):
         path = filedialog.askdirectory(title='Choose the folder containing all required game files', mustexist=True,
@@ -354,24 +578,27 @@ class Application(tk.Tk):
             self.file_label.set(path)
             self.detected.set('Identifying file set…')
             catalog = self.catalog
-            self.start(lambda cancel, progress: scan_root(path, catalog, cancel, progress), 'identify')
+            self.start(lambda cancel, progress: scan_root(path, catalog, cancel, progress, defer_chd=True), 'identify')
 
     def scan(self):
         self.selection, self.plan = None, None
         self.file_label.set("")
         self.detected.set("Scanning the app folder…")
         catalog = self.catalog
-        self.start(lambda cancel, progress: scan_root(application_root(), catalog, cancel, progress), "scan")
+        self.start(lambda cancel, progress: scan_root(application_root(), catalog, cancel, progress, defer_chd=True), "scan")
 
-    def select_found(self, event=None):
+    def select_found(self, event=None, automatic=False):
         index = self.file_box.current()
         if 0 <= index < len(self.found):
             self.selection = self.found[index]
+            if isinstance(self.selection[1], ChdSource) or (self.selection[0].is_file() and is_chd(self.selection[0])):
+                self.prepare_chd(self.selection[0], automatic=automatic)
+                return True
             if isinstance(self.selection[1], SolutionSource):
                 self.selection = (self.selection[1].root, self.selection[1])
-            chd = is_chd(self.selection[0]) if self.selection[0].is_file() else False
-            self.detected.set(self.selection[1].label + (' • CHD (disc verified on Patch)' if chd else ''))
-            self.output_format.set('CHD' if chd else 'Original format')
+            extracted = self.selection[0].resolve() in self.extracted_inputs
+            self.detected.set(self.selection[1].label + (' • extracted disc' if extracted else ''))
+            self.output_format.set('CHD' if extracted else 'Original format')
             self.apply_source.set(str(self.selection[0]))
             self.target_box.configure(values=["Latest", "Next version only"] + [n.version for n in self.catalog.versions(self.selection[1])])
             self.target.set("Latest")
@@ -396,7 +623,7 @@ class Application(tk.Tk):
                     self.update_action()
                     return
                 can_pack = self.plan.target.format == 'iso' or (self.plan.target.format == 'bin' and
-                    path.is_file() and is_chd(path))
+                    path.is_file() and (is_chd(path) or unpacked_layout(path) is not None))
                 self.output_format_box.configure(values=['Original format', 'CHD'] if can_pack else ['Original format'])
                 if not can_pack:
                     self.output_format.set('Original format')
@@ -512,13 +739,18 @@ class Application(tk.Tk):
             if not self.selection or not self.plan or not self.plan.edges or not self.output.get():
                 return
             source, plan, catalog, output = self.selection[0], self.plan, self.catalog, self.output.get()
+            if source.is_file() and is_chd(source):
+                self.prepare_chd(source)
+                return
+            nodes = [p.source for _, _, p in plan.parts] if isinstance(plan, SolutionPlan) else [plan.source]
+            ps3 = any(is_ps3_platform(n.platform) for n in nodes)
             chd_output = self.output_format.get() == 'CHD'
             def work(cancel, progress):
                 apply_plan(source, output, plan, catalog, self.client, cancel=cancel, progress=progress, chd_output=chd_output)
                 if isinstance(plan, SolutionPlan):
-                    return (Path(output), 'Complete patch solution verified. Patched files and required unchanged files saved together.')
+                    return (Path(output), 'Complete patch solution verified. Patched files and required unchanged files saved together.' + reminder)
                 return (Path(output), 'Every patch step was verified.' +
-                        (' The CHD was extracted again and matched the verified disc.' if chd_output else ' Final disc bytes verified.'))
+                        (' New CHD output verified against the patched disc.' if chd_output else ' Final disc bytes verified.') + reminder)
         else:
             values = (self.apply_source, self.apply_delta, self.apply_output)
             source, second, output = [v.get() for v in values]
@@ -526,11 +758,22 @@ class Application(tk.Tk):
                 self.status.set("Choose both inputs and an output filename.")
                 return
             unpack, chd_output = self.unpack_chd.get(), self.manual_format.get() == 'CHD'
+            if unpack and Path(source).is_file() and is_chd(source):
+                self.prepare_chd(source, manual=True)
+                return
+            ps3 = looks_like_ps3(source)
+            if self.selection and Path(source).resolve() == self.selection[0].resolve():
+                node = self.selection[1]
+                nodes = [n for _, n in node.found.values()] if isinstance(node, SolutionSource) else [node]
+                ps3 = ps3 or any(is_ps3_platform(n.platform) for n in nodes)
             def work(cancel, progress):
                 digest = manual_patch(source, second, output, cancel=cancel, progress=progress,
                                       unpack_chd=unpack, chd_output=chd_output)
                 return (Path(output), 'Applied with xdelta checks; no catalog output hash was supplied.\n' +
-                        ('CHD round trip verified. Patched disc SHA-256: ' if chd_output else 'Output SHA-256: ') + digest)
+                        ('CHD round trip verified. Patched disc SHA-256: ' if chd_output else 'Output SHA-256: ') + digest + reminder)
+        reminder = '\n\n' + (INSTALLATION_WARNING if ps3 else MANUAL_REMINDER) if ps3 or tab == 1 else ''
+        if ps3:
+            messagebox.showwarning('PS3 installation data', INSTALLATION_WARNING, parent=self)
         self.start(work, "patch")
 
     def poll(self):
@@ -582,14 +825,38 @@ class Application(tk.Tk):
                         self.plan_problem = ''
                         if len(self.found) == 1:
                             self.file_box.current(0)
-                            self.select_found()
+                            if self.select_found(automatic=value[0] == 'scan'):
+                                continue
                         else:
-                            self.file_label.set("")
-                            self.detected.set("Choose a recognized file" if self.found else "No recognized binary")
+                            if self.found:
+                                self.file_label.set("")
+                            self.detected.set("Choose a file to identify or patch" if self.found else "No recognized binary")
                             self.route.set("Select a file set above." if self.found else "Browse to another file or folder, or use Apply xdelta for a local patch.")
-                        self.status.set("{} matching file/version entries found.".format(len(self.found)))
+                        self.status.set("{} file/version entries found.".format(len(self.found)))
                         self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
+                        if not self.found and Path(self.apply_source.get()).resolve() in self.extracted_inputs:
+                            self.detail.set('No catalog match. The extracted disc is kept at:\n' +
+                                            self.apply_source.get() + '\nUse Apply xdelta if you have a local patch.')
                         self.update_action()
+                    elif value[0] in ('unpack_auto', 'unpack_manual'):
+                        source, binary = value[1]
+                        self.extracted_inputs.add(binary.resolve())
+                        self.apply_source.set(str(binary))
+                        if value[0] == 'unpack_auto':
+                            self.manual_format.set('CHD' if self.unpack_chd.get() else 'Original format')
+                        previous = Path(self.apply_output.get())
+                        if not self.apply_output.get() or (previous.parent == source.parent and
+                                previous.stem == source.stem + '-patched'):
+                            self.apply_output.set(str(binary.with_name(binary.stem + '-patched' + binary.suffix)))
+                        self.change_output_format(manual=True)
+                        self.status.set('CHD unpacked. The extracted disc is now selected.')
+                        self.detail.set('Kept: ' + str(binary) + '\nThe original CHD is preserved. Click Patch when ready.')
+                        if value[0] == 'unpack_auto':
+                            self.file_label.set(str(binary))
+                            if not self.cancel.is_set() and not self.closing:
+                                self.identify_source(binary)
+                            else:
+                                self.detected.set('Extracted disc kept; identification cancelled.')
                     elif value[0] == 'save_check':
                         if self.cancel.is_set():
                             self.status.set('Cancelled.')
@@ -599,6 +866,18 @@ class Application(tk.Tk):
                             self.save_summary.set('{} saves checked. Ready to convert.'.format(len(mappings)))
                             self.status.set('Check passed. Review the slots, then click Convert saves.')
                             self.detail.set('\n'.join(m['source_folder'] + ' → ' + m['destination_folder'] for m in mappings))
+                            if value[1].get('profile') == mx_converter.PROFILE:
+                                self.mx_source_difficulty = next((m['source_balance'] for m in mappings
+                                    if m['direction'] == 'ps2-to-psp'), None)
+                                self.refresh_mx_difficulty()
+                                self.save_summary.set('Experimental MX candidate checked. Review the details before converting.')
+                                difficulty = {'original': 'PS2 Original', 'psp': 'PSP'}
+                                self.detail.set('\n'.join(m['source_folder'] + ' → ' + m['destination_folder'] +
+                                    '\nFunds: {:,}; units: {}; pilots: {}; difficulty: {} → {}; favorites kept: {}.'.format(
+                                        m['source']['funds'], m['source']['unit_count'], m['source']['pilot_count'],
+                                        difficulty[m['source_balance']], difficulty[m['destination_balance']],
+                                        ', '.join(m['retained_series'])) for m in mappings)
+                                    + '\n\n' + '\n'.join(value[1]['warnings']))
                             self.progress.configure(value=100)
                         self.update_action()
                     else:
@@ -617,7 +896,9 @@ class Application(tk.Tk):
             self.catalog, self.pending_catalog = self.pending_catalog, None
             if self.selection and self.notebook.index(self.notebook.select()) == 0:
                 path, catalog = self.selection[0], self.catalog
-                self.start(lambda cancel, progress: [(path, n) for n in recognize(path, catalog, cancel, progress)], "identify")
+                self.start(lambda cancel, progress: [(path, n) for n in recognize(path, catalog, cancel, progress, defer_chd=True)], "identify")
+            elif Path(self.apply_source.get()).resolve() in self.extracted_inputs:
+                self.identify_source(self.apply_source.get())
             elif self.notebook.index(self.notebook.select()) == 0:
                 self.scan()
         self.threads = [t for t in self.threads if t.is_alive()]
@@ -642,7 +923,7 @@ class Application(tk.Tk):
     def about(self):
         messagebox.showinfo("Retro Trans " + __version__, self.app_update_status +
             "\n\nApp and releases:\nhttps://github.com/" + APP_REPO +
-            "\n\nAutomatic mode verifies catalog hashes. Manual xdelta and Z3 save conversion work offline.")
+            "\n\nAutomatic mode verifies catalog hashes. Manual xdelta and save conversion work offline.")
 
     def open_folder(self):
         if self.saved_output:

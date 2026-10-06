@@ -7,6 +7,7 @@ from retro_trans.gui import Application, main
 from retro_trans.updater import helper_main, maybe_install_pending
 from retro_trans.z3_saves import GUIDE
 from retro_trans import chd
+from retro_trans import mx_converter, mx_crypto
 
 
 def diagnose(path):
@@ -18,6 +19,10 @@ def diagnose(path):
         catalog = load_catalog()
         if not GUIDE.read_text(encoding="utf-8").strip():
             raise RuntimeError("Bundled Z3 save instructions are missing.")
+        if not mx_converter.GUIDE.read_text(encoding="utf-8").strip():
+            raise RuntimeError("Bundled MX save instructions are missing.")
+        if mx_crypto.cmac(bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'), b'').hex() != 'bb1d6929e95937287fa37d129b756746':
+            raise RuntimeError('Windows savedata cryptography self-check failed.')
         import tempfile
         import subprocess
         with tempfile.TemporaryDirectory() as cache:
@@ -30,10 +35,10 @@ def diagnose(path):
             source = Path(cache) / 'health.iso'
             source.write_bytes(bytes(range(256)) * 64)
             chd.compress_verified(source, Path(cache) / 'health.chd', chd.Disc('dvd', source.stat().st_size))
-        report.update(ok=True, tk=app.tk.call("info", "patchlevel"),
+        report.update(ok=True, tk=app.tk.call("info", "patchlevel"), title=app.title(),
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
-            chd_round_trip=True)
+            chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:

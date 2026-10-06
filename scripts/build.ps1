@@ -1,9 +1,11 @@
 param([string]$Python = "python", [string]$OutputDirectory = "dist")
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path -Parent $PSScriptRoot)
-& $Python -m venv .venv
-if ($LASTEXITCODE -ne 0) { throw "Could not create the build environment." }
 $BuildPython = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+if (-not (Test-Path -LiteralPath $BuildPython)) {
+    & $Python -m venv .venv
+    if ($LASTEXITCODE -ne 0) { throw "Could not create the build environment." }
+}
 $env:PYINSTALLER_CONFIG_DIR = Join-Path (Get-Location) "build\pyinstaller-cache"
 & $BuildPython -m pip install --disable-pip-version-check --no-cache-dir "pyinstaller==6.22.3"
 if ($LASTEXITCODE -ne 0) { throw "Could not install PyInstaller." }

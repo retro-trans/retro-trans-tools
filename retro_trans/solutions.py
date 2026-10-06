@@ -200,9 +200,9 @@ def solution_versions(catalog, source):
                    s.id[:3] == source.family), key=lambda s: version_key(s.version), reverse=True)
 
 
-def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=None):
+def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=None, *, defer_chd=False):
     from .catalog import _recognize_binary, version_key
-    from .chd import ChdError, is_chd
+    from .chd import ChdError, ChdSource, is_chd
     root = Path(root).resolve()
     if not root.is_dir():
         raise PatchError("Choose a folder containing the original files.")
@@ -212,9 +212,13 @@ def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=
         if not path.is_file() or path.is_symlink() or path.resolve() == Path(sys.executable).resolve():
             continue
         try:
-            nodes = known[path] if known is not None and path in known else _recognize_binary(path, catalog, cancel, progress)
+            nodes = known[path] if known is not None and path in known else _recognize_binary(
+                path, catalog, cancel, progress, defer_chd=defer_chd)
             compressed = bool(nodes) and is_chd(path)
             for node in nodes:
+                if isinstance(node, ChdSource):
+                    singles.append((path, node))
+                    continue
                 if node.id[:3] in catalog.grouped_families:
                     if not compressed:  # A group is an explicit set of raw files.
                         matches.setdefault(node.id[:3], []).append((path, node))
@@ -249,19 +253,22 @@ def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=
     return groups + [(p, n) for p, n in singles if selected is None or p == selected]
 
 
-def recognize_selection(path, catalog, cancel=None, progress=None):
+def recognize_selection(path, catalog, cancel=None, progress=None, *, defer_chd=False):
     from .catalog import _recognize_binary
+    from .chd import ChdSource
     path = Path(path).resolve()
     if path.is_dir():
         # File results need their own paths; folder selection is for groups only.
-        return [n for _, n in scan_folder(path, catalog, cancel, progress) if isinstance(n, SolutionSource)]
-    nodes = _recognize_binary(path, catalog, cancel, progress)
+        return [n for _, n in scan_folder(path, catalog, cancel, progress, defer_chd=defer_chd) if isinstance(n, SolutionSource)]
+    nodes = _recognize_binary(path, catalog, cancel, progress, defer_chd=defer_chd)
+    if any(isinstance(n, ChdSource) for n in nodes):
+        return nodes
     if any(n.id[:3] in catalog.grouped_families for n in nodes):
-        return [n for _, n in scan_folder(path.parent, catalog, cancel, progress, path, {path: nodes})]
+        return [n for _, n in scan_folder(path.parent, catalog, cancel, progress, path, {path: nodes}, defer_chd=defer_chd)]
     if path.suffix.lower() in ('.cue', '.gdi') and not nodes:
         if not catalog.active_solutions:
             raise PatchError('The current catalog has no complete disc patches. Click Refresh catalog, then select the CUE/GDI again.')
-        groups = [n for _, n in scan_folder(path.parent, catalog, cancel, progress) if isinstance(n, SolutionSource)]
+        groups = [n for _, n in scan_folder(path.parent, catalog, cancel, progress, defer_chd=defer_chd) if isinstance(n, SolutionSource)]
         if not groups:
             raise PatchError('No supported disc set was found beside this CUE/GDI. Keep the descriptor and its tracks in the same folder, and refresh the catalog.')
         return groups

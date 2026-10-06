@@ -1,0 +1,82 @@
+MX PS2 <-> PSP SAVE CONVERSION - EXPERIMENTAL TEST BUILD
+
+The earlier PS2 -> PSP test save was reported working in PPSSPP by the user.
+PS2 loading and a full save/reload cycle still need verification. Each newly
+converted save remains a test candidate. Use a separate card or emulator profile.
+Keep your original saves until you have checked all three in the game.
+
+CURRENT PROFILE
+Only the observed early Hugo/Cerberus intermission (two completed maps), from
+a fresh PS2 English PSP-stage port campaign and MX Portable English 0.4.9.
+PS2 output targets local build 0.1.18 with its three-favorite selector. Earlier
+fresh 0.1.14 manual saves remain usable as sources/templates at this checkpoint.
+The converter checks campaign flags, history, party IDs and allocation. Other
+checkpoints, stock PS2 campaigns, system data and battle saves are rejected.
+This is not a general whole-campaign converter yet.
+
+IN RETRO TRANS
+1. Open Save conversion and select MX (experimental).
+2. Select a PS2 extracted manual folder, .ps2 card or .psu, and a PSP manual
+   folder such as ULJS000410000. Both are needed; the destination supplies
+   icons and container metadata only. Its progression is never substituted.
+3. Open MX options and expand Show game files and slot if needed.
+   Choose your PS2 manual directory if the card has several.
+   For encrypted PSP input, select your PSP ISO (or BOOT.BIN) and the official
+   PPSSPP 1.20.4 Windows 64-bit EXE. Keys are read locally, never downloaded,
+   bundled, displayed or written into the output report. Plaintext input is
+   also accepted. PSP output needs the game file for native music defaults.
+4. Choose a direction. All mapped favorite-series bits are preserved in both
+   directions, including all three picks. Check saves lists the retained series.
+   No favorite selection or manual recreation of bonuses is needed.
+5. Use the single PSP difficulty on PS2 checkbox:
+   PSP -> PS2: checked by default, keeping the PSP source's difficulty.
+   Untick it to use PS2 Original difficulty instead.
+   PS2 -> PSP: Check saves reads the PS2 save's stored setting and shows it in
+   the checkbox. It is read-only in this direction; PSP output always uses
+   PSP difficulty. A source already using PSP difficulty needs no change.
+   Both directions: the checkbox controls the PS2 output only.
+   Difficulty changes future enemy HP/rewards. Existing funds and progression
+   are not scaled. The checked preview shows source and output difficulty.
+6. Confirm the stated test profile and close both emulators. Click Check saves,
+   review the report, then Convert saves. Inputs are checked again before writing.
+
+WHAT IS AND IS NOT TRANSFERRED
+The source manual slot supplies party records (including duplicates and order),
+player names, inventory/state arrays, funds, turn counts and reviewed campaign
+flags/history. Option toggles reset to the test-profile defaults. PSP music
+choices reset to defaults from your own game, or are omitted on PS2. A single
+PS2 favorite remains a single favorite in PSP; extra favorites are not invented.
+Three-favorite and inherited multiple-favorite masks are preserved in full.
+System/gallery unlocks and battle suspend are NOT migrated. Their interaction
+with a converted manual slot needs game testing. No unrelated system save is
+silently merged, and the app never installs anything into a live memory card.
+
+TEST PS2 -> PPSSPP
+Use a separate PPSSPP memstick/profile. With PPSSPP closed, copy the
+ULJS00041xxxx folder from ps2-to-psp into its PSP/SAVEDATA directory. Do not
+overwrite your normal profile. Keep a copy of your destination system data in
+the isolated profile if needed, but do not treat that data as converted.
+Boot MX Portable, choose Load (not Continue/battle suspend) and the test slot.
+The save list says MX conversion test; inspect actual progression in the game.
+The output is plaintext savedata for PPSSPP, not a physical-PSP package.
+
+TEST PSP -> PCSX2
+Use a separate copy of your PCSX2 memory card with the English 0.1.18 port.
+Import the .psu in psp-to-ps2 with a PSU-capable memory-card manager such as
+mymc. The adjacent extracted directory is for inspection, not a raw card.
+The import occupies the selected PS2 template slot; use a test card to avoid
+replacing a normal slot. Fresh-boot the 0.1.18 ISO and load that manual slot;
+an older emulator save state still contains the old executable.
+
+ACCEPTANCE CHECK
+Compare protagonist, robot, route, party order, funds, levels/EXP, PP, kills,
+upgrades, skills, parts, favorites and inventory with the source. Play the next
+battle, save to another slot, exit, then reload. Report a load rejection or
+any mismatch before using this for continued play. A valid checksum alone
+does not prove gameplay compatibility.
+
+OUTPUTS
+Converted folders, verified ZIPs, original-backups, and CONVERSION_AUDIT.json.
+The report records source/output SHA-256, selected profiles and changes.
+Existing output folders are refused. Cancellation/failure removes staging.
+Original cards and saves are never changed. No cloud service is needed.

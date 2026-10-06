@@ -7,7 +7,8 @@ No Python, Node.js, or .NET installation is needed to run it.
 
 ## Use
 
-Run **Retro-Trans.exe** on 64-bit Windows 10/11. The app scans files directly
+Run **Retro-Trans.exe** on 64-bit Windows 10/11. The title bar shows the app version.
+The app scans files directly
 beside its EXE and identifies supported originals and previously patched versions.
 It selects a file automatically only when one match is found. Use the selector
 when several match, or **Browse** to a file in any other folder.
@@ -23,17 +24,30 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
-- **Z3 saves:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
+- **Save conversion — Z3:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
   both directions. Select both save folders and a new output folder, close both
   emulators, then **Check saves** and **Convert saves**. Includes backups, verified
   ZIPs, and import instructions. Works offline. Supports decrypted emulator saves
   (NPJB00520 / PCSG00264); physical-console decryption and signing are not included.
   See [save conversion instructions](retro_trans/resources/Z3-SAVE-CONVERSION.txt).
+- **Save conversion — MX (experimental):** create PS2 ↔ PSP manual-save test
+  candidates at the reviewed early Hugo/Cerberus intermission, using fresh
+  PS2 English-port and PSP English 0.4.9 saves. PS2 output targets local 0.1.18;
+  the earlier fresh 0.1.14 sample remains compatible. Includes authenticated
+  mode-3 PSP input, PPSSPP plaintext output, PS2 PSU packaging, preservation of
+  all favorite-series choices, one PSP difficulty checkbox, backups and an audit. The
+  first PSP candidate was reported working in PPSSPP; **PS2 loading and a full
+  save/reload cycle remain unverified**. Other checkpoints, stock PS2, system saves and battle
+  suspend are unsupported. Use a separate test card/profile. See the
+  [MX instructions](retro_trans/resources/MX-SAVE-CONVERSION.txt) and
+  [implementation notes](docs/MX_SAVE_CONVERSION.md). The app includes no game
+  keys: encrypted input uses the user's reviewed PSP ISO/BOOT.BIN and installed
+  PPSSPP 1.20.4 Windows x64 executable; AES runs through Windows CNG.
 
 The original files are never overwritten. Existing output files are refused.
 Cancelling a job removes unfinished output. Files stay on your computer and are
 never uploaded. ISO, BIN, VPK, and other binary formats are handled as exact bytes.
-Supported CHDs are unpacked into temporary disc images for patching; ZIP, 7z and
+Supported CHDs are unpacked with your permission into a new child folder; ZIP, 7z and
 other archives still need to be extracted separately.
 
 Both engines and the initial catalog are bundled, so manual xdelta and CHD conversion work offline from
@@ -44,10 +58,17 @@ access is needed for new catalogs, new patch downloads, and app updates.
 
 Browse to a CHD or put it beside the EXE for automatic scanning. Choose **CHD**
 or **Original format** in the output selector; CHD inputs default to CHD output.
-The app extracts the disc, verifies its exact catalog identity, applies the
-patch route, and optionally compresses it back to CHD. A new CHD is extracted
+Scanning lists CHDs without extracting them. When you select one, the app asks
+before unpacking and shows the destination and required disc space. It creates
+`<game>-unpacked` beside the CHD (or a numbered new folder if that name exists).
+It then selects the extracted ISO, or BIN with a CUE for raw CD sectors, verifies
+its catalog identity, and waits for you to click **Patch**. The extracted source
+is kept and reused; clicking Patch does **not** unpack the source a second time.
+You can browse to that extracted file again in a later session.
+
+The app applies the patch route and optionally compresses the result back to CHD. A new CHD is extracted
 again and compared with the verified patched disc before it is saved. The
-original CHD is preserved. No separate chdman installation is needed.
+original CHD and extracted source are preserved. No separate chdman installation is needed.
 
 Supports standalone **CHD v5 DVDs** and **single data-track CDs** in MODE1/2048,
 MODE1/2352 or MODE2/2352, without gaps or subchannels. CD BIN output includes a
@@ -56,22 +77,33 @@ GD-ROM, parent-dependent CHDs, hard disks and other layouts are rejected.
 Unpacked Dreamcast tracks are supported through explicit multi-file solutions;
 multi-track/GD-ROM CHD extraction and recompression are not supported.
 
-For known DVD identities, the embedded disc SHA-1 is a quick selection hint;
-the actual extracted bytes are always verified before patch downloads or patch
-execution. CD images and SHA-256-only identities may need extraction during
-identification. Compressed file size and filename are not binary identities.
+The actual extracted bytes are verified before patch downloads or patch
+execution. Compressed file size and filename are not binary identities.
 
 In **Apply xdelta**, leave **Unpack CHD input before patching** enabled for
-patches intended for the original ISO/BIN. Disable it only for a patch made
+patches intended for the original ISO/BIN. This also asks before keeping and
+selecting the extraction; click **Apply patch** after it finishes. Disable it only for a patch made
 against the compressed CHD file itself, and choose **Original format**. Manual
 mode retains xdelta checks; CHD round-trip checks do not add a catalog identity
 that the manual patch did not provide.
 
-Allow temporary space for the extracted source plus the largest pair of patch
+Allow space beside the CHD for the retained extracted source, and temporary
+space on the output drive for the largest pair of patch
 steps. CHD output also needs room for the final disc, compressed copy and
 verification extraction (conservatively three times the target disc size),
-plus 64 MiB. Preparation uses the output drive; identification that requires
-extraction uses the app's cache drive. Cancellation removes temporary images.
+plus 64 MiB. Cancellation or failure during extraction removes unfinished files;
+completed extractions remain available even if identification or patching fails.
+
+### PS3 installation data
+
+Every catalog-recognized PS3 patch shows an installation warning before patching
+and keeps the reminder in its completion message. Manual mode also shows the
+reminder; recognized PS3 disc headers and PS3_GAME paths trigger the dialog.
+Before playing, close the game/emulator and delete the related **old installation
+data**, so it is rebuilt from the patched files. On PS3, use **Game Data Utility**,
+not **Saved Data Utility**. On RPCS3, remove only the matching installation-data
+folder under `dev_hdd0/game` (SRW Z3 Jigoku-hen: `BLJS10256_DATA`). Keep your game
+images, saved games, and other games. The patcher never deletes installation data.
 
 The bundled official chdman 0.289 requires a CPU supporting x86-64-v2. Engine
 documentation: [MAME chdman](https://docs.mamedev.org/tools/chdman.html).

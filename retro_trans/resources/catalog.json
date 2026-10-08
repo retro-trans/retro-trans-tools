@@ -2071,6 +2071,37 @@
         "SN3-English-v0.1.81.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.81/SN3-English-v0.1.81.xdelta",
         "SN3-English-v0.1.77-to-v0.1.81.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.81/SN3-English-v0.1.77-to-v0.1.81.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.3.6",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.3.6",
+        "source_commit": "5029bba01a47842e5eb21ca3fe87c080248ed835",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.3.6.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "3360e045c6045a8efd45bb6b0f03d647221011fcc661c398560461ecb26e5cb6",
+            "target_bytes": 725316816,
+            "patch_sha256": "7539c44db02e771176a4c46e1fea0f1dc7435ef2534871dcf41924fb13cb61bc",
+            "patch_bytes": 61660859
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.3.6.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.6/STT2001-English-v0.3.6.xdelta"
+      }
     }
   ],
   "withdrawn_releases": [

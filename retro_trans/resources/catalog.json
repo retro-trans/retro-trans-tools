@@ -356,7 +356,7 @@
       "tag": "v0.1.17",
       "manifest": {
         "game_id": "marionette-handler-2",
-        "game_name": "Marionette Handler 2 — English",
+        "game_name": "Marionette Handler 2 \u2014 English",
         "platform": "Dreamcast",
         "version": "0.1.17",
         "source_commit": "9df2908baaafab875c9e8a0de27ee965b6d559d9",
@@ -1992,7 +1992,7 @@
         "schema_version": 1,
         "patches": [
           {
-            "patch": "SN3-English-v0.1.77.xdelta",
+            "patch": "SN3-English-v0.1.77-optimized.xdelta",
             "edition": "Japanese NPJH50380",
             "language": "en",
             "source_version": "original",
@@ -2002,8 +2002,8 @@
             "source_bytes": 1658159104,
             "target_sha256": "d35b5882e5547d578776d3337909c0b2c939f7aeedb05e76f21ab2cbb4587427",
             "target_bytes": 1691269120,
-            "patch_sha256": "bd58e1a0b196464f0c586c8d68cea4ad21ac08677cadac64490ba6e8c794d08c",
-            "patch_bytes": 407197655
+            "patch_sha256": "6ec18d8355dbb5a71c637f44abe8c6d47a7ad22461de4d5a9f03306d37f23b49",
+            "patch_bytes": 14383778
           },
           {
             "patch": "SN3-English-v0.1.73-to-v0.1.77.xdelta",
@@ -2022,8 +2022,8 @@
         ]
       },
       "assets": {
-        "SN3-English-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.77.xdelta",
-        "SN3-English-v0.1.73-to-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.73-to-v0.1.77.xdelta"
+        "SN3-English-v0.1.73-to-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.73-to-v0.1.77.xdelta",
+        "SN3-English-v0.1.77-optimized.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.77-optimized.xdelta"
       }
     }
   ],
@@ -2157,6 +2157,38 @@
         "SRWMX-English-v0.4.2.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.2/SRWMX-English-v0.4.2.xdelta"
       },
       "reason": "Maintainer requested withholding GitHub releases until explicit approval; v0.4.2 returned to an unpublished draft."
+    },
+    {
+      "repo": "retro-trans/Summon-Night-3",
+      "tag": "v0.1.77",
+      "manifest": {
+        "game_id": "summon-night-3",
+        "game_name": "Summon Night 3",
+        "platform": "PSP",
+        "version": "0.1.77",
+        "source_commit": "e08b3899667dcafb5412e173b48a43afdde65797",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SN3-English-v0.1.77.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "00b9fe052e7f516a2975cb3e625682640ec17edb7bd23f3a785f6c73d4bbefda",
+            "source_bytes": 1658159104,
+            "target_sha256": "d35b5882e5547d578776d3337909c0b2c939f7aeedb05e76f21ab2cbb4587427",
+            "target_bytes": 1691269120,
+            "patch_sha256": "bd58e1a0b196464f0c586c8d68cea4ad21ac08677cadac64490ba6e8c794d08c",
+            "patch_bytes": 407197655
+          }
+        ]
+      },
+      "assets": {
+        "SN3-English-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.77.xdelta"
+      },
+      "reason": "Oversized full patch withdrawn after encoding optimization; replacement recreates the identical 0.1.77 ISO."
     }
   ]
 }

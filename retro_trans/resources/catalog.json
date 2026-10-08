@@ -356,7 +356,7 @@
       "tag": "v0.1.17",
       "manifest": {
         "game_id": "marionette-handler-2",
-        "game_name": "Marionette Handler 2 \u2014 English",
+        "game_name": "Marionette Handler 2 — English",
         "platform": "Dreamcast",
         "version": "0.1.17",
         "source_commit": "9df2908baaafab875c9e8a0de27ee965b6d559d9",
@@ -2022,8 +2022,8 @@
         ]
       },
       "assets": {
-        "SN3-English-v0.1.73-to-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.73-to-v0.1.77.xdelta",
-        "SN3-English-v0.1.77-optimized.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.77-optimized.xdelta"
+        "SN3-English-v0.1.77-optimized.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.77-optimized.xdelta",
+        "SN3-English-v0.1.73-to-v0.1.77.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.77/SN3-English-v0.1.73-to-v0.1.77.xdelta"
       }
     }
   ],

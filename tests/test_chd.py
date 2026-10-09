@@ -1,6 +1,7 @@
 """Real offline chdman/xdelta round trips using synthetic disc bytes only."""
 import hashlib
 import os
+import sys
 from pathlib import Path
 import struct
 import tempfile
@@ -14,7 +15,7 @@ from retro_trans.catalog import Catalog, apply_plan, recognize, scan_root
 from retro_trans.core import Cancelled, PatchError, manual_patch
 
 
-@unittest.skipUnless(os.name == 'nt', 'Bundled Windows x64 engines')
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled engines')
 class ChdTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

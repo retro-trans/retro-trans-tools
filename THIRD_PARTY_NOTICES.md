@@ -1,5 +1,19 @@
 # Third-party components
 
+## Mac test build
+
+Mac builds include the official xdelta3 3.2.0 executable for the selected
+architecture and Homebrew's native chdman with its runtime libraries.
+PyInstaller rewrites dependency paths and ad-hoc signs packaged binaries;
+the runtime hashes describe the final bundled bytes. Homebrew package receipts,
+dependency license files, Python/Tcl notices and the xdelta license are retained
+under `Contents/Resources/retro_trans/resources/native/licenses`.
+Homebrew rom-tools sources: https://formulae.brew.sh/formula/rom-tools ;
+MAME sources: https://github.com/mamedev/mame .
+Vita3K Mac DMGs are downloaded from the publisher and are not bundled or
+re-hosted. MX AES/CMAC uses the macOS system CommonCrypto library; the same
+user-supplied, hash-identified PPSSPP EXE is read as data, not executed.
+
 ## Optional Vita3K package conversion
 
 Vita rePatch downloads the unmodified official Windows x64 archive directly

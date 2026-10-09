@@ -1,5 +1,6 @@
 import copy
 import os
+import sys
 from pathlib import Path
 import tempfile
 import time
@@ -17,11 +18,12 @@ from retro_trans.catalog import scan_root
 from retro_trans.solutions import SolutionPlan
 
 
-@unittest.skipUnless(os.name == "nt", "Native Windows UI test")
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native desktop UI')
 class GuiTests(unittest.TestCase):
     def setUp(self):
         self.storage = tempfile.TemporaryDirectory()
-        self.environment = patch.dict(os.environ, {'LOCALAPPDATA': self.storage.name})
+        self.environment = patch.dict(os.environ, {'LOCALAPPDATA': self.storage.name,
+            'RETRO_TRANS_DATA_DIR': str(Path(self.storage.name)/'RetroTrans')})
         self.environment.start()
         self.app = Application(startup=False)
         self.app.attributes("-alpha", 0)

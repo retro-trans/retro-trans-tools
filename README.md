@@ -1,5 +1,9 @@
 # Retro Trans
 
+Mac feature-parity test builds are being prepared on `codex/macos-feature-parity`.
+See [Mac test-build instructions](docs/MAC_TEST_BUILD.md). The published Windows
+release is unchanged; this is not a Mac release announcement.
+
 A compact Windows desktop toolkit for translation releases from
 [retro-trans](https://github.com/retro-trans). Download the standalone EXE or ZIP
 from [Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).

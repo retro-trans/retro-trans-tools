@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import struct
+import sys
 import subprocess
 import tempfile
 import time
@@ -106,6 +107,11 @@ def require_space(folder, size):
 
 @contextmanager
 def engine_context(cancel=None):
+    if sys.platform == 'darwin':
+        from .macos import native_tool
+        check_cancel(cancel)
+        yield native_tool('chdman')
+        return
     if os.name != 'nt':
         raise ChdError('The bundled CHD engine requires 64-bit Windows.')
     if sha256_file(RESOURCE, cancel) != ENGINE_SHA256:

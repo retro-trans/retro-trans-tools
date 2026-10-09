@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from retro_trans.core import GitHubClient, PatchError
@@ -33,6 +34,9 @@ class UpdateClient(GitHubClient):
 
 class UpdateTests(unittest.TestCase):
     def setUp(self):
+        # These fixtures exercise the unchanged Windows update protocol on either OS.
+        self.addCleanup(patch.stopall)
+        patch('retro_trans.updater.sys', SimpleNamespace(platform='win32')).start()
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name).resolve()
         self.target = self.root / "installed.exe"

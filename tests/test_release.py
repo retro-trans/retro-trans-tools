@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import sys
 from pathlib import Path
 import tempfile
 import threading
@@ -12,7 +13,7 @@ from retro_trans.core import Cancelled, PatchError, manual_patch
 from retro_trans.release import build_release, validate_directory
 
 
-@unittest.skipUnless(os.name == "nt", "Bundled xdelta engine is Windows x64")
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled xdelta')
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

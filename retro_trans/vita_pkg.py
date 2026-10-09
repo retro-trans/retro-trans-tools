@@ -10,9 +10,11 @@ import json
 import os
 from pathlib import Path
 import platform
+import plistlib
 import shutil
 import stat
 import struct
+import sys
 import subprocess
 import tempfile
 import time
@@ -82,18 +84,69 @@ def read_lock(path):
 
 
 def runtime_asset(client, cancel):
+    name = 'windows-latest.zip'
+    if sys.platform == 'darwin':
+        from .macos import architecture
+        name = 'macos-arm64-latest.dmg' if architecture() == 'arm64' else 'macos-latest.dmg'
+    expected_url = API.replace('api.github.com/repos/', 'github.com/').replace('/releases/tags/', '/releases/download/') + '/' + name
     data = client.json(API, cancel)
     require(isinstance(data, dict) and data.get('tag_name') == 'continuous' and not data.get('draft'),
             'Official Vita3K download metadata is unavailable.')
-    candidates = [a for a in data.get('assets', []) if isinstance(a, dict) and a.get('name') == 'windows-latest.zip']
-    require(len(candidates) == 1, 'Official Vita3K Windows download is unavailable.')
+    candidates = [a for a in data.get('assets', []) if isinstance(a, dict) and a.get('name') == name]
+    require(len(candidates) == 1, 'Official Vita3K download for this computer is unavailable.')
     item = candidates[0]
     digest = item.get('digest', '') or ''
-    require(item.get('browser_download_url') == URL and digest.startswith('sha256:'),
+    require(item.get('browser_download_url') == expected_url and digest.startswith('sha256:'),
             'Official Vita3K download lacks a verifiable checksum.')
     size = valid_size(item.get('size'))
     require(0 < size <= 150 * 1024**2, 'Unexpected Vita3K download size.')
-    return Asset('windows-latest.zip', URL, size, valid_hash(digest[7:]))
+    return Asset(name, expected_url, size, valid_hash(digest[7:]))
+
+
+def extract_mac_runtime(archive, root, cancel=None):
+    """Copy the verified publisher's app from a private read-only DMG mount."""
+    root.mkdir(parents=True)
+    mount = root/'mount'
+    mount.mkdir()
+    attached = False
+    try:
+        check_cancel(cancel)
+        result = subprocess.run(['/usr/bin/hdiutil', 'attach', '-readonly', '-nobrowse',
+            '-noautoopen', '-plist', '-mountpoint', str(mount), str(archive)],
+            capture_output=True, timeout=120)
+        attached = result.returncode == 0
+        require(attached, 'Could not open the verified Vita3K Mac download.')
+        metadata = plistlib.loads(result.stdout)
+        require(any(e.get('mount-point') == str(mount) for e in metadata.get('system-entities', [])),
+                'Unexpected Vita3K mount location.')
+        apps = list(mount.glob('*.app'))
+        require(len(apps) == 1 and not apps[0].is_symlink(), 'Expected one Vita3K application.')
+        # Framework symlinks must stay within the copied application.
+        for path in apps[0].rglob('*'):
+            check_cancel(cancel)
+            require(not path.is_symlink() or apps[0].resolve() in path.resolve().parents,
+                    'Vita3K app contains an external link.')
+        target = root/apps[0].name
+        shutil.copytree(apps[0], target, symlinks=True)
+        info = plistlib.loads((target/'Contents/Info.plist').read_bytes())
+        name = info['CFBundleExecutable']
+        require(isinstance(name, str) and '/' not in name and name not in ('.', '..'), 'Invalid Mac executable.')
+        exe = target/'Contents/MacOS'/name
+        require(exe.is_file() and os.access(exe, os.X_OK), 'Missing Vita3K Mac executable.')
+        return exe
+    finally:
+        if attached:
+            result = subprocess.run(['/usr/bin/hdiutil', 'detach', str(mount)], capture_output=True, timeout=60)
+            require(result.returncode == 0, 'Could not unmount the temporary Vita3K disk image.')
+
+
+def portable_directory(exe):
+    if sys.platform == 'darwin':
+        from .macos import app_bundle
+        bundle = app_bundle(exe)
+        require(bundle is not None, 'Vita3K is not a Mac application bundle.')
+        return bundle.parent/'portable'
+    return exe.parent/'portable'
 
 
 def extract_runtime(archive, root, cancel=None):
@@ -131,7 +184,7 @@ def extract_runtime(archive, root, cancel=None):
 
 
 def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
-    portable = exe.parent/'portable'
+    portable = portable_directory(exe)
     portable.mkdir()
     fs.mkdir(parents=True)
     (portable/'config.yml').write_text('pref-path: ' + json.dumps(str(fs)) +
@@ -139,7 +192,7 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
     # Redirect fallbacks as well as the documented portable paths. No firmware,
     # emulator account, real configuration, installed game or save is touched.
     env = os.environ.copy()
-    for key in ('APPDATA', 'LOCALAPPDATA', 'TEMP', 'TMP'):
+    for key in ('APPDATA', 'LOCALAPPDATA', 'TEMP', 'TMP', 'TMPDIR', 'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME'):
         folder = portable/key.lower()
         folder.mkdir()
         env[key] = str(folder)
@@ -147,7 +200,7 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
     env.pop('QT_QPA_PLATFORM_PLUGIN_PATH', None)
     args = [str(exe), '--pkg', str(pkg), '--zrif', secret]
     process = subprocess.Popen(args, cwd=exe.parent, env=env, stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW)
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
     # Upstream CLI accepts zRIF only via argv. It is transiently visible to
     # same-user/system process inspection, never sent to GitHub or persisted.
     del args, secret
@@ -169,8 +222,9 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
 
 @contextmanager
 def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=None, progress=None):
-    require(os.name == 'nt' and platform.machine().lower() in ('amd64', 'x86_64'),
-            'Direct PKG conversion currently requires 64-bit Windows on an x64 PC.')
+    require((os.name == 'nt' and platform.machine().lower() in ('amd64', 'x86_64'))
+            or (sys.platform == 'darwin' and platform.machine().lower() in ('arm64', 'x86_64')),
+            'Direct PKG conversion requires x64 Windows or an Apple Silicon/Intel Mac.')
     pkg, license_path, output = no_links(pkg).resolve(), no_links(license_path).resolve(), no_links(output)
     require(pkg.is_file() and license_path.is_file(), 'Choose the original PKG and matching work.bin.')
     require(not os.path.lexists(output) and output.parent.is_dir() and
@@ -192,10 +246,14 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
         verify(archive, dict(bytes=asset.size, sha256=asset.sha256), cancel)
         with tempfile.TemporaryDirectory(prefix='.retro-pkg-', dir=str(output.parent)) as folder:
             root = Path(folder)
-            exe = extract_runtime(archive, root/'engine', cancel)
-            fs = exe.parent/'portable/fs'
+            extractor = extract_mac_runtime if sys.platform == 'darwin' else extract_runtime
+            exe = extractor(archive, root/'engine', cancel)
+            fs = portable_directory(exe)/'fs'
             run_installer(exe, pkg, encoded_license(data), fs, cancel, progress)
             del data
+            # POSIX read locks are advisory: recheck user inputs after conversion.
+            if sys.platform == 'darwin':
+                verify(pkg, PKG, cancel, progress)
             source = fs/'ux0/app/PCSG00264'
             require((source/'eboot.bin').is_file(),
                     'PKG decryption did not finish. Verify your work.bin; no overlay was created.')

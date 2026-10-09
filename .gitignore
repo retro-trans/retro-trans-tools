@@ -9,3 +9,4 @@ dist/
 .integration/
 *.egg-info/
 release-local.json
+retro_trans/resources/native/

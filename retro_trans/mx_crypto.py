@@ -10,6 +10,7 @@ import hmac
 import os
 from pathlib import Path
 import struct
+import sys
 
 from .core import check_cancel
 from .mx_saves import _read_stable, inspect_psp_save
@@ -33,6 +34,15 @@ def xor(a, b):
 class AES:
     """Small bounded AES-CBC interface to the Windows built-in provider."""
     def __init__(self, key):
+        if sys.platform == 'darwin':
+            require(len(key) == 16, 'Invalid savedata key length')
+            self.apple_key = bytearray(key)
+            self.dll = ctypes.CDLL('/usr/lib/system/libcommonCrypto.dylib')
+            self.dll.CCCrypt.argtypes = [ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32,
+                ctypes.c_void_p, ctypes.c_size_t, ctypes.c_void_p, ctypes.c_void_p,
+                ctypes.c_size_t, ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(ctypes.c_size_t)]
+            self.dll.CCCrypt.restype = ctypes.c_int32
+            return
         require(os.name == 'nt', 'Encrypted PSP saves require Windows')
         require(len(key) == 16, 'Invalid savedata key length')
         self.dll = ctypes.WinDLL('bcrypt')
@@ -66,6 +76,15 @@ class AES:
 
     def crypt(self, data, decrypt=False, iv=bytes(16)):
         require(len(data) > 0 and len(data) % 16 == 0 and len(iv) == 16, 'Invalid AES data length')
+        if hasattr(self, 'apple_key'):
+            require(len(self.apple_key) == 16, 'Savedata cipher is closed')
+            output = ctypes.create_string_buffer(len(data))
+            written = ctypes.c_size_t()
+            # kCCAlgorithmAES=0, CBC/no padding=0, encrypt=0/decrypt=1.
+            result = self.dll.CCCrypt(int(decrypt), 0, 0, bytes(self.apple_key), 16,
+                iv, data, len(data), output, len(data), ctypes.byref(written))
+            require(result == 0 and written.value == len(data), 'Mac savedata cryptography failed')
+            return output.raw
         source = ctypes.create_string_buffer(data)
         output = ctypes.create_string_buffer(len(data))
         vector = ctypes.create_string_buffer(iv)
@@ -77,6 +96,10 @@ class AES:
         return output.raw
 
     def close(self):
+        if hasattr(self, 'apple_key'):
+            self.apple_key[:] = bytes(len(self.apple_key))
+            self.apple_key.clear()
+            return
         if self.handle:
             self.dll.BCryptDestroyKey(self.handle)
             self.handle = ctypes.c_void_p()

@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import os
+import sys
 from pathlib import Path
 import tempfile
 import threading
@@ -229,7 +230,7 @@ class SolutionTests(unittest.TestCase):
         self.assertTrue((stage / 'file.bin').exists())
 
 
-@unittest.skipUnless(os.name == 'nt', 'Bundled xdelta engine is Windows x64')
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled xdelta')
 class SolutionRoundTrips(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()

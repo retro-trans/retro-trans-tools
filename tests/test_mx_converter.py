@@ -1,5 +1,6 @@
 import hashlib
 import os
+import sys
 from pathlib import Path
 import struct
 import tempfile
@@ -201,7 +202,7 @@ class ConversionTests(unittest.TestCase):
             self.assertEqual(len(data), 0xD400)
 
 
-@unittest.skipUnless(os.name == 'nt', 'Windows CNG cryptography')
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native savedata cryptography')
 class CryptoTests(unittest.TestCase):
     def test_nist_aes_cbc_and_cmac_vectors(self):
         # NIST SP 800-38A F.2.1 and SP 800-38B examples / RFC 4493.

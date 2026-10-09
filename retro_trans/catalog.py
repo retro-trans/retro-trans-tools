@@ -364,6 +364,11 @@ def scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
 
 
 def application_root():
+    if sys.platform == 'darwin' and getattr(sys, 'frozen', False):
+        from .macos import app_bundle
+        bundle = app_bundle()
+        if bundle:
+            return bundle.parent
     return Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parents[1]
 
 

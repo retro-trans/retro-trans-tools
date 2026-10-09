@@ -7,6 +7,7 @@ import struct
 import tempfile
 import threading
 import unittest
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 import zipfile
 import zlib
@@ -56,6 +57,8 @@ class PkgTests(unittest.TestCase):
         self.assertEqual(struct.unpack('>I', encoded[-4:])[0], zlib.adler32(data))
 
     def test_publisher_asset_identity(self):
+        self.addCleanup(patch.stopall)
+        patch.object(p, 'sys', SimpleNamespace(platform='win32')).start()
         item = dict(name='windows-latest.zip', browser_download_url=p.URL,
                     size=100, digest='sha256:'+'a'*64)
         release = dict(tag_name='continuous', draft=False, assets=[item])

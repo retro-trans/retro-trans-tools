@@ -1,0 +1,49 @@
+name: Mac feature-parity test builds
+on:
+  push:
+    branches: [codex/macos-feature-parity]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-14, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build-only dependencies
+        run: |
+          brew install rom-tools
+          python -m pip install pyinstaller==6.22.3
+      - name: Test and package all features
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/build_macos.py
+      - name: Check packaged updates and official Vita3K startup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/check_macos_package.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Retro-Trans-${{ matrix.runner }}-test
+          path: |
+            dist/Retro-Trans-macos-*.zip
+            dist/UPDATE-macos-*.json
+            dist/*HEALTH*.json
+            dist/MAC-VALIDATION.json
+          if-no-files-found: error
+          retention-days: 30
+  windows-regression:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v

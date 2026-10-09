@@ -23,6 +23,9 @@ def update_directory(target=None):
 
 
 def stage_update(client=None, directory=None, current=__version__, cancel=None):
+    if sys.platform == 'darwin':
+        from .mac_updater import stage_update as mac_stage
+        return mac_stage(client, directory, current, cancel)
     client = client or GitHubClient()
     directory = Path(directory) if directory else update_directory()
     release = client.json("https://api.github.com/repos/{}/releases/latest".format(APP_REPO), cancel)
@@ -192,6 +195,9 @@ def install_staged(target, directory, health_check=_health_check, retry_seconds=
 
 
 def maybe_install_pending():
+    if sys.platform == 'darwin':
+        from .mac_updater import maybe_install_pending as mac_pending
+        return mac_pending()
     if os.name != "nt" or not getattr(sys, "frozen", False):
         return False
     target, directory = Path(sys.executable).resolve(), update_directory()
@@ -214,6 +220,9 @@ def maybe_install_pending():
 
 
 def helper_main(target, directory):
+    if sys.platform == 'darwin':
+        from .mac_updater import helper_main as mac_helper
+        return mac_helper(target, directory)
     # Command-line paths cannot redirect an update to an unrelated cache folder.
     if Path(directory).resolve() != update_directory(target).resolve():
         raise PatchError("Invalid update helper directory.")

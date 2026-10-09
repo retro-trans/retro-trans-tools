@@ -99,3 +99,18 @@
   the metadata/deltas and app update remained local pending publication approval.
 - Packaged a standalone local test EXE; offline startup/engine checks pass
   with the new fourth tab. It uses the reviewed sidecar profile automatically.
+# 0.5.5 Mac feature-parity candidate (unreleased)
+
+- Added Apple Silicon/Intel Mac app packaging and a read-only test-build
+  workflow; no release, tag or main-branch publication. Windows packaging and
+  update protocol remain unchanged.
+- Native verified xdelta/chdman, Finder output folders and bundle-aware scanning;
+  native CommonCrypto AES/CMAC for the existing experimental MX profile.
+  Existing PPSSPP EXE key input is read as data, never executed on Mac.
+- Official architecture-specific Vita3K DMG verification, read-only mounting,
+  isolated portable conversion and input revalidation. No game/license CI upload.
+- Whole-app Mac updates with independent per-architecture metadata, archive
+  boundaries, startup checks and previous-app rollback. Added Mac-specific tests
+  and enabled shared GUI, patch, CHD and cryptography tests on macOS.
+- Validation is in progress. Real PKG/work.bin conversion and physical-console
+  gameplay require separate user testing; do not infer them from CLI startup.

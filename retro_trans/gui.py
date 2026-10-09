@@ -1,6 +1,8 @@
 """Compact native tabs; stale background results cannot change a newer selection."""
 import json
 import os
+import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 import queue
@@ -70,6 +72,7 @@ class Application(tk.Tk):
         self.mx_slot = tk.StringVar(value='')
         self.mx_boot = tk.StringVar(value=self.settings.get('mx_game_file', ''))
         self.mx_ppsspp = tk.StringVar(value=self.settings.get('mx_ppsspp',
+            '' if sys.platform == 'darwin' else
             str(Path(os.environ.get('ProgramFiles', 'C:/Program Files')) / 'PPSSPP' / 'PPSSPPWindows64.exe')))
         self.mx_psp_difficulty = tk.BooleanVar(value=True)
         self.mx_ps2_output_difficulty = True
@@ -992,7 +995,11 @@ class Application(tk.Tk):
 
     def open_folder(self):
         if self.saved_output:
-            os.startfile(str(self.saved_output if self.saved_output.is_dir() else self.saved_output.parent))
+            folder = str(self.saved_output if self.saved_output.is_dir() else self.saved_output.parent)
+            if sys.platform == 'darwin':
+                subprocess.Popen(['/usr/bin/open', folder])
+            else:
+                os.startfile(folder)
 
     def destroy(self):
         for callback in self.tk.splitlist(self.tk.call("after", "info")):

@@ -22,7 +22,7 @@ def diagnose(path):
         if not mx_converter.GUIDE.read_text(encoding="utf-8").strip():
             raise RuntimeError("Bundled MX save instructions are missing.")
         if mx_crypto.cmac(bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'), b'').hex() != 'bb1d6929e95937287fa37d129b756746':
-            raise RuntimeError('Windows savedata cryptography self-check failed.')
+            raise RuntimeError('Savedata cryptography self-check failed.')
         import tempfile
         import subprocess
         with tempfile.TemporaryDirectory() as cache:

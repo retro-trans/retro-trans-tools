@@ -51,6 +51,10 @@ def report(progress, message, fraction=None):
 
 
 def cache_directory():
+    if os.environ.get('RETRO_TRANS_DATA_DIR'):
+        return Path(os.environ['RETRO_TRANS_DATA_DIR']) / 'cache'
+    if sys.platform == 'darwin':
+        return Path.home() / 'Library/Application Support/RetroTrans/cache'
     root = Path(os.environ.get("LOCALAPPDATA", str(Path.home() / ".cache")))
     return root / "RetroTrans" / "cache"
 
@@ -315,6 +319,21 @@ def identify_source(source, release, cancel=None, progress=None):
 
 
 def ensure_engine(client, cache, cancel=None, progress=None):
+    if sys.platform == 'darwin':
+        from .macos import native_tool
+        # Keep the existing ownership contract: callers remove engine.parent.
+        check_cancel(cancel)
+        source = native_tool('xdelta3')
+        Path(cache).mkdir(parents=True, exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix='engine-', dir=str(cache)))
+        try:
+            # xdelta's official Mac build is standalone, unlike chdman.
+            target = root/'xdelta3'
+            shutil.copy2(source, target)
+            return target
+        except BaseException:
+            shutil.rmtree(root)
+            raise
     if os.name != "nt" or platform.machine().lower() not in ("amd64", "x86_64", "arm64"):
         raise PatchError("Automatic engine setup requires 64-bit Windows.")
     bundled = Path(__file__).parent / "resources" / "xdelta3-windows.zip"

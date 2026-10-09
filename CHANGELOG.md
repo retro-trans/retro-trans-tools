@@ -118,3 +118,6 @@
   run exposed root-owned /var aliases and Windows-specific test doubles; allow
   only macOS's fixed /private aliases, retaining descendant symlink rejection.
   Added real packaged next-launch helper coverage and startup-exception rollback.
+- Mac package conversion rechecks both PKG and work.bin after conversion;
+  external Vita3K does not inherit app-specific dynamic-library overrides.
+  Added architecture-specific update download/tampering tests.

@@ -1,5 +1,6 @@
 """Native adapters, archive boundaries and platform-specific update isolation."""
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -13,7 +14,28 @@ from unittest.mock import Mock, patch
 import zipfile
 
 from retro_trans import mac_updater as u, vita_pkg as v
-from retro_trans.core import PatchError, Cancelled
+from retro_trans.core import PatchError, Cancelled, GitHubClient
+
+
+class MacClient(GitHubClient):
+    def __init__(self, data):
+        self.data = data
+        meta, asset, platform_id = u.names()
+        self.meta = json.dumps({'schema_version':1, 'version':'9.0.0', 'platform':platform_id,
+            'asset':asset, 'bytes':len(data), 'sha256':hashlib.sha256(data).hexdigest()}).encode()
+        self.prefix = 'https://github.com/retro-trans/retro-trans-tools/releases/download/v9.0.0/'
+
+    def json(self, *a):
+        meta, asset, _ = u.names()
+        return {'tag_name':'v9.0.0', 'assets':[{'name':name, 'size':len(data),
+            'digest':'sha256:'+hashlib.sha256(data).hexdigest(), 'browser_download_url':self.prefix+name}
+            for name,data in ((meta,self.meta),(asset,self.data))]}
+
+    def read(self, *a):
+        return self.meta
+
+    def open(self, *a):
+        return io.BytesIO(self.data)
 
 
 class MacTests(unittest.TestCase):
@@ -57,6 +79,22 @@ class MacTests(unittest.TestCase):
             with patch.object(v, 'sys', SimpleNamespace(platform='darwin')), patch('retro_trans.macos.architecture', return_value=arch):
                 self.assertEqual(v.runtime_asset(client, None).name, filename)
 
+    def test_update_download_identity_and_tampering(self):
+        client = MacClient(self.bundle().read_bytes())
+        folder = self.root/'cache'
+        u.stage_update(client, folder, current='0.0.0')
+        data, path = u.pending(folder, current='0.0.0')
+        self.assertEqual(path.read_bytes(), client.data)
+        self.assertIsNone(u.pending(folder, current='9.0.0'))
+        path.write_bytes(b'tampered')
+        with self.assertRaises(PatchError):
+            u.pending(folder, current='0.0.0')
+        metadata = json.loads(client.meta)
+        metadata['platform'] = 'windows-x86_64'
+        client.meta = json.dumps(metadata).encode()
+        with self.assertRaises(PatchError):
+            u.stage_update(client, folder, current='0.0.0')
+
     @unittest.skipUnless(sys.platform == 'darwin', 'Mac whole-bundle filesystem test')
     def test_mac_install_success_failure_and_backup(self):
         for fail in (False, True):
@@ -92,7 +130,7 @@ class MacTests(unittest.TestCase):
         cancel = Mock(); cancel.is_set.return_value = True
         with patch.object(v.subprocess, 'Popen', return_value=process) as popen:
             with self.assertRaises(Cancelled):
-                v.run_installer(exe, self.root/'input.pkg', 'private', self.root/'portable/fs', cancel)
+                v.run_installer(exe, self.root/'input.pkg', 'secret-license-fixture', self.root/'portable/fs', cancel)
         process.kill.assert_called_once()
         self.assertEqual(popen.call_args.kwargs['creationflags'], 0)
-        self.assertNotIn('private', (self.root/'portable/config.yml').read_text())
+        self.assertNotIn('secret-license-fixture', (self.root/'portable/config.yml').read_text())

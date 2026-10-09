@@ -6,6 +6,7 @@ run a user's existing installation, and never log subprocess arguments/output.
 import base64
 from contextlib import contextmanager, ExitStack
 import ctypes
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -198,6 +199,9 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
         env[key] = str(folder)
     env.pop('QT_PLUGIN_PATH', None)
     env.pop('QT_QPA_PLATFORM_PLUGIN_PATH', None)
+    if sys.platform == 'darwin':
+        for key in ('DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', 'DYLD_INSERT_LIBRARIES'):
+            env.pop(key, None)
     args = [str(exe), '--pkg', str(pkg), '--zrif', secret]
     process = subprocess.Popen(args, cwd=exe.parent, env=env, stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
@@ -238,6 +242,7 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
         locks.enter_context(read_lock(pkg))
         locks.enter_context(read_lock(license_path))
         data = license_bytes(pkg, license_path)
+        license_digest = hashlib.sha256(data).digest()
         verify(pkg, PKG, cancel, progress)
         require(shutil.disk_usage(output.parent).free >= 6 * 1024**3,
                 'At least 6 GB of free temporary space is required on the output drive.')
@@ -254,6 +259,8 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
             # POSIX read locks are advisory: recheck user inputs after conversion.
             if sys.platform == 'darwin':
                 verify(pkg, PKG, cancel, progress)
+                require(hashlib.sha256(license_bytes(pkg, license_path)).digest() == license_digest,
+                        'work.bin changed during conversion; no overlay was created.')
             source = fs/'ux0/app/PCSG00264'
             require((source/'eboot.bin').is_file(),
                     'PKG decryption did not finish. Verify your work.bin; no overlay was created.')

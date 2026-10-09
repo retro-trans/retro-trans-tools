@@ -38,7 +38,8 @@ def diagnose(path):
         report.update(ok=True, tk=app.tk.call("info", "patchlevel"), title=app.title(),
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
-            chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True)
+            chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
+            mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG')
     except Exception as exc:
         report["error"] = str(exc)
     finally:

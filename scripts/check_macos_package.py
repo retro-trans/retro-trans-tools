@@ -108,7 +108,8 @@ def main():
         portable = v.portable_directory(exe)
         portable.mkdir()
         # --help initializes only the isolated portable directory, not a user's Vita3K.
-        result = subprocess.run([str(exe), '--help'], cwd=exe.parent, capture_output=True, timeout=60)
+        child_env = {k: value for k, value in os.environ.items() if k not in ('GH_TOKEN', 'GITHUB_TOKEN')}
+        result = subprocess.run([str(exe), '--help'], cwd=exe.parent, env=child_env, capture_output=True, timeout=60)
         text = (result.stdout+result.stderr).decode('utf-8', errors='replace')
         assert result.returncode == 0 and '--pkg' in text and '--zrif' in text, text[-3000:]
         reports['official_vita3k_cli'] = {'asset': asset.name, 'sha256': asset.sha256, 'bytes':asset.size}

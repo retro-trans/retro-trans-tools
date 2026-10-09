@@ -121,3 +121,7 @@
 - Mac package conversion rechecks both PKG and work.bin after conversion;
   external Vita3K does not inherit app-specific dynamic-library overrides.
   Added architecture-specific update download/tampering tests.
+- Both native suites now pass193 tests/3 expected skips; Apple Silicon app
+  startup and real next-launch updater pass. The Vita3K DMG smoke check exposed
+  a second /var versus /private/var identity comparison; mount checks now compare
+  resolved paths. External conversion processes also drop GitHub API tokens.

@@ -106,6 +106,7 @@ def runtime_asset(client, cancel):
 
 def extract_mac_runtime(archive, root, cancel=None):
     """Copy the verified publisher's app from a private read-only DMG mount."""
+    root = Path(root).resolve()
     root.mkdir(parents=True)
     mount = root/'mount'
     mount.mkdir()
@@ -118,7 +119,8 @@ def extract_mac_runtime(archive, root, cancel=None):
         attached = result.returncode == 0
         require(attached, 'Could not open the verified Vita3K Mac download.')
         metadata = plistlib.loads(result.stdout)
-        require(any(e.get('mount-point') == str(mount) for e in metadata.get('system-entities', [])),
+        require(any(e.get('mount-point') and Path(e['mount-point']).resolve() == mount
+                    for e in metadata.get('system-entities', [])),
                 'Unexpected Vita3K mount location.')
         apps = list(mount.glob('*.app'))
         require(len(apps) == 1 and not apps[0].is_symlink(), 'Expected one Vita3K application.')
@@ -199,6 +201,8 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
         env[key] = str(folder)
     env.pop('QT_PLUGIN_PATH', None)
     env.pop('QT_QPA_PLATFORM_PLUGIN_PATH', None)
+    for key in ('GH_TOKEN', 'GITHUB_TOKEN'):
+        env.pop(key, None)
     if sys.platform == 'darwin':
         for key in ('DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', 'DYLD_INSERT_LIBRARIES'):
             env.pop(key, None)

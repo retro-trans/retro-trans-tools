@@ -42,7 +42,9 @@ def fake_engine(*args, **kwargs):
 class VitaTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name)
+        # CI may provide an 8.3 temp path (RUNNER~1); compare the same canonical
+        # paths used by the backend when injecting reparse-point test metadata.
+        self.root = Path(self.temp.name).resolve()
         self.source, self.package, self.output = self.root/'source', self.root/'patches', self.root/'output'
         self.source.mkdir(); self.package.mkdir()
         self.data, self.originals, self.targets = fixture()

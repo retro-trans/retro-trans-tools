@@ -18,6 +18,9 @@
 - Catalog builder validates the separate Vita profile and every listed delta,
   rejects undeclared/corrupt/missing/replaced extras, and records its immutable
   discovery metadata without changing any PS3 patch identities or routes.
+- Fixed the reparse-point test fixture to canonicalize Windows CI's short
+  temporary paths, so its injected junction metadata matches the checked path.
+  The production path/link guards are unchanged; no test was skipped or relaxed.
 
 - Earlier preflight held the release pending the PKG + work.bin workflow.
   The existing local PFS helper depends on Vita3K/psvpfsparser at

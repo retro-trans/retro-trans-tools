@@ -2,6 +2,10 @@
 
 ## 0.5.3 — Single Vita patch ZIP (2026-10-09)
 
+- Published v0.5.3 at 09:25:02 UTC from d83c504 after release run37910890752
+  passed every gate. Actual public EXE/ZIP/UPDATE hashes, downloaded startup
+  and isolated update staging from0.5.2 pass. Added the step-by-step work.bin
+  guide; public game README/release instructions now describe the ZIP flow.
 - Published the optional 15.1 MB Vita ZIP; all 159 existing game-release assets
   retain their IDs/sizes/hashes. Public ZIP + PKG/work.bin reproduces all 154
   payloads without individual patch downloads. Windows CI, live catalog and

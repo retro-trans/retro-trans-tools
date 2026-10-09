@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import plistlib
+import platform
 import shutil
 import stat
 import subprocess
@@ -113,7 +114,9 @@ def main():
     app = ROOT/'dist'/APP
     info_path = app/'Contents/Info.plist'
     info = plistlib.loads(info_path.read_bytes())
-    info.update(CFBundleShortVersionString=__version__, CFBundleVersion=__version__)
+    minimum = platform.mac_ver()[0].split('.')[0] + '.0'
+    info.update(CFBundleShortVersionString=__version__, CFBundleVersion=__version__,
+                LSMinimumSystemVersion=minimum)
     info_path.write_bytes(plistlib.dumps(info))
     # PyInstaller fixes dylib paths and signs nested binaries; hash final bytes.
     manifest(app/'Contents/Resources/retro_trans/resources/native')
@@ -126,7 +129,8 @@ def main():
     output = ROOT/'dist'/asset
     zip_app(app, output)
     atomic_json(ROOT/'dist'/metadata, {'schema_version': 1, 'version': __version__,
-        'platform': platform_id, 'asset': asset, 'bytes': output.stat().st_size, 'sha256': sha256_file(output)})
+        'platform': platform_id, 'asset': asset, 'bytes': output.stat().st_size,
+        'sha256': sha256_file(output), 'minimum_macos': minimum})
     subprocess.run([str(app/'Contents/MacOS/Retro-Trans'), '--health-check', str(ROOT/'dist/APP-HEALTH.json')],
                    check=True, timeout=120)
     if not json.loads((ROOT/'dist/APP-HEALTH.json').read_text()).get('ok'):

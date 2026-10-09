@@ -125,3 +125,7 @@
   startup and real next-launch updater pass. The Vita3K DMG smoke check exposed
   a second /var versus /private/var identity comparison; mount checks now compare
   resolved paths. External conversion processes also drop GitHub API tokens.
+- Mac bundles declare the build host's macOS major version as their minimum,
+  matching their tested native dependencies; metadata and installation guide
+  expose that requirement rather than relying on Python's older default.
+- Mac UI keeps native system fonts instead of requesting Windows-only Segoe UI.

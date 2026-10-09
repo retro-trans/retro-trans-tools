@@ -110,15 +110,17 @@ class Application(tk.Tk):
         style = ttk.Style(self)
         if "vista" in style.theme_names():
             style.theme_use("vista")
-        for name in ("TkDefaultFont", "TkTextFont", "TkMenuFont"):
-            font.nametofont(name).configure(family="Segoe UI", size=9)
+        if sys.platform != 'darwin':
+            for name in ("TkDefaultFont", "TkTextFont", "TkMenuFont"):
+                font.nametofont(name).configure(family="Segoe UI", size=9)
         self.option_add("*Font", "TkDefaultFont")
         self.configure(bg=style.lookup("TFrame", "background"))
         style.configure("TButton", padding=(8, 3))
         style.configure("TEntry", padding=3)
         style.configure("TCombobox", padding=3)
         style.configure("Muted.TLabel", foreground=MUTED)
-        style.configure("Status.TLabel", font=("Segoe UI", 9, "bold"))
+        default = font.nametofont('TkDefaultFont').actual()
+        style.configure("Status.TLabel", font=(default['family'], default['size'], "bold"))
 
     def button(self, parent, text, command, **kw):
         control = ttk.Button(parent, text=text, command=command, **kw)

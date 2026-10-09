@@ -1682,7 +1682,8 @@
         "url": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.0/SRW-Z3-v0.9.0-Vita-patches.zip",
         "bytes": 15141769,
         "sha256": "3427f86b1e0647a74a877564399d63a175c446994e9b4b2ef898f22badfced0f"
-      }
+      },
+      "vita_min_app_version": "0.5.4"
     },
     {
       "repo": "retro-trans/SRW-Z3-R",

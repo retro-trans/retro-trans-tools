@@ -11,6 +11,8 @@ from pathlib import Path
 import platform
 import re
 import shutil
+import socket
+import ssl
 import subprocess
 import tempfile
 import threading
@@ -134,6 +136,21 @@ class Release:
 
 
 class GitHubClient:
+    def tls_context(self):
+        # Python's OpenSSL on macOS does not automatically use the Keychain.
+        # A frozen app cannot depend on its builder's certificate-file path.
+        # Windows keeps its existing OS certificate-store behavior.
+        if sys.platform != 'darwin':
+            return None
+        if not hasattr(self, '_tls_context'):
+            try:
+                import certifi
+                self._tls_context = ssl.create_default_context(cafile=certifi.where())
+            except (ImportError, OSError, ssl.SSLError) as exc:
+                raise PatchError('The app\'s HTTPS certificate bundle is missing or damaged. '
+                                 'Download a fresh Mac app and try again.') from exc
+        return self._tls_context
+
     def open(self, url):
         parsed = urllib.parse.urlsplit(url)
         if parsed.scheme != "https" or parsed.hostname not in ("api.github.com", "github.com", "raw.githubusercontent.com") or parsed.username or parsed.password:
@@ -147,7 +164,7 @@ class GitHubClient:
             headers["Authorization"] = "Bearer " + os.environ["GH_TOKEN"]
         request = urllib.request.Request(url, headers=headers)
         try:
-            return urllib.request.urlopen(request, timeout=30)
+            return urllib.request.urlopen(request, timeout=30, context=self.tls_context())
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
                 raise PatchError("No published release was found for this repository.") from exc
@@ -155,6 +172,20 @@ class GitHubClient:
                 raise PatchError("GitHub has limited requests. Please try again later.") from exc
             raise PatchError("GitHub returned HTTP {}. Please try again.".format(exc.code)) from exc
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc
+            if isinstance(reason, ssl.SSLCertVerificationError):
+                raise PatchError('Could not verify GitHub\'s HTTPS certificate. Check your Mac/PC date '
+                                 'and time, and any proxy or security software inspecting HTTPS. '
+                                 'Certificate verification has not been disabled.') from exc
+            if isinstance(reason, ssl.SSLError):
+                raise PatchError('Could not establish a secure HTTPS connection to GitHub. '
+                                 'Check your proxy or security software and try again.') from exc
+            if isinstance(reason, socket.gaierror):
+                raise PatchError('Could not find GitHub\'s network address. '
+                                 'Check your internet connection and DNS settings.') from exc
+            if isinstance(reason, TimeoutError):
+                raise PatchError('The GitHub connection timed out. Check your connection '
+                                 'and try again.') from exc
             raise PatchError("Could not reach GitHub. Check your connection and try again.") from exc
 
     def read(self, url, cancel=None):

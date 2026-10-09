@@ -1,5 +1,6 @@
 """Build a native, offline-capable Mac app and test ZIP; never publish."""
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -69,6 +70,12 @@ def prepare():
     for name in ('README.md', 'THIRD_PARTY_NOTICES.md'):
         shutil.copy2(ROOT/name, licenses/name)
     shutil.copy2(ROOT/'retro_trans/resources/XDELTA-LICENSE.txt', licenses/'XDELTA-LICENSE.txt')
+    certifi_dist = importlib.metadata.distribution('certifi')
+    for entry in certifi_dist.files:
+        if Path(entry).name == 'LICENSE':
+            shutil.copy2(certifi_dist.locate_file(entry), licenses/'certifi-LICENSE.txt')
+    if not (licenses/'certifi-LICENSE.txt').is_file():
+        raise RuntimeError('Certifi license was not found')
     # Retain Homebrew receipts and every shipped dependency's license files.
     packages = ['rom-tools'] + subprocess.check_output(['brew', 'deps', 'rom-tools'], text=True).splitlines()
     for package in packages:
@@ -107,6 +114,7 @@ def main():
     args = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir', '--windowed',
         '--name', 'Retro-Trans', '--osx-bundle-identifier', IDENTIFIER,
         '--target-architecture', architecture(), '--codesign-identity', '-',
+        '--collect-data', 'certifi',
         '--add-data', 'retro_trans/resources:retro_trans/resources']
     for name in ('xdelta3', 'chdman'):
         args.extend(['--add-binary', str(native/name)+':retro_trans/resources/native'])

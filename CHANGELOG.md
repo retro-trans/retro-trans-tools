@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.6 — Mac HTTPS test fix (2026-10-09)
+
+- Supersedes the 0.5.5 Mac test build: bundle certifi CA roots so secure GitHub
+  downloads do not depend on certificates installed on the build machine.
+  Certificate and hostname verification remain required; Windows trust is unchanged.
+- Add distinct certificate, TLS, DNS and timeout messages instead of hiding every
+  connection failure behind the generic GitHub message.
+- Add a frozen-app test of the actual catalog, Vita patch ZIP and official Vita3K
+  download with host CA paths unavailable. No game/license inputs go to CI.
+- Publication and real-game Mac PKG conversion validation are still pending.
+
 ## 0.5.4 — ZIP-only Vita release (2026-10-09)
 
 - Fix 0.5.3's remaining dependency on individual Vita assets: when a ZIP is

@@ -7,7 +7,7 @@ name = "retro-trans-tools"
 dynamic = ["version"]
 description = "Download verified retro-trans releases and patch local binaries"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ["certifi==2026.7.22; sys_platform == 'darwin'"]
 
 [project.gui-scripts]
 retro-trans = "retro_trans.gui:main"

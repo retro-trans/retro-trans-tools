@@ -53,6 +53,9 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) == 2 and args[0] in ("--diagnose", "--health-check"):
         sys.exit(diagnose(args[1]))
+    if len(args) == 2 and args[0] == '--network-check':
+        from retro_trans.network_check import diagnose_network
+        sys.exit(diagnose_network(args[1]))
     if len(args) == 3 and args[0] == "--apply-update":
         sys.exit(helper_main(args[1], args[2]))
     if len(args) == 2 and args[0] == "--updated":

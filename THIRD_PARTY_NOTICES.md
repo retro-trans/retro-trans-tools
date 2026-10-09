@@ -14,6 +14,13 @@ Vita3K Mac DMGs are downloaded from the publisher and are not bundled or
 re-hosted. MX AES/CMAC uses the macOS system CommonCrypto library; the same
 user-supplied, hash-identified PPSSPP EXE is read as data, not executed.
 
+Mac builds include certifi 2026.7.22 and its Mozilla CA certificate bundle for
+verified HTTPS independently of developer-installed Python certificates.
+Certifi is licensed under MPL-2.0; its full license is retained as
+`native/licenses/certifi-LICENSE.txt`. Source: https://github.com/certifi/python-certifi .
+Certificate and hostname verification stay enabled. Windows continues to use
+its existing certificate-store handling.
+
 ## Optional Vita3K package conversion
 
 Vita rePatch downloads the unmodified official Windows x64 archive directly

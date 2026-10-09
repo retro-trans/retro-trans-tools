@@ -30,6 +30,7 @@ def next_launch_update(root, dist, metadata):
     args = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--onedir', '--windowed',
         '--name', 'Retro-Trans', '--osx-bundle-identifier', u.IDENTIFIER,
         '--codesign-identity', '-', '--runtime-hook', str(hook),
+        '--collect-data', 'certifi',
         '--distpath', str(root/'old'), '--workpath', str(root/'build'), '--specpath', str(root),
         '--add-data', str(ROOT/'retro_trans/resources')+':retro_trans/resources']
     for name in ('xdelta3', 'chdman'):
@@ -82,6 +83,21 @@ def main():
     metadata = json.loads((dist/u.names()[0]).read_text())
     with tempfile.TemporaryDirectory(prefix='retro-mac-package-') as temp:
         root = Path(temp)
+        # Simulate a user's Mac with no developer-installed OpenSSL CA bundle.
+        # Run actual frozen networking, not this CI interpreter's urllib.
+        network_env = dict(os.environ, SSL_CERT_FILE=str(root/'no-host-ca.pem'),
+                           SSL_CERT_DIR=str(root/'no-host-certs'))
+        network_report = dist/'NETWORK-HEALTH.json'
+        network_process = subprocess.run([str(u.executable(dist/u.APP)), '--network-check', str(network_report)],
+                                         env=network_env, timeout=300)
+        network = json.loads(network_report.read_text())
+        print(json.dumps(network, indent=2), flush=True)
+        network_process.check_returncode()
+        assert network['ok'] and network['frozen'] and network['version'] == __version__, network
+        assert network['tls']['default_ca_count'] == 0, network
+        assert network['tls']['trusted_ca_count'] > 0 and network['tls']['verification_required'], network
+        assert network['tls']['hostname_checked'] and network['vita_patch_files'] > 0, network
+        reports['packaged_https_without_host_certificates'] = True
         target = root/u.APP
         shutil.copytree(dist/u.APP, target, symlinks=True)
         directory = root/'updates'; directory.mkdir()

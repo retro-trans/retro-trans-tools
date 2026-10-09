@@ -57,7 +57,14 @@ CHD, save cryptography, archive-safety and update tests, plus packaged startup,
 whole-bundle replacement and official Vita3K CLI checks. Test artifacts expire
 after 30 days. It cannot publish a release (read-only repository permissions).
 
-Build dependencies: Python 3.12, PyInstaller 6.22.3, and Homebrew rom-tools.
+The 0.5.6 Mac test build supersedes 0.5.5, which omitted HTTPS certificates.
+It bundles certifi roots and keeps TLS/hostname verification enabled. The
+packaged-app test downloads the catalog, actual Vita patch ZIP and official
+Vita3K DMG with developer-installed certificate paths unavailable. Certificate,
+DNS and timeout failures now have distinct messages. A network that substitutes
+its own HTTPS certificates may still require administrator assistance.
+
+Build dependencies: Python 3.12, PyInstaller 6.22.3, certifi 2026.7.22, and Homebrew rom-tools.
 Run `python scripts/build_macos.py`, then
 `python scripts/check_macos_package.py` on a Mac. Tool receipts/notices are
 included in the app. Full Windows regression runs separately.

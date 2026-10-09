@@ -2,6 +2,10 @@
 
 ## 0.5.2 — Vita rePatch workflow (2026-10-09)
 
+- Published v0.5.2 at 08:55:32 UTC; release run 37907763867 passed all gates.
+  Actual public EXE/ZIP/UPDATE hashes, downloaded startup and isolated public
+  update staging from 0.5.1 pass. No game or license is bundled.
+
 - Direct original PKG + matching NoNpDrm work.bin input is now implemented.
   Uses an unmodified official Vita3K download in an isolated portable workspace,
   not the development-only custom PFS helper. Publisher checksum, exact PKG

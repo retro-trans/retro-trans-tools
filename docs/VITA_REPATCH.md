@@ -85,12 +85,12 @@ The online loader currently targets `retro-trans/SRW-Z3` tag `v0.9.0`. It requir
 the exact metadata asset plus flat `VITA-*.xdelta` assets at that release. It
 verifies GitHub asset digests, sizes, and agreement with metadata, then reuses
 the existing hash-checked download cache and bundled xdelta engine. These
-assets have **not** been uploaded by this implementation. Absent metadata
-produces an explicit unavailable message; it cannot silently use another build.
-Publishing the app update and these extras requires explicit authorization and
-the project's release/download/catalog regression gate. The metadata carries
-sanitized auth bytes: review that exception to any repository rule prohibiting
-auth-file uploads before publication. Never publish a raw auth dump.
+assets were explicitly approved and published as optional v0.9.0 extras on
+October 9, 2026. Absent metadata produces an explicit unavailable message;
+it cannot silently use another build. The user approved the sanitized fixed
+permission metadata separately; this is not permission to publish raw auth
+dumps, licenses, game packages, or complete game files. App release and extras
+still require their public-download/catalog regression gates.
 
 Every declared nested file has source/target SHA-256 and size plus the delta's
 identity. Only `eboot.bin` and `.cpk`/`.bin` under `DATA` or `CommonData` are
@@ -106,7 +106,8 @@ from a user's unrelated files, licenses, modules or saves is copied.
 - Full suite: 181 tests, one explicitly opt-in online test skipped.
 - Real Z3 test18: all 153 xdelta outputs plus sanitized auth (154 payloads)
   match the existing verified physical-Vita build byte for byte.
-- Input files remain unchanged; no Vita installation or publication performed.
+- Input files remain unchanged; no Vita installation performed. Only the
+  explicitly approved deltas and sanitized profile are published.
 - Real original-PKG conversion additionally matched all 153 required source
   files; the complete PKG-to-overlay flow matched all 154 output payloads,
   preserved PKG/work.bin and removed its temporary installation. Tested official

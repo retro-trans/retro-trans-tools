@@ -37,12 +37,12 @@ class GuiTests(unittest.TestCase):
     def test_tabs_layout_and_long_diagnostics(self):
         app = self.app
         self.assertEqual(app.title(), 'Retro Trans ' + __version__)
-        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion"])
+        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita rePatch"])
         app.geometry("{}x{}".format(*app.minsize()))
         detail = "Hash mismatch: " + "a" * 64 + "\nCheck the binary.\n" * 12
         app.detail.set(detail)
         app.status.set("Downloading SRWZ-English-Best-v0.9.79-to-v0.9.83.xdelta")
-        for tab in range(3):
+        for tab in range(4):
             app.notebook.select(tab)
             app.update()
             self.assertEqual(app.detail_text.get("1.0", "end-1c"), detail)
@@ -68,6 +68,34 @@ class GuiTests(unittest.TestCase):
         app.poll()
         self.assertFalse(app.busy)
         self.assertEqual(app.detail.get(), "Current failure")
+
+    def test_vita_tab_worker_and_busy_controls(self):
+        app = self.app
+        app.notebook.select(3); app.update()
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.vita_source.set('original game'); app.vita_output.set('new output')
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.vita_license.set('matching work.bin')
+        app.vita_description.set('local profile.json')
+        app.update()
+        self.assertEqual(app.apply_button['text'], 'Create rePatch')
+        self.assertEqual(str(app.apply_button['state']), 'normal')
+        jobs = []
+        with patch.object(app, 'start', side_effect=lambda work, kind: jobs.append((work, kind))):
+            app.apply()
+        self.assertEqual(jobs[0][1], 'vita_repatch')
+        from retro_trans import vita_repatch
+        with patch.object(vita_repatch, 'apply', return_value=Path('new output')) as apply:
+            result = jobs[0][0](None, None)
+        self.assertEqual(apply.call_args.args[:3], ('original game', 'new output', 'local profile.json'))
+        self.assertEqual(apply.call_args.kwargs['work_bin'], 'matching work.bin')
+        self.assertIn('ux0:rePatch/PCSG00264', result[1])
+        app.job_kind = 'vita_repatch'; app.set_busy(True)
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.events.put(('done', app.job_id, ('vita_repatch', result)))
+        app.poll()
+        self.assertEqual(app.saved_output, Path('new output'))
+        self.assertEqual(str(app.folder_button['state']), 'normal')
 
     def test_multiple_matches_require_selection(self):
         app = self.app
@@ -117,7 +145,7 @@ class GuiTests(unittest.TestCase):
             with patch.object(Application, "build_styles", scaled_styles):
                 self.app = Application(startup=False)
             self.app.attributes("-alpha", 0)
-            for tab in range(3):
+            for tab in range(4):
                 self.app.notebook.select(tab)
                 self.app.update()
                 for widget in self.app.controls + [self.app.cancel_button, self.app.detail_text]:

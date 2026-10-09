@@ -24,6 +24,15 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
+- **Vita rePatch — Z3:** select your original PCSG00264 v01.00 **PKG**, its
+  matching NoNpDrm **work.bin**, and a new output folder, then **Create rePatch**.
+  Downloads the official Vita3K tool and runs its package conversion in an
+  isolated temporary folder, then verifies and patches the decrypted files.
+  Copy the resulting `rePatch/PCSG00264` folder to your physical Vita.
+  Needs an x64 Windows PC, internet, 6 GB of temporary space, and the matching
+  patch profile (online when published, or a reviewed local `VITA-REPATCH.json`
+  with its deltas). No Python, command-line steps, or personal auth dump needed.
+  Your license is used locally, never uploaded. See [Vita instructions](docs/VITA_REPATCH.md).
 - **Save conversion — Z3:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
   both directions. Select both save folders and a new output folder, close both
   emulators, then **Check saves** and **Convert saves**. Includes backups, verified
@@ -52,7 +61,8 @@ other archives still need to be extracted separately.
 
 Both engines and the initial catalog are bundled, so manual xdelta and CHD conversion work offline from
 the first launch. Automatic mode can also use cached patches offline. Network
-access is needed for new catalogs, new patch downloads, and app updates.
+access is needed for new catalogs, new patch downloads, app updates, and the
+official package-conversion tool used by the Vita rePatch workflow.
 
 ### CHD disc images
 

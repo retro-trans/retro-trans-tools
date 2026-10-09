@@ -216,6 +216,26 @@ to Retro Trans 0.3.1 or later before refreshing a catalog with withdrawals.
 
 ## Application releases
 
+### Registered Vita overlay extras
+
+SRW Z3 `retro-trans/SRW-Z3` tag `v0.9.0` may additionally carry one
+`VITA-REPATCH.json` and its declared bare `VITA-*.xdelta` assets. They are a
+separate physical-Vita overlay profile, not PS3 ISO patches or schema-v2 disc
+solutions. See [Vita rePatch](VITA_REPATCH.md) for the input, schema and privacy
+requirements. No general permission to attach unrelated patches is implied.
+
+The catalog generator validates the profile, sanitized permissions, unique
+safe paths, exact asset inventory, GitHub checksums and every actual delta
+download. Undeclared xdelta assets still fail. It preserves the canonical
+PS3 BUILD-MANIFEST/checksums/report and records a separate `vita_repatch`
+metadata identity (URL, size, SHA-256, title, app version and build) on the
+catalog release. A recorded profile cannot be removed or replaced on refresh.
+Existing clients ignore this additional field and retain unchanged PS3 routes.
+The dedicated Vita tab obtains its profile from the registered release;
+Automatic remains disc patching. Adding another game/version requires review.
+
+### Publishing the application
+
 Set `retro_trans.__version__` and push a matching stable `vX.Y.Z` tag. The Windows
 workflow runs tests, builds a standalone EXE with the engine/catalog bundled,
 checks its offline startup, and publishes `Retro-Trans.exe`, the distribution ZIP,

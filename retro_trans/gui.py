@@ -13,7 +13,7 @@ from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_p
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves, mx_converter
+from . import z3_saves, mx_converter, vita_repatch
 from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
@@ -78,6 +78,10 @@ class Application(tk.Tk):
         self.mx_difficulty_note = tk.StringVar()
         self.mx_difficulty_caption = tk.StringVar(value='PSP difficulty on PS2')
         self.mx_difficulty_checkbox = None
+        self.vita_source, self.vita_output = tk.StringVar(), tk.StringVar()
+        self.vita_license = tk.StringVar()
+        sidecar = application_root() / vita_repatch.MANIFEST
+        self.vita_description = tk.StringVar(value=str(sidecar) if sidecar.is_file() else '')
         self.mx_experimental = tk.BooleanVar(value=False)
         self.build_styles()
         self.build_layout()
@@ -86,6 +90,8 @@ class Application(tk.Tk):
             variable.trace_add('write', self.invalidate_saves)
         self.mx_psp_difficulty.trace_add('write', self.change_mx_difficulty)
         self.save_game.trace_add('write', self.change_save_game)
+        for variable in (self.vita_source, self.vita_output, self.vita_license):
+            variable.trace_add('write', lambda *args: self.update_action())
         self.update_idletasks()
         scale = self.winfo_fpixels("1i") / 96
         width, height = max(round(700 * scale), self.winfo_reqwidth()), max(round(440 * scale), self.winfo_reqheight())
@@ -128,7 +134,7 @@ class Application(tk.Tk):
         self.notebook = ttk.Notebook(outer)
         self.notebook.pack(fill="x")
         self.tabs = []
-        for title in ("Automatic", "Apply xdelta", "Save conversion"):
+        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita rePatch"):
             page = ttk.Frame(self.notebook, padding=10)
             page.columnconfigure(1, weight=1)
             self.notebook.add(page, text=title)
@@ -201,6 +207,25 @@ class Application(tk.Tk):
         self.mx_options_button.grid_remove()
         ttk.Label(saves, textvariable=self.save_summary, style='Muted.TLabel').grid(
             row=5, column=0, columnspan=3, sticky='w', pady=(3, 0))
+        vita = self.tabs[3]
+        ttk.Label(vita, text='SRW Z3 Jigoku-hen • Physical Vita • PCSG00264 v01.00').grid(
+            row=0, column=0, columnspan=3, sticky='w', pady=(0, 6))
+        self.path_row(vita, 1, 'Original PKG:', self.vita_source, extension='.pkg')
+        self.path_row(vita, 2, 'Matching work.bin:', self.vita_license, extension='.bin')
+        for row, title, variable, is_output in (
+                (3, 'New output:', self.vita_output, True),):
+            ttk.Label(vita, text=title).grid(row=row, column=0, sticky='w', padx=(0, 8))
+            entry = ttk.Entry(vita, textvariable=variable, width=1)
+            entry.grid(row=row, column=1, sticky='ew', pady=3)
+            self.controls.append(entry)
+            self.button(vita, 'Browse…', lambda v=variable, out=is_output: self.pick_vita_folder(v, out)).grid(
+                row=row, column=2, sticky='ew', padx=(8, 0))
+        self.path_row(vita, 4, 'Local patch (optional):', self.vita_description, extension='.json')
+        ttk.Label(vita, text='Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
+                  'Your license stays local. Originals, emulator setup and saves stay untouched.',
+                  style='Muted.TLabel').grid(row=5, column=0, columnspan=3, sticky='w', pady=5)
+        self.button(vita, 'Instructions', lambda: messagebox.showinfo('Physical Vita rePatch',
+                    vita_repatch.GUIDE, parent=self)).grid(row=6, column=2, sticky='ew')
         self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
@@ -668,8 +693,39 @@ class Application(tk.Tk):
         if tab == 2:
             enabled = enabled and self.save_closed.get() and all(v.get().strip() for v in
                 (self.save_ps3, self.save_vita, self.save_output))
-        self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves')[tab],
+        if tab == 3:
+            enabled = enabled and all(v.get().strip() for v in
+                (self.vita_source, self.vita_output, self.vita_license))
+        self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves', 'Create rePatch')[tab],
             state="normal" if enabled else "disabled")
+
+    def pick_vita_folder(self, variable, output=False):
+        path = filedialog.askdirectory(title='Choose where to create the rePatch output' if output else
+                                       'Choose decrypted PCSG00264 (contains eboot.bin)', mustexist=True)
+        if path:
+            if output:
+                base = Path(path) / ('Vita-rePatch-' + datetime.now().strftime('%Y%m%d-%H%M%S'))
+                candidate, suffix = base, 1
+                while candidate.exists():
+                    candidate = base.with_name(base.name + '-' + str(suffix))
+                    suffix += 1
+                variable.set(str(candidate))
+            else:
+                variable.set(path)
+
+    def create_vita_repatch(self):
+        source, output, description = [v.get().strip() for v in
+                                       (self.vita_source, self.vita_output, self.vita_description)]
+        if not source or not output:
+            return
+        work_bin = self.vita_license.get().strip()
+        if not work_bin:
+            return
+        def work(cancel, progress):
+            result = vita_repatch.apply(source, output, description or None, self.client,
+                                       cancel=cancel, progress=progress, work_bin=work_bin)
+            return result, vita_repatch.GUIDE
+        self.start(work, 'vita_repatch')
 
     def set_busy(self, busy):
         self.busy = busy
@@ -732,6 +788,9 @@ class Application(tk.Tk):
         if self.busy:
             return
         tab = self.notebook.index(self.notebook.select())
+        if tab == 3:
+            self.create_vita_repatch()
+            return
         if tab == 2:
             self.convert_saves()
             return

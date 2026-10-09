@@ -1,5 +1,16 @@
 # Third-party components
 
+## Optional Vita3K package conversion
+
+Vita rePatch downloads the unmodified official Windows x64 archive directly
+from the [Vita3K continuous release](https://github.com/Vita3K/Vita3K/releases/tag/continuous).
+It is not embedded in Retro Trans, rebuilt, or re-hosted by this project.
+The publisher's SHA-256 and byte size are verified before extraction; all
+archive files and notices remain intact in the temporary engine directory.
+Vita3K's [source and license](https://github.com/Vita3K/Vita3K) remain available
+from its publisher. The custom local PFS helper considered during development
+is not distributed or used by this workflow.
+
 ## xdelta3 3.2.0
 
 Copyright Joshua MacDonald and the xdelta contributors. Licensed under Apache

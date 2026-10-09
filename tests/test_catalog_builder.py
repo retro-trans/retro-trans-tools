@@ -34,6 +34,56 @@ class ReleaseClient(GitHubClient):
 
 
 class CatalogBuilderTests(unittest.TestCase):
+    def vita_client(self):
+        from retro_trans import vita_repatch as vita
+        from test_vita_repatch import fixture
+        item = record()
+        item['repo'], item['tag'] = vita.REPO, vita.TAG
+        item['manifest']['version'] = vita.TAG.lstrip('v')
+        client = ReleaseClient(item)
+        data, _, targets = fixture()
+        extra = {vita.MANIFEST: json.dumps(data).encode()}
+        extra.update({row['patch']['name']: targets[row['path']] for row in data['files']})
+        client.files.update(extra)
+        client.assets.extend(dict(name=name, size=len(raw), digest='sha256:'+hashlib.sha256(raw).hexdigest(),
+                                  browser_download_url=client.prefix+name) for name, raw in extra.items())
+        return client
+
+    def test_vita_extras_verified_separately_and_preserve_disc_routes(self):
+        client = self.vita_client()
+        previous = dict(schema_version=1, releases=[])
+        result = build_catalog(previous, client)
+        entry = result['releases'][0]
+        self.assertEqual(entry['manifest'], client.record['manifest'])
+        self.assertEqual(entry['vita_repatch']['title_id'], 'PCSG00264')
+        self.assertEqual(build_catalog(result, client), result)
+        self.assertFalse(any(name.startswith('VITA-') for name in entry['assets']))
+
+    def test_vita_missing_corrupt_undeclared_and_changed_extras_rejected(self):
+        for error in ('missing', 'corrupt', 'unlisted', 'auth', 'removed', 'changed'):
+            client = self.vita_client()
+            previous = build_catalog(dict(schema_version=1, releases=[]), client)
+            if error == 'missing':
+                client.assets = [a for a in client.assets if a['name'] != 'VITA-0.xdelta']
+            elif error == 'corrupt':
+                client.files['VITA-0.xdelta'] = b'wrong'
+            elif error == 'unlisted':
+                client.assets.append(dict(name='VITA-unlisted.xdelta'))
+            elif error == 'removed':
+                client.assets = [a for a in client.assets if a['name'] != 'VITA-REPATCH.json']
+            else:
+                data = json.loads(client.files['VITA-REPATCH.json'])
+                if error == 'auth':
+                    data['auth']['hex'] = '01'*144
+                else:
+                    data['build'] = 'replacement'
+                raw = json.dumps(data).encode()
+                client.files['VITA-REPATCH.json'] = raw
+                asset = next(a for a in client.assets if a['name'] == 'VITA-REPATCH.json')
+                asset.update(size=len(raw), digest='sha256:'+hashlib.sha256(raw).hexdigest())
+            with self.subTest(error=error), self.assertRaises(PatchError):
+                build_catalog(previous, client)
+
     def reviewed_solution(self):
         from test_solutions import grouped_record
         imported = grouped_record(copies=True)

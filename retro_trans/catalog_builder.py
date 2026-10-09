@@ -17,6 +17,8 @@ from .release import validate_directory
 def release_record(repo, release, client, reviewed=None):
     tag = release["tag_name"]
     assets = {a["name"]: a for a in release["assets"]}
+    if len(assets) != len(release['assets']):
+        raise PatchError('Duplicate release assets.')
     manifests = [name for name in assets if name.startswith("BUILD-MANIFEST") and name.endswith(".json")]
     if not manifests:
         return None
@@ -57,7 +59,35 @@ def release_record(repo, release, client, reviewed=None):
             imported['schema_version'] = 2
             imported['solutions'] = copy.deepcopy(reviewed['manifest'].get('solutions'))
             validate_manifest(imported)
-        if {p["patch"] for p in manifest["patches"]} != {n for n in assets if n.lower().endswith((".xdelta", ".vcdiff"))}:
+        vita_record, vita_names = None, set()
+        if 'VITA-REPATCH.json' in assets:
+            from . import vita_repatch as vita
+            if (repo, tag) != (vita.REPO, vita.TAG):
+                raise PatchError('Vita extras are not registered for this release.')
+            vita_raw = read_verified(vita.MANIFEST)
+            description = vita.read_description(vita_raw)
+            metadata, metadata_url = fetch(vita.MANIFEST)
+            metadata_hash = hashlib.sha256(vita_raw).hexdigest()
+            if metadata.get('digest') != 'sha256:' + metadata_hash:
+                raise PatchError('Vita metadata requires a publisher checksum.')
+            vita_record = dict(url=metadata_url, bytes=len(vita_raw), sha256=metadata_hash,
+                               title_id=description['title_id'], app_version=description['app_version'],
+                               build=description['build'])
+            if reviewed and reviewed.get('vita_repatch') and reviewed['vita_repatch'] != vita_record:
+                raise PatchError('Published Vita profile identity changed.')
+            for row in description['files']:
+                patch = row['patch']
+                name = patch['name']
+                if not name.startswith('VITA-') or name in {p['patch'] for p in manifest['patches']}:
+                    raise PatchError('Vita extras must use separate VITA- patch names.')
+                a, url = fetch(name)
+                if a['size'] != patch['bytes'] or a.get('digest') != 'sha256:' + patch['sha256']:
+                    raise PatchError('Vita asset disagrees with its profile: ' + name)
+                client.download(Asset(name, url, patch['bytes'], patch['sha256']), directory/'vita-cache')
+                vita_names.add(name)
+        elif reviewed and reviewed.get('vita_repatch'):
+            raise PatchError('Published Vita profile was removed.')
+        if {p["patch"] for p in manifest["patches"]} | vita_names != {n for n in assets if n.lower().endswith((".xdelta", ".vcdiff"))}:
             raise PatchError("Uploaded patches do not exactly match the manifest.")
         (directory / "BUILD-MANIFEST.json").write_bytes(raw)
         for name in ("SHA256SUMS.txt", "VALIDATION.json"):
@@ -73,6 +103,8 @@ def release_record(repo, release, client, reviewed=None):
               "assets": {p["patch"]: assets[p["patch"]]["browser_download_url"] for p in manifest["patches"]}}
     if imported:
         record['solution_import'] = copy.deepcopy(reviewed['solution_import'])
+    if vita_record:
+        record['vita_repatch'] = vita_record
     return record
 
 

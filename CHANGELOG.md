@@ -101,6 +101,12 @@
   with the new fourth tab. It uses the reviewed sidecar profile automatically.
 # 0.5.5 Mac feature-parity candidate (unreleased)
 
+- Test builds completed on Apple Silicon and Intel, source7af3856; workflow
+  37947388822 passes all three runners (193 tests/3 expected skips each).
+  Packaged startup, whole-app and real next-launch updates, native tools and
+  official Vita3K CLI pass. Downloaded both artifacts and verified sizes/hashes.
+  See docs/releases/v0.5.5-macos-test-validation.md. Real Mac PKG/work.bin testing
+  is still pending; no release/tag/main merge or Windows publication change.
 - Added Apple Silicon/Intel Mac app packaging and a read-only test-build
   workflow; no release, tag or main-branch publication. Windows packaging and
   update protocol remain unchanged.
@@ -112,7 +118,8 @@
 - Whole-app Mac updates with independent per-architecture metadata, archive
   boundaries, startup checks and previous-app rollback. Added Mac-specific tests
   and enabled shared GUI, patch, CHD and cryptography tests on macOS.
-- Validation is in progress. Real PKG/work.bin conversion and physical-console
+- Initial validation was in progress; final test-build evidence is above.
+  Real PKG/work.bin conversion and physical-console
   gameplay require separate user testing; do not infer them from CLI startup.
 - First Windows regression passes192 tests/3 expected skips. Initial native Mac
   run exposed root-owned /var aliases and Windows-specific test doubles; allow

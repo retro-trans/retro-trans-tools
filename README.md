@@ -1,6 +1,8 @@
 # Retro Trans
 
-Mac feature-parity test builds are being prepared on `codex/macos-feature-parity`.
+Mac feature-parity test builds are available from the
+[validated Mac workflow](https://github.com/retro-trans/retro-trans-tools/actions/runs/37947388822)
+on `codex/macos-feature-parity`.
 See [Mac test-build instructions](docs/MAC_TEST_BUILD.md). The published Windows
 release is unchanged; this is not a Mac release announcement.
 

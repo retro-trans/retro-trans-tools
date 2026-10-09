@@ -9,7 +9,14 @@
   connection failure behind the generic GitHub message.
 - Add a frozen-app test of the actual catalog, Vita patch ZIP and official Vita3K
   download with host CA paths unavailable. No game/license inputs go to CI.
-- Publication and real-game Mac PKG conversion validation are still pending.
+- Both Mac architectures and Windows pass 200 tests in workflow 37950148961.
+  Frozen Mac checks verify the catalog, all 153 patches inside the public ZIP,
+  and official Vita3K DMGs with zero host CA roots and 121 bundled roots.
+- User-authorized Mac test extras and checksums are attached to v0.5.4 with
+  installation/limitation notes. Public downloads are reverified; the release
+  tag and all three Windows asset IDs, bytes and hashes are unchanged. No Mac
+  updater metadata was added to the older release. See the 0.5.6 validation note.
+- Real-game Mac PKG conversion and physical-Vita gameplay remain unverified.
 
 ## 0.5.4 — ZIP-only Vita release (2026-10-09)
 

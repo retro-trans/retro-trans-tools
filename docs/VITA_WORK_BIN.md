@@ -75,7 +75,7 @@ this workflow expects. See the
 ## 3. Use it in Retro Trans
 
 1. Download [Retro Trans](https://github.com/retro-trans/retro-trans-tools/releases/latest)
-   for an x64 Windows 10/11 PC. This workflow requires version **0.5.2 or later**.
+   for an x64 Windows 10/11 PC. Use version **0.5.4 or later** for the ZIP-only release.
 2. Open **Vita rePatch** and select your original **PKG** and the copied **work.bin**.
 3. Choose a new output folder on a drive with at least **6 GB free**.
 4. Leave **Local patch** blank to use the published SRW Z3 v0.9.0 Vita profile.

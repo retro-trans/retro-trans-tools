@@ -82,6 +82,10 @@ def release_record(repo, release, client, reviewed=None):
                 name = patch['name']
                 if not name.startswith('VITA-') or name in {p['patch'] for p in manifest['patches']}:
                     raise PatchError('Vita extras must use separate VITA- patch names.')
+                # A verified complete ZIP replaces missing individual assets.
+                # Existing bare assets, if any, must still match the profile.
+                if name not in assets and vita.ARCHIVE in assets:
+                    continue
                 a, url = fetch(name)
                 if a['size'] != patch['bytes'] or a.get('digest') != 'sha256:' + patch['sha256']:
                     raise PatchError('Vita asset disagrees with its profile: ' + name)
@@ -123,6 +127,7 @@ def release_record(repo, release, client, reviewed=None):
         record['vita_repatch'] = vita_record
     if vita_archive:
         record['vita_archive'] = vita_archive
+        record['vita_min_app_version'] = '0.5.4'
     return record
 
 

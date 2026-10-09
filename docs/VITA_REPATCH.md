@@ -16,7 +16,7 @@ original digital PKG is accepted: 2,338,423,472 bytes, SHA-256
 3. Browse to the parent where a **new** output folder should be created. Keep
    at least **6 GB free** on that drive for temporary extraction/verification.
 4. Leave **Local patch** blank to download the published patch automatically.
-   Retro Trans **0.5.3 or newer** downloads one verified
+   Retro Trans **0.5.4 or newer** downloads one verified
    `SRW-Z3-v0.9.0-Vita-patches.zip`. Alternatively, select that ZIP directly in
    Local patch—no manual extraction needed. A reviewed `VITA-REPATCH.json`
    with its `.xdelta` files beside it remains supported. No package scripts run.
@@ -94,15 +94,19 @@ permission metadata separately; this is not permission to publish raw auth
 dumps, licenses, game packages, or complete game files. App release and extras
 still require their public-download/catalog regression gates.
 
-Version 0.5.3 prefers the single ZIP when present. Its publisher checksum and
+Version 0.5.4 uses the single ZIP without requiring individual release assets.
+Version 0.5.3 preferred the ZIP but still checked for all bare deltas; upgrade
+to 0.5.4 or newer for the ZIP-only release. The ZIP's publisher checksum and
 size are verified, then its flat inventory must contain exactly the unchanged
 profile and every declared delta, with matching sizes and hashes. Unsafe paths,
 links, duplicate names, extra files and oversized contents are rejected before
 use. Extraction is temporary. The catalog records the ZIP separately as
 `vita_archive`; existing `vita_repatch` and PS3 identities are unchanged.
-The original bare assets remain published for 0.5.2 clients. Do not remove them
-or replace their bytes. If the ZIP is absent, the app retains the verified
-individual-download route; a present but invalid ZIP fails validation.
+The user authorized retiring all 153 individual Vita assets after 0.5.4 is
+published and verified. Old 0.5.2/0.5.3 online Vita clients must update; their
+PS3 patch routes and cached catalog refreshes remain unchanged. No cache reset
+is needed. If a release has no ZIP, the new app retains the verified individual
+route; a present but invalid ZIP fails validation instead of falling back.
 
 Every declared nested file has source/target SHA-256 and size plus the delta's
 identity. Only `eboot.bin` and `.cpk`/`.bin` under `DATA` or `CommonData` are

@@ -264,9 +264,36 @@ class VitaTests(unittest.TestCase):
             self.assertIsNone(individual)
         self.assertEqual(downloaded, [v.MANIFEST, v.ARCHIVE])
         self.assertFalse(folder.exists())
+        # ZIP mode must not depend on individual assets, even malformed ones.
+        assets[:] = [a for a in assets if not a['name'].endswith('.xdelta')]
+        assets.append(dict(name='VITA-ignored.xdelta'))
+        downloaded.clear()
+        with v.description_context(client=Client(), cache=cache) as (data, folder, individual):
+            self.assertEqual(data, self.data)
+            self.assertTrue((folder/'VITA-0.xdelta').is_file())
+        self.assertEqual(downloaded, [v.MANIFEST, v.ARCHIVE])
         archive.write_bytes(b'corrupt')
         with self.assertRaises(PatchError), v.description_context(client=Client(), cache=cache):
             pass
+
+    def test_zip_only_online_apply_without_individual_assets(self):
+        archive = self.make_zip()
+        prefix = 'https://github.com/{}/releases/download/{}/'.format(v.REPO, v.TAG)
+        assets = [dict(name=p.name, size=p.stat().st_size, digest='sha256:'+v.sha256_file(p),
+                       browser_download_url=prefix+p.name) for p in (self.description, archive)]
+        fetched = []
+        class Client:
+            def json(inner, *args): return dict(tag_name=v.TAG, assets=assets)
+            def download(inner, asset, *args):
+                fetched.append(asset.name)
+                return self.package/asset.name
+        def decode(engine, source, delta, output, size, *args):
+            output.write_bytes(delta.read_bytes())
+        with patch.object(v, 'engine_context', fake_engine), patch.object(v, 'decode', side_effect=decode):
+            v.apply(self.source, self.output, client=Client())
+        self.assertEqual(fetched, [v.MANIFEST, v.ARCHIVE])
+        for name, raw in self.targets.items():
+            self.assertEqual((self.output/'rePatch/PCSG00264'/name).read_bytes(), raw)
 
 
 if __name__ == '__main__':

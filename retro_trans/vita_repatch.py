@@ -143,9 +143,11 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
             release.get('draft') and not release.get('prerelease'), 'Vita release is not published.')
     assets = {}
     prefix = 'https://github.com/{}/releases/download/{}/'.format(REPO, TAG)
+    has_archive = any(item.get('name') == ARCHIVE for item in release.get('assets', []))
     for item in release.get('assets', []):
         name = item.get('name')
-        if name in (MANIFEST, ARCHIVE) or (isinstance(name, str) and name.startswith('VITA-') and name.endswith('.xdelta')):
+        if name in (MANIFEST, ARCHIVE) or (not has_archive and isinstance(name, str) and
+                                         name.startswith('VITA-') and name.endswith('.xdelta')):
             output_name(name)
             require(name not in assets and item.get('browser_download_url') == prefix + name,
                     'Invalid Vita release asset address.')
@@ -159,10 +161,11 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
         require(0 < assets[ARCHIVE].size <= MAX_ARCHIVE, 'Vita patch ZIP is too large.')
     path = client.download(assets[MANIFEST], cache or cache_directory(), cancel, progress)
     data, _, _ = local_description(path)
-    for row in data['files']:
-        p = row['patch']; asset = assets.get(p['name'])
-        require(asset is not None and asset.size == p['bytes'] and asset.sha256 == p['sha256'],
-                'Vita release asset differs from its description.')
+    if ARCHIVE not in assets:
+        for row in data['files']:
+            p = row['patch']; asset = assets.get(p['name'])
+            require(asset is not None and asset.size == p['bytes'] and asset.sha256 == p['sha256'],
+                    'Vita release asset differs from its description.')
     return data, None, assets
 
 

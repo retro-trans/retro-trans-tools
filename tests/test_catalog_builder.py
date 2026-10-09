@@ -132,6 +132,22 @@ class CatalogBuilderTests(unittest.TestCase):
             reason='Reviewed complete two-track disc with verified unchanged files.')
         return client, dict(schema_version=1, releases=[imported])
 
+    def test_vita_zip_only_migration_preserves_disc_and_profile_identities(self):
+        from retro_trans import vita_repatch as vita
+        client = self.vita_client()
+        self.add_vita_zip(client)
+        previous = build_catalog(dict(schema_version=1, releases=[]), client)
+        names = [a['name'] for a in client.assets if a['name'].startswith('VITA-') and a['name'].endswith('.xdelta')]
+        for name in names:
+            client.assets = [a for a in client.assets if a['name'] != name]
+            del client.files[name]
+            current = build_catalog(previous, client)
+            self.assertEqual(current, previous)
+        self.assertEqual(current['releases'][0]['vita_min_app_version'], '0.5.4')
+        client.files[vita.ARCHIVE] = b'corrupt'
+        with self.assertRaises(PatchError):
+            build_catalog(previous, client)
+
     def test_reviewed_v1_solution_survives_refresh_with_all_asset_checks(self):
         client, previous = self.reviewed_solution()
         saved = copy.deepcopy(previous)

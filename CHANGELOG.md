@@ -1,7 +1,24 @@
 # Changelog
 
+## 0.5.4 — ZIP-only Vita release (2026-10-09)
+
+- Fix 0.5.3's remaining dependency on individual Vita assets: when a ZIP is
+  published, the app reads only the ZIP and profile release entries and verifies
+  the patches inside the archive. Missing bare assets no longer block it.
+- Catalog validation accepts complete ZIP-only inventories, records minimum
+  app version 0.5.4, and retains all PS3/profile/ZIP identities. Added ZIP-only
+  application and gradual bare-asset removal regression tests.
+- User explicitly requested withdrawing the 0.5.2 app release and approved
+  removing all 153 individual Vita patches after the new app is verified.
+  Existing 0.5.2/0.5.3 Vita clients must update; PS3 cached routes are unchanged.
+  Updated player instructions and work.bin guide. App 0.5.2 release and its three
+  assets are withdrawn; its source tag and verified local recovery files remain.
+  App 0.5.4 publication and bare Vita asset withdrawal are pending.
+
 ## 0.5.3 — Single Vita patch ZIP (2026-10-09)
 
+- Historical note: 0.5.3 still required bare asset listings. The 0.5.4 change
+  removes that dependency and supersedes the older-client retention below.
 - Published v0.5.3 at 09:25:02 UTC from d83c504 after release run37910890752
   passed every gate. Actual public EXE/ZIP/UPDATE hashes, downloaded startup
   and isolated update staging from0.5.2 pass. Added the step-by-step work.bin
@@ -23,6 +40,8 @@
 
 ## 0.5.2 — Vita rePatch workflow (2026-10-09)
 
+- Withdrawn at the user's request later on October 9. This section records the
+  original release; its binaries are no longer public. Source tag retained.
 - Published v0.5.2 at 08:55:32 UTC; release run 37907763867 passed all gates.
   Actual public EXE/ZIP/UPDATE hashes, downloaded startup and isolated public
   update staging from 0.5.1 pass. No game or license is bundled.

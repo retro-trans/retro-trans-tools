@@ -32,9 +32,11 @@ complete patch solution and checks every required component.
   Needs an x64 Windows PC, internet, 6 GB of temporary space, and the matching
   patch profile (online when published, or a reviewed local `VITA-REPATCH.json`
   with its deltas). No Python, command-line steps, or personal auth dump needed.
-  Your license is used locally, never uploaded. Version 0.5.3 downloads one
+  Your license is used locally, never uploaded. Version 0.5.4 downloads one
   verified Vita patch ZIP; you can also select that ZIP directly in **Local patch**.
   See [Vita instructions](docs/VITA_REPATCH.md) and [Getting work.bin](docs/VITA_WORK_BIN.md).
+  **Upgrade from 0.5.2/0.5.3:** those versions require the retired individual
+  Vita patch assets and cannot use the ZIP-only online release.
 - **Save conversion — Z3:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
   both directions. Select both save folders and a new output folder, close both
   emulators, then **Check saves** and **Convert saves**. Includes backups, verified

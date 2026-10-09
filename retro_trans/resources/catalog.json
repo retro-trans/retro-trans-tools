@@ -1669,6 +1669,14 @@
       "assets": {
         "SRW-Z3-PS3-English-0.9.0-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.0/SRW-Z3-PS3-English-0.9.0-from-original.xdelta",
         "SRW-Z3-PS3-English-0.6.25-to-0.9.0.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.0/SRW-Z3-PS3-English-0.6.25-to-0.9.0.xdelta"
+      },
+      "vita_repatch": {
+        "url": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.0/VITA-REPATCH.json",
+        "bytes": 81431,
+        "sha256": "05160f7aed88337fc84890440a0b06e53e563e2d66ae42948bea4fd0c79bbdb0",
+        "title_id": "PCSG00264",
+        "app_version": "01.00",
+        "build": "test18-20261009"
       }
     },
     {

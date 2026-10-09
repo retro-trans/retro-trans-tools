@@ -15,10 +15,11 @@ original digital PKG is accepted: 2,338,423,472 bytes, SHA-256
    configured Vita3K installation is needed.
 3. Browse to the parent where a **new** output folder should be created. Keep
    at least **6 GB free** on that drive for temporary extraction/verification.
-4. For local tests, select the reviewed `VITA-REPATCH.json`; its bare `.xdelta`
-   files must be beside it. A description beside the EXE is selected at startup.
-   No scripts from this folder are executed. Leave the field blank only when
-   the corresponding online profile is published.
+4. Leave **Local patch** blank to download the published patch automatically.
+   Retro Trans **0.5.3 or newer** downloads one verified
+   `SRW-Z3-v0.9.0-Vita-patches.zip`. Alternatively, select that ZIP directly in
+   Local patch—no manual extraction needed. A reviewed `VITA-REPATCH.json`
+   with its `.xdelta` files beside it remains supported. No package scripts run.
 5. Click **Create rePatch**. The app downloads the official Vita3K Windows tool
    directly from its publisher, verifies it, and converts your PKG inside an
    isolated temporary portable folder. It then applies and verifies the patch.
@@ -47,6 +48,7 @@ owned game once. Its generated license is under
 Copy that file to your PC as `work.bin`. A correctly prepared NoNpDrm backup
 already has this replacement at `PCSG00264/sce_sys/package/work.bin`.
 See the [NoNpDrm instructions](https://github.com/TheOfficialFloW/NoNpDrm#creating-the-fake-license).
+For a step-by-step walkthrough, see [Getting work.bin](VITA_WORK_BIN.md).
 Retro Trans checks its size, type and full content ID, then verifies actual
 decrypted file hashes. Matching headers alone are not proof of decryption.
 
@@ -91,6 +93,16 @@ it cannot silently use another build. The user approved the sanitized fixed
 permission metadata separately; this is not permission to publish raw auth
 dumps, licenses, game packages, or complete game files. App release and extras
 still require their public-download/catalog regression gates.
+
+Version 0.5.3 prefers the single ZIP when present. Its publisher checksum and
+size are verified, then its flat inventory must contain exactly the unchanged
+profile and every declared delta, with matching sizes and hashes. Unsafe paths,
+links, duplicate names, extra files and oversized contents are rejected before
+use. Extraction is temporary. The catalog records the ZIP separately as
+`vita_archive`; existing `vita_repatch` and PS3 identities are unchanged.
+The original bare assets remain published for 0.5.2 clients. Do not remove them
+or replace their bytes. If the ZIP is absent, the app retains the verified
+individual-download route; a present but invalid ZIP fails validation.
 
 Every declared nested file has source/target SHA-256 and size plus the delta's
 identity. Only `eboot.bin` and `.cpk`/`.bin` under `DATA` or `CommonData` are

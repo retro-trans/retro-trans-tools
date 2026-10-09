@@ -59,7 +59,9 @@ def release_record(repo, release, client, reviewed=None):
             imported['schema_version'] = 2
             imported['solutions'] = copy.deepcopy(reviewed['manifest'].get('solutions'))
             validate_manifest(imported)
-        vita_record, vita_names = None, set()
+        vita_record, vita_archive, vita_names = None, None, set()
+        if 'SRW-Z3-v0.9.0-Vita-patches.zip' in assets and 'VITA-REPATCH.json' not in assets:
+            raise PatchError('Vita ZIP requires its published profile.')
         if 'VITA-REPATCH.json' in assets:
             from . import vita_repatch as vita
             if (repo, tag) != (vita.REPO, vita.TAG):
@@ -85,6 +87,20 @@ def release_record(repo, release, client, reviewed=None):
                     raise PatchError('Vita asset disagrees with its profile: ' + name)
                 client.download(Asset(name, url, patch['bytes'], patch['sha256']), directory/'vita-cache')
                 vita_names.add(name)
+            if vita.ARCHIVE in assets:
+                a, url = fetch(vita.ARCHIVE)
+                digest = a.get('digest') or ''
+                if not digest.startswith('sha256:') or not 0 < a['size'] <= vita.MAX_ARCHIVE:
+                    raise PatchError('Vita patch ZIP requires a checksum and bounded size.')
+                asset = Asset(vita.ARCHIVE, url, a['size'], valid_hash(digest[7:]))
+                vita_archive = dict(url=url, bytes=asset.size, sha256=asset.sha256)
+                if reviewed and reviewed.get('vita_archive') and reviewed['vita_archive'] != vita_archive:
+                    raise PatchError('Published Vita ZIP identity changed.')
+                path = client.download(asset, directory/'vita-cache')
+                with vita.archive_description(path, description):
+                    pass
+            elif reviewed and reviewed.get('vita_archive'):
+                raise PatchError('Published Vita ZIP was removed.')
         elif reviewed and reviewed.get('vita_repatch'):
             raise PatchError('Published Vita profile was removed.')
         if {p["patch"] for p in manifest["patches"]} | vita_names != {n for n in assets if n.lower().endswith((".xdelta", ".vcdiff"))}:
@@ -105,6 +121,8 @@ def release_record(repo, release, client, reviewed=None):
         record['solution_import'] = copy.deepcopy(reviewed['solution_import'])
     if vita_record:
         record['vita_repatch'] = vita_record
+    if vita_archive:
+        record['vita_archive'] = vita_archive
     return record
 
 

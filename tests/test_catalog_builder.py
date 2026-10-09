@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import unittest
+import zipfile
 
 from retro_trans.catalog_builder import build_catalog
 from retro_trans.core import GitHubClient, PatchError
@@ -83,6 +84,41 @@ class CatalogBuilderTests(unittest.TestCase):
                 asset.update(size=len(raw), digest='sha256:'+hashlib.sha256(raw).hexdigest())
             with self.subTest(error=error), self.assertRaises(PatchError):
                 build_catalog(previous, client)
+
+    def add_vita_zip(self, client, extra=False):
+        from retro_trans import vita_repatch as vita
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
+            for name, raw in client.files.items():
+                if name == vita.MANIFEST or name.startswith('VITA-') and name.endswith('.xdelta'):
+                    archive.writestr(name, raw)
+            if extra:
+                archive.writestr('work.bin', b'not allowed')
+        raw = output.getvalue()
+        client.files[vita.ARCHIVE] = raw
+        client.assets = [a for a in client.assets if a['name'] != vita.ARCHIVE]
+        client.assets.append(dict(name=vita.ARCHIVE, size=len(raw),
+            digest='sha256:'+hashlib.sha256(raw).hexdigest(), browser_download_url=client.prefix+vita.ARCHIVE))
+
+    def test_vita_archive_additive_and_immutable(self):
+        from retro_trans import vita_repatch as vita
+        client = self.vita_client()
+        previous = build_catalog(dict(schema_version=1, releases=[]), client)
+        self.add_vita_zip(client)
+        current = build_catalog(previous, client)
+        entry = current['releases'][0]
+        self.assertEqual(entry['vita_repatch'], previous['releases'][0]['vita_repatch'])
+        self.assertEqual(entry['assets'], previous['releases'][0]['assets'])
+        self.assertEqual(entry['vita_archive']['url'], client.prefix+vita.ARCHIVE)
+        self.assertEqual(build_catalog(current, client), current)
+        client.assets = [a for a in client.assets if a['name'] != vita.ARCHIVE]
+        with self.assertRaisesRegex(PatchError, 'ZIP was removed'):
+            build_catalog(current, client)
+        self.add_vita_zip(client, extra=True)
+        with self.assertRaisesRegex(PatchError, 'ZIP identity changed'):
+            build_catalog(current, client)
+        with self.assertRaisesRegex(PatchError, 'exactly the described'):
+            build_catalog(previous, client)
 
     def reviewed_solution(self):
         from test_solutions import grouped_record

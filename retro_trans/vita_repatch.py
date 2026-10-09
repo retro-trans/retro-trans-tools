@@ -3,6 +3,7 @@
 Separate optional release extras, not a v2 disc solution or a PKG decryptor.
 Only explicitly listed files are read; nothing is installed onto a Vita.
 """
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -12,6 +13,8 @@ import shutil
 import stat
 import struct
 import tempfile
+import zipfile
+import zlib
 
 from .core import (Asset, GitHubClient, MAX_METADATA, PatchError, cache_directory,
                    check_cancel, decode, engine_context, report, sha256_file,
@@ -21,6 +24,8 @@ from .solutions import output_name, copy_verified
 REPO = 'retro-trans/SRW-Z3'
 TAG = 'v0.9.0'
 MANIFEST = 'VITA-REPATCH.json'
+ARCHIVE = 'SRW-Z3-v0.9.0-Vita-patches.zip'
+MAX_ARCHIVE = 256 * 1024**2
 SCHEMA = 'retro-trans-vita-repatch-v1'
 GUIDE = ('Close the game and back up saves and any existing overlay. Copy the generated '
          'rePatch/PCSG00264 folder into ux0:rePatch/PCSG00264 using VitaShell. '
@@ -131,7 +136,7 @@ def local_description(path):
     return data, path.parent, None
 
 
-def online_description(client=None, cancel=None, progress=None):
+def online_description(client=None, cancel=None, progress=None, cache=None):
     client = client or GitHubClient()
     release = client.json('https://api.github.com/repos/{}/releases/tags/{}'.format(REPO, TAG), cancel)
     require(isinstance(release, dict) and release.get('tag_name') == TAG and not
@@ -140,7 +145,7 @@ def online_description(client=None, cancel=None, progress=None):
     prefix = 'https://github.com/{}/releases/download/{}/'.format(REPO, TAG)
     for item in release.get('assets', []):
         name = item.get('name')
-        if name == MANIFEST or (isinstance(name, str) and name.startswith('VITA-') and name.endswith('.xdelta')):
+        if name in (MANIFEST, ARCHIVE) or (isinstance(name, str) and name.startswith('VITA-') and name.endswith('.xdelta')):
             output_name(name)
             require(name not in assets and item.get('browser_download_url') == prefix + name,
                     'Invalid Vita release asset address.')
@@ -150,13 +155,89 @@ def online_description(client=None, cancel=None, progress=None):
     require(MANIFEST in assets, 'The Vita rePatch download is not published yet. '
             'Use a reviewed local VITA-REPATCH.json with its patch files for testing.')
     require(assets[MANIFEST].size <= MAX_METADATA, 'Vita metadata is too large.')
-    path = client.download(assets[MANIFEST], cache_directory(), cancel, progress)
+    if ARCHIVE in assets:
+        require(0 < assets[ARCHIVE].size <= MAX_ARCHIVE, 'Vita patch ZIP is too large.')
+    path = client.download(assets[MANIFEST], cache or cache_directory(), cancel, progress)
     data, _, _ = local_description(path)
     for row in data['files']:
         p = row['patch']; asset = assets.get(p['name'])
         require(asset is not None and asset.size == p['bytes'] and asset.sha256 == p['sha256'],
                 'Vita release asset differs from its description.')
     return data, None, assets
+
+
+@contextmanager
+def archive_description(path, expected=None, cancel=None, progress=None):
+    """Extract only a bounded, exact flat inventory into a private temporary folder."""
+    path = no_links(path)
+    require(path.is_file() and 0 < path.stat().st_size <= MAX_ARCHIVE, 'Invalid Vita patch ZIP size.')
+    with tempfile.TemporaryDirectory(prefix='retro-vita-patches-') as temporary:
+        package = Path(temporary)
+        try:
+            with zipfile.ZipFile(path) as archive:
+                entries = archive.infolist()
+                require(2 <= len(entries) <= 590, 'Invalid Vita ZIP inventory.')
+                names = set()
+                for entry in entries:
+                    name = output_name(entry.filename)
+                    require(name == entry.orig_filename and name.casefold() not in names and
+                            not entry.is_dir() and not entry.flag_bits & 1 and
+                            stat.S_IFMT(entry.external_attr >> 16) in (0, stat.S_IFREG) and
+                            entry.compress_type in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED),
+                            'Unsafe or duplicate Vita ZIP entry.')
+                    names.add(name.casefold())
+                require(MANIFEST.casefold() in names, 'Vita ZIP has no patch description.')
+                metadata = archive.getinfo(MANIFEST)
+                require(0 < metadata.file_size <= MAX_METADATA, 'Vita ZIP metadata is too large.')
+                raw = archive.read(metadata)
+                data = read_description(raw)
+                require(expected is None or data == expected, 'Vita ZIP profile differs from published metadata.')
+                inventory = {r['patch']['name']: r['patch'] for r in data['files']}
+                require(set(e.filename for e in entries) == set(inventory) | {MANIFEST},
+                        'Vita ZIP must contain exactly the described patches and metadata.')
+                require(sum(e.file_size for e in entries) <= MAX_ARCHIVE, 'Expanded Vita ZIP is too large.')
+                require(shutil.disk_usage(package).free >= sum(e.file_size for e in entries) + 16 * 1024**2,
+                        'Not enough temporary space for Vita patches.')
+                for entry in entries:
+                    check_cancel(cancel)
+                    row = inventory.get(entry.filename)
+                    require(row is None or entry.file_size == row['bytes'], 'Vita ZIP entry size mismatch.')
+                    with archive.open(entry) as src, (package / entry.filename).open('xb') as dst:
+                        remaining = entry.file_size
+                        while remaining:
+                            check_cancel(cancel)
+                            chunk = src.read(min(1024**2, remaining))
+                            require(bool(chunk), 'Truncated Vita ZIP entry.')
+                            dst.write(chunk)
+                            remaining -= len(chunk)
+                        require(not src.read(1), 'Oversized Vita ZIP entry.')
+                    if row is not None:
+                        verify(package / entry.filename, row, cancel, progress)
+                require((package / MANIFEST).read_bytes() == raw, 'Vita ZIP metadata changed.')
+        except (zipfile.BadZipFile, zlib.error, KeyError, RuntimeError, NotImplementedError, EOFError) as exc:
+            raise PatchError('Invalid or damaged Vita patch ZIP.') from exc
+        yield data, package, None
+
+
+@contextmanager
+def description_context(description=None, client=None, cache=None, cancel=None, progress=None):
+    if description:
+        if Path(description).suffix.lower() == '.zip':
+            with archive_description(description, cancel=cancel, progress=progress) as resolved:
+                yield resolved
+        else:
+            yield local_description(description)
+        return
+    client = client or GitHubClient()
+    data, package, assets = online_description(client, cancel, progress, cache)
+    if ARCHIVE in assets:
+        asset = assets[ARCHIVE]
+        path = client.download(asset, cache or cache_directory(), cancel, progress)
+        verify(path, dict(bytes=asset.size, sha256=asset.sha256), cancel, progress)
+        with archive_description(path, data, cancel, progress) as resolved:
+            yield resolved
+    else:
+        yield data, package, assets
 
 
 def verify(path, row, cancel=None, progress=None):
@@ -180,26 +261,28 @@ def independent(a, b):
 
 
 def apply(source, output, description=None, client=None, cache=None, cancel=None, progress=None, work_bin=None):
-    if work_bin is not None:
-        from .vita_pkg import decrypted_source
-        # Resolve the profile before the expensive package conversion.
-        if description:
-            local_description(description)
-        else:
-            online_description(client, cancel, progress)
-        with decrypted_source(source, work_bin, output, client, cache, cancel, progress) as decrypted:
-            return apply(decrypted, output, description, client, cache, cancel, progress)
+    # Resolve once, before package conversion; keep extracted patches alive until completion.
+    if description:
+        require(independent(Path(output).resolve(), no_links(description).resolve().parent),
+                'Output must be outside the patch package.')
+    with description_context(description, client, cache, cancel, progress) as resolved:
+        if work_bin is not None:
+            from .vita_pkg import decrypted_source
+            with decrypted_source(source, work_bin, output, client, cache, cancel, progress) as decrypted:
+                return _apply_files(decrypted, output, resolved, client, cache, cancel, progress)
+        return _apply_files(source, output, resolved, client, cache, cancel, progress)
+
+
+def _apply_files(source, output, resolved, client=None, cache=None, cancel=None, progress=None):
     client = client or GitHubClient()
     cache = Path(cache) if cache else cache_directory()
     source, output = no_links(source).resolve(), no_links(output)
     require(source.is_dir(), 'Choose the decrypted game folder containing eboot.bin, not a PKG.')
     require(not os.path.lexists(output) and output.parent.is_dir() and independent(source, output.resolve()),
             'Choose a NEW output folder outside the source game folder. Existing folders are never replaced.')
-    if description:
-        data, package, assets = local_description(description)
+    data, package, assets = resolved
+    if package:
         require(independent(output.resolve(), package.resolve()), 'Output must be outside the patch package.')
-    else:
-        data, package, assets = online_description(client, cancel, progress)
     check_cancel(cancel)
     for row in data['files']:
         verify(beneath(source, row['path']), row['source'], cancel, progress)

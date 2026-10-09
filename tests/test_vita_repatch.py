@@ -8,6 +8,7 @@ import struct
 import tempfile
 import threading
 import unittest
+import zipfile
 from unittest.mock import patch
 
 from retro_trans import vita_repatch as v
@@ -190,6 +191,82 @@ class VitaTests(unittest.TestCase):
                 return dict(tag_name=v.TAG, assets=[dict(name=v.MANIFEST,
                     browser_download_url='https://evil.example/patch.json')])
         with self.assertRaises(PatchError): v.online_description(Client())
+
+    def make_zip(self, extra=None, missing=None, corrupt=None):
+        path = self.package / v.ARCHIVE
+        with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as archive:
+            for file in (self.description,) + tuple(self.package.glob('*.xdelta')):
+                if file.name != missing:
+                    archive.writestr(file.name, b'corrupt' if file.name == corrupt else file.read_bytes())
+            if extra:
+                archive.writestr(*extra)
+        return path
+
+    def test_local_zip_applies_and_cleans_up(self):
+        archive = self.make_zip()
+        with v.archive_description(archive) as (data, directory, assets):
+            self.assertEqual(data, self.data)
+            self.assertIsNone(assets)
+            self.assertEqual(len(list(directory.iterdir())), 3)
+        self.assertFalse(directory.exists())
+        self.description = archive
+        self.test_nested_overlay_auth_no_unrelated_copy()
+
+    def test_zip_rejects_unsafe_missing_extra_duplicate_and_corrupt_entries(self):
+        for extra in ('../escape', '/absolute', 'folder/file', 'work.bin',
+                      'vita-0.xdelta', 'VITA-0.xdelta', 'CON.xdelta'):
+            with self.subTest(extra=extra):
+                archive = self.make_zip(extra=(extra, b'bad'))
+                with self.assertRaises(PatchError), v.archive_description(archive):
+                    pass
+        for kwargs in (dict(missing='VITA-0.xdelta'), dict(missing=v.MANIFEST),
+                       dict(corrupt='VITA-0.xdelta')):
+            with self.subTest(kwargs=kwargs), self.assertRaises(PatchError):
+                with v.archive_description(self.make_zip(**kwargs)):
+                    pass
+
+    def test_zip_rejects_links_bad_profile_oversize_and_cancel(self):
+        link = zipfile.ZipInfo('link')
+        link.create_system = 3
+        link.external_attr = 0o120777 << 16
+        with self.assertRaises(PatchError), v.archive_description(self.make_zip(extra=(link, b'outside'))):
+            pass
+        archive = self.make_zip()
+        different = copy.deepcopy(self.data); different['build'] = 'different'
+        with self.assertRaises(PatchError), v.archive_description(archive, different):
+            pass
+        with patch.object(v, 'MAX_ARCHIVE', 10), self.assertRaises(PatchError), v.archive_description(archive):
+            pass
+        cancelled = threading.Event(); cancelled.set()
+        with self.assertRaises(Cancelled), v.archive_description(archive, cancel=cancelled):
+            pass
+        archive.write_bytes(b'not a zip')
+        with self.assertRaises(PatchError), v.archive_description(archive):
+            pass
+
+    def test_online_prefers_zip_and_uses_requested_cache(self):
+        archive = self.make_zip()
+        prefix = 'https://github.com/{}/releases/download/{}/'.format(v.REPO, v.TAG)
+        files = [self.description, archive] + list(self.package.glob('*.xdelta'))
+        assets = [dict(name=p.name, size=p.stat().st_size,
+                       digest='sha256:'+v.sha256_file(p), browser_download_url=prefix+p.name) for p in files]
+        downloaded = []
+        cache = self.root/'cache'
+        class Client:
+            def json(inner, *args): return dict(tag_name=v.TAG, assets=assets)
+            def download(inner, asset, selected_cache, *args):
+                self.assertEqual(selected_cache, cache)
+                downloaded.append(asset.name)
+                return self.package/asset.name
+        with v.description_context(client=Client(), cache=cache) as (data, folder, individual):
+            self.assertEqual(data, self.data)
+            self.assertTrue((folder/'VITA-0.xdelta').is_file())
+            self.assertIsNone(individual)
+        self.assertEqual(downloaded, [v.MANIFEST, v.ARCHIVE])
+        self.assertFalse(folder.exists())
+        archive.write_bytes(b'corrupt')
+        with self.assertRaises(PatchError), v.description_context(client=Client(), cache=cache):
+            pass
 
 
 if __name__ == '__main__':

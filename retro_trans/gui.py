@@ -220,7 +220,7 @@ class Application(tk.Tk):
             self.controls.append(entry)
             self.button(vita, 'Browse…', lambda v=variable, out=is_output: self.pick_vita_folder(v, out)).grid(
                 row=row, column=2, sticky='ew', padx=(8, 0))
-        self.path_row(vita, 4, 'Local patch (optional):', self.vita_description, extension='.json')
+        self.path_row(vita, 4, 'Local patch (optional):', self.vita_description, extension='.zip')
         ttk.Label(vita, text='Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
                   'Your license stays local. Originals, emulator setup and saves stay untouched.',
                   style='Muted.TLabel').grid(row=5, column=0, columnspan=3, sticky='w', pady=5)
@@ -309,7 +309,13 @@ class Application(tk.Tk):
             return parent
         options = {"initialdir": self.settings.get("last_browse_folder", str(application_root())),
                    "filetypes": [("All files", "*.*")]}
-        if extension:
+        if variable is self.vita_description:
+            options['filetypes'].insert(0, ('Vita patch ZIP or JSON', '*.zip *.json'))
+        elif variable is self.vita_source:
+            options['filetypes'].insert(0, ('Original Vita package', '*.pkg'))
+        elif variable is self.vita_license:
+            options['filetypes'].insert(0, ('Vita license', '*.bin'))
+        elif extension:
             options["filetypes"].insert(0, ("xdelta patches", "*.xdelta *.vcdiff"))
         if save:
             path = filedialog.asksaveasfilename(confirmoverwrite=False, defaultextension=extension,

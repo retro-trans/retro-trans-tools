@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.3 — Single Vita patch ZIP (2026-10-09)
+
+- Prefer the verified SRW Z3 Vita patch ZIP for online rePatch creation instead
+  of 153 separate patch downloads. Original metadata and individual assets
+  remain available for 0.5.2 clients; PS3 patch routes are unchanged.
+- Accept the same ZIP directly in Local patch, alongside existing JSON profiles.
+  Resolve and verify it once before PKG conversion. Extraction rejects extra,
+  missing, duplicate, unsafe, linked, oversized or corrupt entries, checks each
+  patch hash, and cleans temporary files on success, cancellation or failure.
+- Catalog validation checks the ZIP against the unchanged profile and records
+  its immutable identity separately. Added ZIP and compatibility regressions.
+- Corrected file-picker filters for Vita PKG, work.bin and ZIP/JSON inputs.
+
 ## 0.5.2 — Vita rePatch workflow (2026-10-09)
 
 - Published v0.5.2 at 08:55:32 UTC; release run 37907763867 passed all gates.

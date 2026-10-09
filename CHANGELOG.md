@@ -2,6 +2,10 @@
 
 ## 0.5.3 — Single Vita patch ZIP (2026-10-09)
 
+- Published the optional 15.1 MB Vita ZIP; all 159 existing game-release assets
+  retain their IDs/sizes/hashes. Public ZIP + PKG/work.bin reproduces all 154
+  payloads without individual patch downloads. Windows CI, live catalog and
+  0.5.1/0.5.2 cached-client checks pass. See v0.5.3-validation.md for evidence.
 - Prefer the verified SRW Z3 Vita patch ZIP for online rePatch creation instead
   of 153 separate patch downloads. Original metadata and individual assets
   remain available for 0.5.2 clients; PS3 patch routes are unchanged.

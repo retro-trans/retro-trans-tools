@@ -2151,6 +2151,52 @@
     },
     {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.3.18",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.3.18",
+        "source_commit": "c9e50cd73ee60d9a82d98ffe4d01e2425e1022bf",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.3.18.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "a002b82cc05c7184e3bb5cfac0d0e43ea41a7875ccfc82b2e110446dbc73df7a",
+            "target_bytes": 725316816,
+            "patch_sha256": "e64a72c018b8be887f8560dacdde3c920ae835fec55853a3ec4213c493f2b438",
+            "patch_bytes": 61809201
+          },
+          {
+            "patch": "STT2001-English-v0.3.6-to-v0.3.18.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.6",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "3360e045c6045a8efd45bb6b0f03d647221011fcc661c398560461ecb26e5cb6",
+            "source_bytes": 725316816,
+            "target_sha256": "a002b82cc05c7184e3bb5cfac0d0e43ea41a7875ccfc82b2e110446dbc73df7a",
+            "target_bytes": 725316816,
+            "patch_sha256": "f3ca30aeee61b15f42c98ff121b136df16992d879ed24a6c98ebfa472183136f",
+            "patch_bytes": 2552993
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.3.18.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.18/STT2001-English-v0.3.18.xdelta",
+        "STT2001-English-v0.3.6-to-v0.3.18.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.18/STT2001-English-v0.3.6-to-v0.3.18.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.6",
       "manifest": {
         "game_id": "super-tokusatsu-taisen-2001",

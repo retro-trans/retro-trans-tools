@@ -114,3 +114,7 @@
   and enabled shared GUI, patch, CHD and cryptography tests on macOS.
 - Validation is in progress. Real PKG/work.bin conversion and physical-console
   gameplay require separate user testing; do not infer them from CLI startup.
+- First Windows regression passes192 tests/3 expected skips. Initial native Mac
+  run exposed root-owned /var aliases and Windows-specific test doubles; allow
+  only macOS's fixed /private aliases, retaining descendant symlink rejection.
+  Added real packaged next-launch helper coverage and startup-exception rollback.

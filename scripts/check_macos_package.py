@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -17,6 +18,62 @@ sys.path.insert(0, str(ROOT))
 from retro_trans import __version__, mac_updater as u, vita_pkg as v
 from retro_trans.catalog import atomic_json
 from retro_trans.core import GitHubClient
+from retro_trans.updater import update_directory
+from scripts.build_macos import manifest
+
+
+def next_launch_update(root, dist, metadata):
+    """Build an old-version fixture, then let its real detached helper update it."""
+    root.mkdir()
+    hook = root/'old_version.py'
+    hook.write_text("import retro_trans\nretro_trans.__version__ = '0.0.0'\n")
+    args = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--onedir', '--windowed',
+        '--name', 'Retro-Trans', '--osx-bundle-identifier', u.IDENTIFIER,
+        '--codesign-identity', '-', '--runtime-hook', str(hook),
+        '--distpath', str(root/'old'), '--workpath', str(root/'build'), '--specpath', str(root),
+        '--add-data', str(ROOT/'retro_trans/resources')+':retro_trans/resources']
+    for name in ('xdelta3', 'chdman'):
+        args.extend(['--add-binary', str(ROOT/'retro_trans/resources/native'/name)+':retro_trans/resources/native'])
+    subprocess.run(args+[str(ROOT/'launch.py')], cwd=ROOT, check=True)
+    target = root/'old'/u.APP
+    manifest(target/'Contents/Resources/retro_trans/resources/native')
+    subprocess.run(['codesign', '--force', '--sign', '-', str(target)], check=True)
+    old_digest = __import__('hashlib').sha256(u.executable(target).read_bytes()).hexdigest()
+    env = dict(os.environ, RETRO_TRANS_DATA_DIR=str(root/'data'))
+    with patch.dict(os.environ, {'RETRO_TRANS_DATA_DIR': env['RETRO_TRANS_DATA_DIR']}):
+        directory = update_directory(u.executable(target))
+    directory.mkdir(parents=True)
+    shutil.copyfile(dist/metadata['asset'], directory/(metadata['sha256']+'.zip'))
+    atomic_json(directory/'pending-mac.json', metadata)
+    settings = root/'data/settings.json'
+    atomic_json(settings, {'keep_fixture_setting': True})
+    process = subprocess.Popen([str(u.executable(target))], env=env, start_new_session=True)
+    launched_pid = None
+    try:
+        deadline = time.monotonic()+120
+        while time.monotonic() < deadline:
+            if (directory/'status.json').exists():
+                break
+            time.sleep(.2)
+        status = json.loads((directory/'status.json').read_text())
+        assert status.get('message') == 'Updated to '+__version__, status
+        startup = json.loads((directory/'startup.json').read_text())
+        launched_pid = startup['pid']
+        assert startup['ok'] and startup['version'] == __version__
+        backup = Path(status['backup'])
+        assert __import__('hashlib').sha256(u.executable(backup).read_bytes()).hexdigest() == old_digest
+        assert json.loads(settings.read_text())['keep_fixture_setting']
+        assert not (directory/'pending-mac.json').exists()
+        process.wait(timeout=15)
+    finally:
+        if launched_pid:
+            try:
+                os.kill(launched_pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        if process.poll() is None:
+            process.terminate()
+            process.wait(timeout=15)
 
 
 def main():
@@ -40,6 +97,8 @@ def main():
         reports['packaged_bundle_update'] = True
         assert list(root.glob('*.previous-*'))
         reports['previous_app_retained'] = True
+        next_launch_update(root/'launch-fixture', dist, metadata)
+        reports['packaged_next_launch_update'] = True
     client = GitHubClient()
     asset = v.runtime_asset(client, None)
     archive = client.download(asset, ROOT/'.test-cache')

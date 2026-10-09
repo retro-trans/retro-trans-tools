@@ -1016,5 +1016,5 @@ def main(health_report=None):
             pass
     app = Application()
     if health_report:
-        atomic_json(health_report, {"ok": True, "version": __version__})
+        atomic_json(health_report, {"ok": True, "version": __version__, "pid": os.getpid()})
     app.mainloop()

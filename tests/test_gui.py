@@ -197,9 +197,11 @@ class GuiTests(unittest.TestCase):
             self.assertEqual(z3_saves.source_blobs(z3_saves.load_ps3(ps3), z3_saves.load_vita(vita)), before)
             self.assertEqual(app.apply_button['text'], 'Check saves')
             self.assertNotEqual(app.save_output.get(), str(root / 'converted'))
-            with patch('retro_trans.gui.os.startfile') as open_folder:
+            target = 'retro_trans.gui.subprocess.Popen' if sys.platform == 'darwin' else 'retro_trans.gui.os.startfile'
+            with patch(target) as open_folder:
                 app.open_folder()
-                open_folder.assert_called_once_with(str(root / 'converted'))
+                expected = ['/usr/bin/open', str(root/'converted')] if sys.platform == 'darwin' else str(root/'converted')
+                open_folder.assert_called_once_with(expected)
 
     def test_save_checks_invalidated_by_changed_inputs_and_direction(self):
         with tempfile.TemporaryDirectory() as temporary:

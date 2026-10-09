@@ -12,6 +12,7 @@ import re
 import shutil
 import stat
 import struct
+import sys
 import tempfile
 import zipfile
 import zlib
@@ -57,6 +58,12 @@ def no_links(path):
     for item in (path,) + tuple(path.parents):
         if os.path.lexists(item):
             info = item.lstat()
+            # macOS exposes these root-owned, fixed system aliases. Do not
+            # resolve arbitrary user symlinks or weaken descendant checks.
+            if (sys.platform == 'darwin' and item in (Path('/var'), Path('/tmp'), Path('/etc'))
+                    and stat.S_ISLNK(info.st_mode) and info.st_uid == 0
+                    and item.resolve() == Path('/private')/item.name):
+                continue
             require(not stat.S_ISLNK(info.st_mode) and not
                     (getattr(info, 'st_file_attributes', 0) & 0x400),
                     'Use ordinary files/folders, not symbolic links or junctions: ' + str(item))

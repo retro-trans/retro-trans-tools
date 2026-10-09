@@ -294,7 +294,10 @@ class ChdTests(unittest.TestCase):
         self.assertEqual(output.read_bytes(), b'keep')
         broken = self.root / 'broken-engine.zip'
         broken.write_bytes(b'not the engine')
-        with patch.object(chd, 'RESOURCE', broken), self.assertRaisesRegex(PatchError, 'engine failed verification'):
+        guard = (patch('retro_trans.core.sha256_file', return_value='0'*64) if sys.platform == 'darwin'
+                 else patch.object(chd, 'RESOURCE', broken))
+        message = 'bundled Mac tools' if sys.platform == 'darwin' else 'engine failed verification'
+        with guard, self.assertRaisesRegex(PatchError, message):
             with chd.prepared_source(self.base / 'dvd.chd', self.root):
                 self.fail('Bad engine used')
         self.assert_clean()

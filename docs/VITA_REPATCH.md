@@ -83,12 +83,13 @@ the separate Vita inventory and records `vita_repatch` discovery metadata on
 the existing release. Old clients ignore that additional field and retain their
 unchanged PS3 routes. Once recorded, the profile identity cannot be replaced.
 
-The online loader currently targets `retro-trans/SRW-Z3` tag `v0.9.0`. It requires
-the exact metadata asset plus flat `VITA-*.xdelta` assets at that release. It
-verifies GitHub asset digests, sizes, and agreement with metadata, then reuses
-the existing hash-checked download cache and bundled xdelta engine. These
-assets were explicitly approved and published as optional v0.9.0 extras on
-October 9, 2026. Absent metadata produces an explicit unavailable message;
+The online loader currently targets `retro-trans/SRW-Z3` tag `v0.9.0`. Version
+0.5.4 uses its exact metadata asset and patch ZIP; no individual delta assets
+are required. It verifies GitHub asset digests, sizes and every patch inside
+the ZIP, then reuses the hash-checked download cache and bundled xdelta engine.
+The extras were explicitly approved and initially published as bare deltas on
+October 9, 2026, followed by the approved ZIP-only migration. Absent metadata
+produces an explicit unavailable message;
 it cannot silently use another build. The user approved the sanitized fixed
 permission metadata separately; this is not permission to publish raw auth
 dumps, licenses, game packages, or complete game files. App release and extras
@@ -102,8 +103,8 @@ profile and every declared delta, with matching sizes and hashes. Unsafe paths,
 links, duplicate names, extra files and oversized contents are rejected before
 use. Extraction is temporary. The catalog records the ZIP separately as
 `vita_archive`; existing `vita_repatch` and PS3 identities are unchanged.
-The user authorized retiring all 153 individual Vita assets after 0.5.4 is
-published and verified. Old 0.5.2/0.5.3 online Vita clients must update; their
+All 153 individual Vita assets were retired with explicit user approval after
+0.5.4 was published and verified. Old 0.5.2/0.5.3 online Vita clients must update; their
 PS3 patch routes and cached catalog refreshes remain unchanged. No cache reset
 is needed. If a release has no ZIP, the new app retains the verified individual
 route; a present but invalid ZIP fails validation instead of falling back.

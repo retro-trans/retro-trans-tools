@@ -13,7 +13,13 @@
   Existing 0.5.2/0.5.3 Vita clients must update; PS3 cached routes are unchanged.
   Updated player instructions and work.bin guide. App 0.5.2 release and its three
   assets are withdrawn; its source tag and verified local recovery files remain.
-  App 0.5.4 publication and bare Vita asset withdrawal are pending.
+  App0.5.4 published at09:44:59 UTC from8edfb2e after release37913041790 passed.
+  Actual public EXE/ZIP/UPDATE hashes, startup and update staging pass.
+- Removed exactly153 bare Vita assets after app verification, retaining recovery
+  ZIP/metadata. Seven game assets, both PS3 patches and game tag are unchanged.
+  Post-removal public PKG flow verifies154 payloads; catalog37913522760 and
+  old PS3 cached refresh/parser checks pass. Updated release/README migration
+  notices and historical0.5.3 docs; see v0.5.4-validation.md for complete evidence.
 
 ## 0.5.3 — Single Vita patch ZIP (2026-10-09)
 

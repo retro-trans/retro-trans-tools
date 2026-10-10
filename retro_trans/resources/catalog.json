@@ -1630,6 +1630,73 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z-Special-Disc",
+      "tag": "v0.3.20",
+      "manifest": {
+        "game_id": "srw-z-special-disc",
+        "game_name": "Super Robot Taisen Z Special Disc",
+        "platform": "PS2",
+        "version": "0.3.20",
+        "source_commit": "b2bf43001456ee1c11b6f66b077cd0b9b83b239b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWZ-SP-English-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c3bd8c1af4e411e5ab2ae2d4be877170b6ab1ea9b51fa62bc0b91a51ba1a2952",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "690796ef790f1944fcbe31d758a8b6c54c097d2a622130a83ed8b0cca60e3e5c",
+            "patch_bytes": 17855985,
+            "source_sha1": "e1e484ff65688313b6acaea117b115d7ba6bfbc4",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          },
+          {
+            "patch": "SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "0.3.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ca444e5c078a6f3cb23a96c5b6d676de1df068cfa4219ecbc06e71cbea4186ec",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "eb1d9e69be06df95f4bd0a0577e36c6f744a8b893f4ef08404e378f82e6ee713",
+            "patch_bytes": 9514899,
+            "source_sha1": "aec2b234675630ed26ad3bf6bdc7240d9882a9f5",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          },
+          {
+            "patch": "SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "0.3.16",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "38199a3be48e759e2b887c369609b404afe9376a6f28a91d02036bfca914f5a7",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "f8e4cb4e8087e526cce9d5390cc17d3ce7aaf3e0b4823db977889687cb2ef720",
+            "patch_bytes": 600476,
+            "source_sha1": "5833c27eeb5c68ef547af2c173621568819b1af5",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          }
+        ]
+      },
+      "assets": {
+        "SRWZ-SP-English-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.20.xdelta",
+        "SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta",
+        "SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3",
       "tag": "v0.6.21",
       "manifest": {

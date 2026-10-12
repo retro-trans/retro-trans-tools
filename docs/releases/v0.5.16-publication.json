@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "version": "0.5.16",
+  "published_at": "2026-10-12T11:38:55.489994+00:00",
+  "release": "https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.16",
+  "private": false,
+  "draft": false,
+  "latest": true,
+  "source_commit": "29908917df72b7741dd8e4349497e94a7ce952b5",
+  "all_five_downloads_verified": true,
+  "published_updater_staging_verified": true,
+  "packaged_next_launch_update_verified": true,
+  "assets": [
+    {
+      "name": "RELEASE-VALIDATION.json",
+      "bytes": 2091,
+      "sha256": "b359e6af55bf953196d3904c75c087f78d629b3121dab8f9f96bd31973e8fc56"
+    },
+    {
+      "name": "Retro-Trans-Windows.zip",
+      "bytes": 17796245,
+      "sha256": "d8eb6eeed7a0835cc9af1655aed5fa4a4dde0ac0c15b4a0fdd2400fbc910d203"
+    },
+    {
+      "name": "Retro-Trans.exe",
+      "bytes": 18024533,
+      "sha256": "3cdb81e749eac2afc2fd18b95699f19937745b586e56cbd68bb31b1648e9d6c0"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 344,
+      "sha256": "52414d04d0346a04eef39027509e4f87887fd5d659735f971057a3a2c42bc241"
+    },
+    {
+      "name": "UPDATE.json",
+      "bytes": 212,
+      "sha256": "ada076f8018f03a1bc4f43a351797257d746a5837233e6d7b9091ef67e0217fd"
+    }
+  ]
+}

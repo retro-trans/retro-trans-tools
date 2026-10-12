@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "version": "0.5.15",
+  "local_build_only": true,
+  "tools_source_pushed": false,
+  "release_published": false,
+  "unit_tests": {
+    "total": 251,
+    "skipped": 4,
+    "failures": 0
+  },
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.15",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.15",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true
+  },
+  "actual_cpk_apply_ui_verified": true,
+  "game_proof": "https://github.com/retro-trans/Cross-Ange/blob/main/docs/cpk-restoration-0.1.13.json",
+  "previous_local_builds_withdrawn": [
+    "0.5.12",
+    "0.5.13",
+    "0.5.14"
+  ],
+  "prior_builds_archived_locally": true,
+  "latest_published_tools_version": "0.5.4",
+  "license_needed_for_original_installation": true,
+  "license_read_for_cpk_patching": false,
+  "emulator_installation_and_saves_untouched": true
+}

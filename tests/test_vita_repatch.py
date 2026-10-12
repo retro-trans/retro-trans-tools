@@ -88,6 +88,97 @@ class VitaTests(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(PatchError):
                 v.validate(data)
 
+    def asset_only(self):
+        self.data['files'] = self.data['files'][1:]
+        self.data['auth'] = None
+        self.data['title_id'] = 'PCSG00597'
+        raw = b'Translation credits and font attribution'
+        self.data['extras'] = [dict(path='sce_sys/font-license.txt',
+            asset=dict(name='VITA-font-license.txt',**ident(raw)))]
+        (self.package/'VITA-font-license.txt').write_bytes(raw)
+        self.save()
+        return raw
+
+    def test_asset_only_overlay_keeps_original_executable_and_copies_credits(self):
+        raw = self.asset_only()
+        self.apply()
+        tree = self.output/'rePatch/PCSG00597'
+        self.assertEqual((tree/'sce_sys/font-license.txt').read_bytes(),raw)
+        self.assertFalse((tree/'eboot.bin').exists())
+        self.assertFalse((tree/'self_auth.bin').exists())
+        self.assertEqual((self.source/'eboot.bin').read_bytes(),self.originals['eboot.bin'])
+        record = json.loads((self.output/'VERIFIED.json').read_text())
+        self.assertIsNone(record['sanitized_auth_sha256'])
+        self.assertEqual(record['files']['sce_sys/font-license.txt'],ident(raw))
+
+    def test_asset_only_zip_contains_and_verifies_added_files(self):
+        raw = self.asset_only()
+        archive = self.make_zip()
+        self.description = archive
+        self.apply()
+        self.assertEqual((self.output/'rePatch/PCSG00597/sce_sys/font-license.txt').read_bytes(),raw)
+
+    def test_added_file_hash_failure_never_publishes(self):
+        self.asset_only()
+        (self.package/'VITA-font-license.txt').write_bytes(b'corrupt')
+        with self.assertRaises(PatchError): self.apply()
+        self.assertFalse(self.output.exists())
+
+    def test_added_file_paths_collisions_and_size_are_rejected(self):
+        self.asset_only()
+        for name in ('work.bin','sce_sys/a.rif','eboot.bin','DATA/x.cpk','../credits.txt',
+                     self.data['files'][0]['path']):
+            data = copy.deepcopy(self.data);data['extras'][0]['path']=name
+            with self.subTest(path=name),self.assertRaises(PatchError): v.validate(data)
+        data = copy.deepcopy(self.data);data['extras'][0]['asset']['name']=v.MANIFEST
+        with self.assertRaises(PatchError): v.validate(data)
+        data = copy.deepcopy(self.data);data['extras'][0]['asset']['bytes']=8*1024**2+1
+        with self.assertRaises(PatchError): v.validate(data)
+        data = copy.deepcopy(self.data);data['extras'] *= 2
+        with self.assertRaises(PatchError): v.validate(data)
+
+    def test_auth_requires_an_executable_and_executable_requires_auth(self):
+        data = copy.deepcopy(self.data);data['auth']=None
+        with self.assertRaises(PatchError): v.validate(data)
+        data = copy.deepcopy(self.data);data['files']=data['files'][1:]
+        with self.assertRaises(PatchError): v.validate(data)
+
+    def test_pkg_without_local_profile_uses_generic_repatch_discovery(self):
+        @contextmanager
+        def discovered(source,client,cache,cancel,progress,profile):
+            self.assertIs(profile,v)
+            self.assertEqual(source,self.root/'original.pkg')
+            yield self.data,self.package,None
+        @contextmanager
+        def decrypted(*args,**kwargs):
+            yield self.source
+        def decode(engine,source,delta,dest,size,*args): dest.write_bytes(delta.read_bytes())
+        with patch('retro_trans.vita_downloads.automatic_description',discovered), \
+             patch('retro_trans.vita_pkg.decrypted_source',decrypted), \
+             patch.object(v,'engine_context',fake_engine),patch.object(v,'decode',side_effect=decode):
+            v.apply(self.root/'original.pkg',self.output,work_bin=self.root/'work.bin')
+        self.assertTrue((self.output/'rePatch/PCSG00264/eboot.bin').exists())
+
+    def test_legacy_z3_fallback_is_limited_to_missing_profile_for_z3(self):
+        @contextmanager
+        def absent(*args,**kwargs):
+            raise PatchError('No automatic Vita translation was found for PCSG00264.')
+            yield
+        @contextmanager
+        def legacy(*args,**kwargs): yield self.data,self.package,None
+        with patch('retro_trans.vita_downloads.automatic_description',absent), \
+             patch('retro_trans.vita_downloads.package_content',return_value='JP0700-PCSG00264_00-'+('X'*16)), \
+             patch.object(v,'description_context',legacy):
+            with v.pkg_description('original.pkg',client=object()) as result:
+                self.assertEqual(result[0],self.data)
+        with patch('retro_trans.vita_downloads.automatic_description',absent), \
+             patch('retro_trans.vita_downloads.package_content',return_value='JP0700-PCSG00597_00-'+('X'*16)), \
+             self.assertRaises(PatchError),v.pkg_description('original.pkg',client=object()): pass
+
+    def test_future_required_app_version_rejected(self):
+        self.data['minimum_app_version']='0.99.99'
+        with self.assertRaisesRegex(PatchError,'newer app'):v.validate(self.data)
+
     def test_hardware_profile_for_another_game(self):
         self.data['title_id']='PCSE12345';self.save()
         self.apply()
@@ -203,7 +294,8 @@ class VitaTests(unittest.TestCase):
     def make_zip(self, extra=None, missing=None, corrupt=None):
         path = self.package / v.ARCHIVE
         with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as archive:
-            for file in (self.description,) + tuple(self.package.glob('*.xdelta')):
+            for file in (self.description,) + tuple(self.package/r['patch']['name'] for r in self.data['files']) + tuple(
+                    self.package/r['asset']['name'] for r in self.data.get('extras',[])):
                 if file.name != missing:
                     archive.writestr(file.name, b'corrupt' if file.name == corrupt else file.read_bytes())
             if extra:

@@ -1,10 +1,10 @@
 # Retro Trans
 
-**Vita PKG release withdrawn:** v0.5.11 and its downloadable assets were removed
-on 2026-10-12 at the user's request because patching required `work.bin`/`.rif`.
-The remaining latest release, v0.5.4, does not provide the Automatic Vita PKG flow
-described below. Those instructions document the withdrawn build; a replacement
-that patches whole PKGs without a license has not been released.
+**Retro Trans 0.5.16:** Automatic downloads small Vita translation patches and
+rebuilds an English PKG locally using your original PKG and matching
+`work.bin`/`.rif`. Generic hardware rePatch and manual installed CPK patching
+are also supported. Download the Windows EXE or ZIP from
+[Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).
 
 Older Mac
 0.5.6 test builds remain available from the
@@ -36,21 +36,10 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
-- **Automatic — Vita PKG:** from 0.5.11, browse to your original Vita PKG in **Automatic**. The app detects its title ID and shows **Matching license**; select your local `work.bin`/`.rif`, choose a new translated PKG filename and click **Patch**. The newest matching translation ZIP downloads automatically. The app verifies source files, applies patches, rebuilds encrypted PFS and verifies an isolated installation before saving. Browsing and scanning inspect headers without downloading patches; exact source matching happens on Patch. Private releases can use your existing GitHub CLI sign-in; public releases need none. Only translation assets are downloaded; your game and license stay local. Future games with supported formats use new profiles. See [generic Vita flow](docs/VITA_PKG.md).
-- **Vita — local override:** select **Vita3K PKG** in the Vita tab to supply a downloaded ZIP or local JSON under **Local patch (optional)**. Leaving it blank uses the same automatic download flow. Temporary Windows file locks are retried in both routes.
-- **Vita — Hardware rePatch:** select your original PCSG00264 v01.00 **PKG**, its
-  matching NoNpDrm **work.bin**, and a new output folder, then **Create rePatch**.
-  Downloads the official Vita3K tool and runs its package conversion in an
-  isolated temporary folder, then verifies and patches the decrypted files.
-  Copy the resulting `rePatch/PCSG00264` folder to your physical Vita.
-  Needs an x64 Windows PC, internet, 6 GB of temporary space, and the matching
-  patch profile (online when published, or a reviewed local `VITA-REPATCH.json`
-  with its deltas). No Python, command-line steps, or personal auth dump needed.
-  Your license is used locally, never uploaded. Version 0.5.4 downloads one
-  verified Vita patch ZIP; you can also select that ZIP directly in **Local patch**.
-  See [Vita instructions](docs/VITA_REPATCH.md) and [Getting work.bin](docs/VITA_WORK_BIN.md).
-  **Upgrade from 0.5.2/0.5.3:** those versions require the retired individual
-  Vita patch assets and cannot use the ZIP-only online release.
+- **Automatic — Vita PKG:** select the original game PKG, its matching local work.bin/.rif and a new translated PKG filename. On Patch, the app discovers the newest compatible small component ZIP, decrypts the original locally, applies deltas/extras, rebuilds encrypted PFS/PKG and verifies a second isolated native installation before saving. Requires Windows and 6 GB temporary space; private releases use existing GitHub CLI sign-in. Translation downloads are small; a first-use official Vita3K runtime download is separate. No license is downloaded or uploaded. Whole-PKG xdelta remains withdrawn. See [Vita flow](docs/VITA_PKG.md).
+- **Vita — local PKG override:** select Vita3K PKG with the same original/license/output, and choose a downloaded small Vita-PKG-patches.zip or VITA-PKG.json under Local patch. Blank uses release discovery.
+- **Vita3K — installed CPK:** install the original game with its matching license, close Vita3K, then select its installed CPK in **Apply xdelta** with the downloaded small translation delta and a new output filename. Verify the output before replacing the installed file with a backup. The current app and published 0.5.4 both support this route. Automatic also supports ordinary binary releases when their standard manifest is in the accessible catalog. Whole-PKG xdelta remains withdrawn because distributing differences between rebuilt encrypted packages can produce a package-size delta. No license is read during CPK patching. See [Vita instructions](docs/VITA_PKG.md).
+- **Vita — Hardware rePatch:** select your original Vita PKG, the **matching work.bin for that exact game**, and a new output folder. Leave **Local patch** blank to discover the matching hardware release, or choose its `*-Vita-rePatch-patches.zip`. The official Vita3K tool decrypts the original in an isolated temporary folder, then the app verifies and creates `rePatch/<TITLE_ID>`. Copy that folder to your hardware Vita with compatible rePatch and the original game installed. Needs internet and 6 GB temporary space. The license stays local. Asset-only profiles preserve the executable and authentication; profiles that patch an executable still require sanitized authentication. The legacy Z3 online profile remains a fallback for PCSG00264. See [hardware instructions](docs/VITA_REPATCH.md).
 - **Save conversion — Z3:** convert Jigoku-hen saves from RPCS3 to Vita3K, the reverse, or
   both directions. Select both save folders and a new output folder, close both
   emulators, then **Check saves** and **Convert saves**. Includes backups, verified

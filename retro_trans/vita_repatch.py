@@ -3,7 +3,7 @@
 Separate optional release extras, not a v2 disc solution or a PKG decryptor.
 Only explicitly listed files are read; nothing is installed onto a Vita.
 """
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 import hashlib
 import json
 import os
@@ -16,7 +16,7 @@ import sys
 import tempfile
 import zipfile
 import zlib
-from . import diagnostics
+from . import diagnostics, __version__
 
 from .core import (Asset, GitHubClient, MAX_METADATA, PatchError, cache_directory,
                    check_cancel, decode, engine_context, report, sha256_file,
@@ -28,6 +28,8 @@ TAG = 'v0.9.0'
 MANIFEST = 'VITA-REPATCH.json'
 ARCHIVE = 'SRW-Z3-v0.9.0-Vita-patches.zip'
 MAX_ARCHIVE = 256 * 1024**2
+MAX_ZIP = MAX_ARCHIVE
+ZIP_SUFFIX = '-Vita-rePatch-patches.zip'
 SCHEMA = 'retro-trans-vita-repatch-v1'
 GUIDE = ('Close the game and back up saves and any existing overlay. Copy the generated '
          'rePatch/PCSG00264 folder into ux0:rePatch/PCSG00264 using VitaShell. '
@@ -88,9 +90,14 @@ def identity(row):
 
 def validate(data):
     try:
-        require(isinstance(data, dict) and set(data)-{'package'} ==
+        require(isinstance(data, dict) and set(data)-{'package','extras','minimum_app_version'} ==
                 {'schema', 'title_id', 'app_version', 'name', 'build', 'files', 'auth'},
                 'Incomplete or unsupported Vita patch description.')
+        if 'minimum_app_version' in data:
+            value = data['minimum_app_version']
+            require(isinstance(value,str) and re.fullmatch(r'0\.\d+\.\d+',value), 'Invalid required app version.')
+            require(tuple(map(int,value.split('.'))) <= tuple(map(int,__version__.split('.'))),
+                    'This hardware overlay needs a newer app version.')
         require(data['schema'] == SCHEMA and isinstance(data['title_id'],str) and
                 re.fullmatch(r'[A-Z]{4}[0-9]{5}',data['title_id']) and
                 isinstance(data['app_version'],str) and re.fullmatch(r'[0-9]{2}\.[0-9]{2}',data['app_version']),
@@ -122,12 +129,32 @@ def validate(data):
                     'Duplicate or invalid Vita patch asset.')
             assets.add(name.casefold())
             identity({k: patch[k] for k in ('bytes', 'sha256')})
-        require('eboot.bin' in paths, 'Vita overlay must include its executable.')
+        extras = data.get('extras', [])
+        require(isinstance(extras,list) and len(extras) <= 32, 'Invalid Vita added-file inventory.')
+        for row in extras:
+            require(isinstance(row,dict) and set(row) == {'path','asset'}, 'Invalid Vita added file.')
+            path = relative_name(row['path'])
+            require(path.casefold() not in paths and path.lower().endswith(('.png','.txt')),
+                    'Added files must be unique credit pictures or text.')
+            paths.add(path.casefold())
+            item = row['asset']
+            require(isinstance(item,dict) and set(item) == {'name','bytes','sha256'}, 'Invalid Vita added asset.')
+            name = output_name(item['name'])
+            require(name.casefold() not in assets and name.casefold() != MANIFEST.casefold() and
+                    Path(name).suffix.lower() == Path(path).suffix.lower(), 'Duplicate or invalid Vita added asset.')
+            assets.add(name.casefold())
+            identity({key:item[key] for key in ('bytes','sha256')})
+            require(item['bytes'] <= 8*1024**2, 'Vita added file is too large.')
+        require(sum(r['asset']['bytes'] for r in extras) <= 16*1024**2, 'Vita added files are too large.')
+        require(len(files)+len(extras) <= 589, 'Too many Vita overlay files.')
         for path in paths:
             require(not any('/'.join(path.split('/')[:i]) in paths
                             for i in range(1, len(path.split('/')))), 'Conflicting file/folder paths.')
         require(sum(r['target']['bytes'] for r in files) <= 16 * 1024**3, 'Vita overlay is too large.')
         auth = data['auth']
+        if 'eboot.bin' not in paths:
+            require(auth is None, 'An asset-only overlay must leave executable authentication unchanged.')
+            return data
         require(isinstance(auth, dict) and set(auth) == {'hex', 'sha256'}, 'Missing sanitized auth data.')
         require(isinstance(auth['hex'], str) and re.fullmatch('[0-9a-f]{288}', auth['hex']),
                 'Invalid sanitized auth data.')
@@ -183,6 +210,7 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
     data, _, _ = local_description(path)
     diagnostics.event('vita_profile', mode='online_zip' if has_archive else 'online_individual', files=len(data['files']))
     if ARCHIVE not in assets:
+        require(not data.get('extras'), 'Added files require a complete rePatch ZIP.')
         for row in data['files']:
             p = row['patch']; asset = assets.get(p['name'])
             require(asset is not None and asset.size == p['bytes'] and asset.sha256 == p['sha256'],
@@ -219,6 +247,7 @@ def archive_description(path, expected=None, cancel=None, progress=None):
                 data = read_description(raw)
                 require(expected is None or data == expected, 'Vita ZIP profile differs from published metadata.')
                 inventory = {r['patch']['name']: r['patch'] for r in data['files']}
+                inventory.update({r['asset']['name']:r['asset'] for r in data.get('extras',[])})
                 require(set(e.filename for e in entries) == set(inventory) | {MANIFEST},
                         'Vita ZIP must contain exactly the described patches and metadata.')
                 require(sum(e.file_size for e in entries) <= MAX_ARCHIVE, 'Expanded Vita ZIP is too large.')
@@ -306,6 +335,22 @@ def independent(a, b):
     return a != b and a not in b.parents and b not in a.parents
 
 
+@contextmanager
+def pkg_description(source,client=None,cache=None,cancel=None,progress=None):
+    from .vita_downloads import automatic_description, package_content, VitaReleaseClient
+    client = client or VitaReleaseClient()
+    with ExitStack() as stack:
+        try:
+            resolved = stack.enter_context(automatic_description(source,client,cache,cancel,progress,
+                profile=sys.modules[__name__]))
+        except PatchError as exc:
+            # Older Z3 overlays predate the optional original-PKG identity.
+            if not str(exc).startswith('No automatic Vita translation was found') or package_content(source)[7:16] != 'PCSG00264':
+                raise
+            resolved = stack.enter_context(description_context(None,client,cache,cancel,progress))
+        yield resolved
+
+
 def apply(source, output, description=None, client=None, cache=None, cancel=None, progress=None, work_bin=None):
     diagnostics.event('vita_input', mode='automatic' if not description else
                       ('local_zip' if Path(description).suffix.lower() == '.zip' else 'local_json'),
@@ -314,7 +359,11 @@ def apply(source, output, description=None, client=None, cache=None, cancel=None
     if description:
         require(independent(Path(output).resolve(), no_links(description).resolve().parent),
                 'Output must be outside the patch package.')
-    with description_context(description, client, cache, cancel, progress) as resolved:
+    if not description and work_bin is not None:
+        context = pkg_description(source,client,cache,cancel,progress)
+    else:
+        context = description_context(description, client, cache, cancel, progress)
+    with context as resolved:
         if work_bin is not None:
             from .vita_pkg import decrypted_source
             data = resolved[0]
@@ -342,7 +391,7 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
     client = client or GitHubClient()
     cache = Path(cache) if cache else cache_directory()
     source, output = no_links(source).resolve(), no_links(output)
-    require(source.is_dir(), 'Choose the decrypted game folder containing eboot.bin, not a PKG.')
+    require(source.is_dir(), 'Choose the matching decrypted game folder, or a PKG with its matching work.bin.')
     require(not os.path.lexists(output) and output.parent.is_dir() and independent(source, output.resolve()),
             'Choose a NEW output folder outside the source game folder. Existing folders are never replaced.')
     data, package, assets = resolved
@@ -351,7 +400,8 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
     check_cancel(cancel)
     for row in data['files']:
         verify(beneath(source, row['path']), row['source'], cancel, progress)
-    needed = sum(r['target']['bytes'] + r['patch']['bytes'] for r in data['files']) + 64 * 1024**2
+    extras = data.get('extras',[])
+    needed = sum(r['target']['bytes'] + r['patch']['bytes'] for r in data['files']) + sum(r['asset']['bytes'] for r in extras) + 64 * 1024**2
     require(shutil.disk_usage(output.parent).free >= needed, 'Not enough free space for the verified overlay.')
     downloads = {}
     for row in data['files']:
@@ -359,7 +409,12 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
         path = beneath(package, p['name']) if package else client.download(assets[p['name']], cache, cancel, progress)
         verify(path, p, cancel, progress)
         downloads[p['name']] = path
-    auth = bytes.fromhex(data['auth']['hex'])
+    for row in extras:
+        item = row['asset']
+        path = beneath(package,item['name']) if package else client.download(assets[item['name']],cache,cancel,progress)
+        verify(path,item,cancel,progress)
+        downloads[item['name']] = path
+    auth = bytes.fromhex(data['auth']['hex']) if data['auth'] else None
     with tempfile.TemporaryDirectory(prefix='.retro-vita-', dir=str(output.parent)) as temp:
         result = Path(temp) / 'result'
         tree = result / 'rePatch' / data['title_id']
@@ -379,9 +434,16 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
                            (index - 1 + (fraction or 0)) / len(data['files']))
                 decode(engine, src, delta, dest, row['target']['bytes'], cancel, part_progress)
                 verify(dest, row['target'], cancel)
-        auth_matches(tree / 'eboot.bin', auth)
-        (tree / 'self_auth.bin').write_bytes(auth)
-        verify(tree / 'self_auth.bin', dict(bytes=144, sha256=data['auth']['sha256']), cancel)
+        for row in extras:
+            item = row['asset']
+            dest = beneath(tree,row['path'])
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            copy_verified(downloads[item['name']],dest,item['bytes'],item['sha256'],cancel)
+            verify(dest,item,cancel,progress)
+        if auth is not None:
+            auth_matches(tree / 'eboot.bin', auth)
+            (tree / 'self_auth.bin').write_bytes(auth)
+            verify(tree / 'self_auth.bin', dict(bytes=144, sha256=data['auth']['sha256']), cancel)
         for row in data['files']:
             verify(beneath(source, row['path']), row['source'], cancel)
         guide = GUIDE if data['title_id'] == 'PCSG00264' else (
@@ -391,8 +453,9 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
             'This overlay has not been verified on physical hardware; it is not a Vita3K PKG.')
         (result / 'README-INSTALL.txt').write_text(guide + '\n', encoding='utf-8')
         (result / 'VERIFIED.json').write_text(json.dumps(dict(schema=data['schema'], build=data['build'],
-            title_id=data['title_id'], files={r['path']: r['target'] for r in data['files']},
-            sanitized_auth_sha256=data['auth']['sha256'], originals_unchanged=True,
+            title_id=data['title_id'], files={**{r['path']: r['target'] for r in data['files']},
+                **{r['path']:{key:r['asset'][key] for key in ('bytes','sha256')} for r in extras}},
+            sanitized_auth_sha256=data['auth']['sha256'] if auth else None, originals_unchanged=True,
             physical_runtime_verified=False), indent=2) + '\n', encoding='utf-8')
         check_cancel(cancel)
         no_links(output)

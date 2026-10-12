@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "version": "0.5.12",
+  "game_version": "0.1.13",
+  "date": "2026-10-12",
+  "local_only": true,
+  "published": false,
+  "source_pushed": false,
+  "unit_tests": {
+    "total": 260,
+    "skipped": 4,
+    "failures": 0
+  },
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.12",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.12",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": true,
+    "license_required_for_pkg_patching": false
+  },
+  "whole_pkg_zip_roundtrip": true,
+  "no_license_argument": true,
+  "native_installer_required_for_patching": false,
+  "original_pkg_unchanged": true,
+  "output_matches_previously_native_verified_48_file_build": true,
+  "gameplay_tested": false,
+  "physical_vita_tested": false,
+  "app": {
+    "name": "Retro-Trans.exe",
+    "bytes": 18029737,
+    "sha256": "fe63932ae1a158d069c7788fd07ff08693a29881132764b9effae9ab4026b8dd"
+  },
+  "app_zip": {
+    "name": "Retro-Trans-Windows.zip",
+    "bytes": 17800691,
+    "sha256": "6947285c3a4b503fb4f482301d8622da76614605ec0f8f1f625f5e9774c93a53"
+  },
+  "patch_zip": {
+    "name": "Cross-Ange-English-0.1.13-Vita-PKG-xdelta.zip",
+    "bytes": 944874396,
+    "sha256": "db9e350049559798ab90b71b3fdc60944de4a005a22e50953e68a998985c2ffa"
+  },
+  "translated_pkg": {
+    "name": "Cross-Ange-English-0.1.13-RT-0.5.12-No-License.pkg",
+    "bytes": 944821248,
+    "sha256": "59bd8f558f8b657d6a298fa0760b7867f67475c579d531fbfffa9c69143d7c8d"
+  }
+}

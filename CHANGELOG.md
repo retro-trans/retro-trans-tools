@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.5.16 — Small-download local PKG Automatic
+
+- Publish the Windows app at the user's request. Automatic downloads small component patches, decrypts the original locally using its matching work.bin/.rif, then rebuilds and verifies an English PKG. Cross Ange's translation download is about 5.4 MB; the native runtime downloads separately on first use. Allow 6 GB temporary space.
+- Generic hardware rePatch discovers profiles by game identity; added credits/font attribution and every output are hash-verified. Retain manual CPK patching, ordinary binary routes, CHD and save conversion. Never download or bundle licenses or package-size whole-PKG deltas.
+- Handle transient Windows sharing locks safely, preserve originals/licenses/emulator data/saves, and retain GitHub CLI access for private profiles. Public releases work without sign-in, subject to GitHub's anonymous request limits.
+- Validation: 257 tests with four platform skips; frozen Automatic and actual UI rebuilt Cross Ange's exact English PKG, each verifying all 48 installed files. Full gameplay and physical-Vita testing remain outstanding. See the local proof and release validation records.
+
+## 0.5.15 — Return to installed CPK patching (local)
+
+- Verification: the 251-test suite passed with four platform skips; frozen startup reports installed CPK patching and disabled whole-PKG support. The actual Apply xdelta UI produced Cross Ange's exact complete English CPK; optional metadata and credits/font extras also passed. See `docs/builds/v0.5.15-local-validation.json`. Previous app bundles are archived outside dist.
+
+- Withdraw local whole-PKG builds 0.5.12–0.5.14 and remove their Automatic, Vita3K PKG and CLI patch routes. PKG selection now explains original installation and installed CPK input; hardware rePatch and ordinary binary/manual patching remain available.
+- Keep the existing published tools 0.5.4 available for Apply xdelta. Original-game installation requires the matching license; CPK patching does not. No new tools release or source push is authorized by this update.
+- Preserve historical proof records and a local source snapshot of the withdrawn route. Existing game installations, licenses and saves are untouched.
+
+## 0.5.14 — Generic hardware rePatch discovery (local build)
+
+- Verification: 270 tests passed with four platform-specific skips. Frozen startup and the published Cross Ange hardware route passed, including isolated native extraction, all three overlay files, unchanged original PKG and license, and no executable/authentication replacement. See `docs/builds/v0.5.14-local-validation.json`. Physical-Vita gameplay remains untested.
+
+- Discover hardware rePatch profiles and ZIPs by original PKG identity, with private GitHub access and a legacy Z3 fallback. Keep hardware extraction's matching local license separate from license-free whole-PKG patching.
+- Support asset-only overlays without an executable/authentication replacement, plus bounded, hash-verified added credit pictures and attribution text. Retain executable authentication requirements when an executable changes.
+- Add the hardware CLI route, clearly require the same game's work.bin at installation, and preserve source files, licenses, emulator configuration and saves. This app build remains local and is not published.
+
+## 0.5.13 — Hardware candidate superseded locally
+
+- The initial generic hardware candidate passed 268 unit tests and startup, but its real published Cross Ange test was blocked by an unrelated legacy Z3 profile's internal build label. Superseded by local 0.5.14, which filters game identity before enforcing matching release versions and includes a regression. This candidate was not published.
+
+## 0.5.12 — Whole-PKG patching without a license (local test build)
+
+- Verification: 260 tests passed with four platform-specific skips; frozen Windows startup and absence of PKG license inputs passed. The packaged executable applied Cross Ange's local whole-PKG ZIP without a license argument and reproduced the previously native-verified English package exactly, preserving the original. See `docs/builds/v0.5.12-local-validation.json`.
+- Automatic and Vita3K PKG now apply xdelta directly to encrypted package bytes. Remove the license input and license CLI argument from this route. The user's matching work.bin/.rif is needed separately when installing the output in Vita3K.
+- Add generic VITA-PKG-XDELTA.json profiles and whole-PKG ZIP discovery, exact source/delta/output size and SHA-256 checks, safe ZIP extraction, cancellation and collision-safe output publication. Preserve hardware rePatch as a separate license-based extraction flow.
+- Reject the old per-file PKG profiles in the new route. Automatic downloads require a published whole-PKG profile; local testing uses Vita → Vita3K PKG → Local patch.
+- Keep v0.5.11 withdrawn. This build and Cross Ange's approximately 945 MB test delta remain local; no new release is authorized.
+
 ## 2026-10-12 — Withdraw v0.5.11
 
 - Removed the GitHub release and its EXE, ZIP and update-metadata downloads at the user's explicit request. This version required a matching local license during Vita PKG patching.

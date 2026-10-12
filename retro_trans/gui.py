@@ -88,9 +88,9 @@ class Application(tk.Tk):
         self.vita_source, self.vita_output = tk.StringVar(), tk.StringVar()
         self.vita_license = tk.StringVar()
         self.vita_game = tk.StringVar(value='Hardware rePatch')
-        self.vita_summary = tk.StringVar(value='PCSG00264 v01.00 • Creates a hardware rePatch folder')
+        self.vita_summary = tk.StringVar(value='Detects the game and downloads its hardware rePatch translation')
         self.vita_note = tk.StringVar(value='Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
-                                    'Your license stays local. Originals, emulator setup and saves stay untouched.')
+                                    'Use the matching work.bin for this game; leave Local patch blank to download its overlay patches.')
         sidecar = application_root() / vita_repatch.MANIFEST
         self.vita_description = tk.StringVar(value=str(sidecar) if sidecar.is_file() else '')
         self.mx_experimental = tk.BooleanVar(value=False)
@@ -699,7 +699,7 @@ class Application(tk.Tk):
             self.plan = VitaAutomaticPlan(self.selection[1])
             self.route.set(self.plan.summary)
             self.detail.set('Select your matching work.bin or .rif, then click Patch. '
-                            'The translation ZIP downloads automatically; your original stays unchanged.')
+                            'The small translation ZIP downloads automatically; the PKG is rebuilt locally. Allow 6 GB free.')
             self.auto_output_label.configure(text='Translated PKG:')
             self.auto_output_button.configure(text='Save as…')
             self.output_format.set('Original format')
@@ -824,7 +824,7 @@ class Application(tk.Tk):
             self.start(english,'vita_pkg')
             return
         def work(cancel, progress):
-            result = vita_repatch.apply(source, output, description or None, self.client,
+            result = vita_repatch.apply(source, output, description or None, self.client if description else None,
                                        cancel=cancel, progress=progress, work_bin=work_bin)
             guide = result/'README-INSTALL.txt'
             return result, guide.read_text(encoding='utf-8') if guide.is_file() else vita_repatch.GUIDE
@@ -836,17 +836,20 @@ class Application(tk.Tk):
         self.vita_output_label.configure(text='Translated PKG:' if english else 'New output:')
         self.vita_patch_label.configure(text='Local patch (optional):')
         self.vita_summary.set('Detects the game and downloads its translation • Windows' if english else
-                              'Local profile, or SRW Z3 PCSG00264 when left blank')
+                              'Detects the game and downloads its hardware rePatch translation')
         self.vita_note.set('Uses your original PKG and matching local work.bin or .rif.\n'
-                          'Leave Local patch blank for automatic download; needs 6 GB free.' if english else
+                          'Leave Local patch blank: small download, local rebuilding; needs 6 GB free.' if english else
                           'Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
-                          'Your license stays local. Originals, emulator setup and saves stay untouched.')
+                          'Use the matching work.bin for this game; leave Local patch blank to download its overlay patches.')
         self.update_action()
 
     def vita_instructions(self):
         english = self.vita_game.get() == 'Vita3K PKG'
         messagebox.showinfo('Translated PKG for Vita3K' if english else 'Physical Vita rePatch',
-                            vita_translation.GUIDE if english else vita_repatch.GUIDE,parent=self)
+                            vita_translation.GUIDE if english else
+                            'Select the original game PKG, its matching local work.bin and a new output folder. '
+                            'Leave Local patch blank for the matching hardware translation. Copy rePatch/<TITLE_ID> '
+                            'to ux0:rePatch/<TITLE_ID> with the original game and compatible rePatch installed.',parent=self)
 
     def set_busy(self, busy):
         self.busy = busy

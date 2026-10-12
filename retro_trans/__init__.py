@@ -1,3 +1,3 @@
 """Retro Trans: verified GitHub release patching."""
 
-__version__ = "0.5.11"
+__version__ = "0.5.16"

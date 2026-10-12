@@ -1,3 +1,22 @@
+# Hardware Vita rePatch
+
+Retro Trans **0.5.16** supports generic game profiles. In **Vita > Hardware rePatch**, select the original PKG, its matching game work.bin and a new output folder. Leave Local patch blank for matching release discovery, or select the hardware ZIP. Original game installation and compatible rePatch are required on the Vita. Cross Ange PCSG00597 uses an asset-only overlay, preserving its executable and authentication. Physical-Vita gameplay remains unverified.
+
+Profiles may include bounded added credit images and attribution text. Executable patches still require sanitized auth. The legacy Z3 profile remains a fallback for PCSG00264. Never bundle or automatically download licenses.
+
+The following records the older Z3-specific route.
+
+Generic profiles use `retro-trans-vita-repatch-v1`: title/application/build labels,
+optional minimum app version, original PKG size/hash/content ID under `package`,
+and hash-locked source/target/delta records under `files`. Publish the identical
+`VITA-REPATCH.json` separately and inside a flat `*-Vita-rePatch-patches.zip`.
+Asset-only overlays use `auth: null` and omit `eboot.bin`; executable overlays
+still require verified sanitized auth. Optional `extras` contain only bounded
+credit PNG/text assets with output paths and exact asset identities. The ZIP
+must match this inventory exactly and remain below 256 MiB. These additions
+require tools 0.5.16. No package scripts, licenses or complete game
+archives belong in the release ZIP.
+
 # Vita rePatch — SRW Z3 Jigoku-hen
 
 **Original PKG + matching work.bin → Create rePatch → copy to Vita.**

@@ -34,7 +34,7 @@ class VitaAutomaticPlan:
     def details(self):
         return (self.source.label + '\n\nThe app will find the newest published translation '
                 'matching your complete original PKG hash and download its patch ZIP when you click Patch. '
-                'Select your matching local work.bin or .rif. Only translation assets are downloaded; '
+                'Select your matching local work.bin or .rif. Small translation patches are downloaded and the PKG is rebuilt locally; '
                 'your game package and license are not uploaded. Private releases can use your existing '
                 'GitHub CLI sign-in. The translated PKG is verified in an isolated Vita3K installation. '
                 'Use the Vita tab for hardware rePatch or a local patch override.')

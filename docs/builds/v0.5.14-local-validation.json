@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-12",
+  "game_version": "0.1.13",
+  "tools_version": "0.5.14",
+  "tools_build_published": false,
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.14",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.14",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": true,
+    "license_required_for_pkg_patching": false
+  },
+  "frozen_hardware_automatic_passed": true,
+  "initial_download_cache_empty": true,
+  "local_patch_selected": false,
+  "native_original_pkg_extraction_verified": true,
+  "matching_license_used_locally": true,
+  "original_pkg_unchanged": true,
+  "license_unchanged": true,
+  "license_included": false,
+  "executable_replaced": false,
+  "authentication_replaced": false,
+  "verified_output_files": {
+    "cpk/Ange.cpk": {
+      "bytes": 902054728,
+      "sha256": "4d6b444ee37994d5282a8fd377cee964f056a68e7a2be9a1f0b075b761601a3a"
+    },
+    "sce_sys/manual/025.png": {
+      "bytes": 47967,
+      "sha256": "d23d30091abb6cbc575bcb954cb5a42d126185bcf769d6bb6ea189e8ce959cf2"
+    },
+    "sce_sys/font-license.txt": {
+      "bytes": 4879,
+      "sha256": "fe3d5478ef544a9b4b9080eaa08209d9e98873d5009e6da76ae9023b704e8439"
+    }
+  },
+  "app": {
+    "name": "Retro-Trans.exe",
+    "bytes": 18029468,
+    "sha256": "04c9928f353b280bd8dd6eb5d62dda035977bf11f61fda0502b771fa649c897b"
+  },
+  "suite_tests": {
+    "total": 270,
+    "skipped": 4,
+    "failures": 0
+  },
+  "additional_download_regressions": {
+    "total": 11,
+    "failures": 0
+  },
+  "physical_vita_tested": false,
+  "manual_credits_on_hardware_verified": false
+}

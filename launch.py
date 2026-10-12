@@ -16,6 +16,11 @@ def diagnose(path):
     try:
         app = Application(startup=False, visible=False)
         app.update_idletasks()
+        app.vita_game.set('Vita3K PKG')
+        license_controls = app.tabs[3].grid_slaves(row=2)
+        if not hasattr(app, 'auto_vita_license') or not license_controls or not all(widget.grid_info() for widget in license_controls):
+            raise RuntimeError('Local PKG rebuilding requires a matching-license input.')
+        app.vita_game.set('Hardware rePatch')
         catalog = load_catalog()
         if not GUIDE.read_text(encoding="utf-8").strip():
             raise RuntimeError("Bundled Z3 save instructions are missing.")
@@ -45,7 +50,8 @@ def diagnose(path):
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
             chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
             mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
-            vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True)
+            vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
+            whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=True,license_required_for_pkg_patching=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:
@@ -66,19 +72,26 @@ if __name__ == "__main__":
         previous_excepthook(exc_type, exc, tb)
     sys.excepthook = log_uncaught
     args = sys.argv[1:]
-    if args and args[0] == '--vita-pkg':
+    if args and args[0] in ('--vita-pkg','--vita-repatch'):
+        hardware = args[0] == '--vita-repatch'
         import argparse
         parser = argparse.ArgumentParser(description='Translate an original Vita PKG using its release profile.')
         parser.add_argument('--package',required=True)
-        parser.add_argument('--license',required=True)
         parser.add_argument('--patch',help='Local ZIP/JSON; omit to download the matching translation automatically.')
         parser.add_argument('--output',required=True)
+        parser.add_argument('--license',required=True,help='Matching local game work.bin/.rif; never downloaded.')
         options = parser.parse_args(args[1:])
-        from retro_trans.vita_translation import apply
+        if hardware:
+            from retro_trans.vita_repatch import apply
+        else:
+            from retro_trans.vita_translation import apply
         try:
-            with diagnostics.operation('vita_pkg'):
-                apply(options.package,options.license,options.output,options.patch,
-                      progress=lambda message,fraction: diagnostics.progress(message))
+            with diagnostics.operation('vita_repatch' if hardware else 'vita_pkg'):
+                progress=lambda message,fraction: diagnostics.progress(message)
+                if hardware:
+                    apply(options.package,options.output,options.patch,work_bin=options.license,progress=progress)
+                else:
+                    apply(options.package,options.license,options.output,options.patch,progress=progress)
         except Exception as exc:
             diagnostics.exception(exc)
             sys.exit(1)

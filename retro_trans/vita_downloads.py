@@ -112,8 +112,10 @@ def asset(item, repo, tag, maximum):
 
 
 @contextmanager
-def automatic_description(pkg, client=None, cache=None, cancel=None, progress=None):
-    from . import vita_translation as vita
+def automatic_description(pkg, client=None, cache=None, cancel=None, progress=None, profile=None):
+    if profile is None:
+        from . import vita_translation as profile
+    vita = profile
     content = package_content(pkg)
     client = client or VitaReleaseClient()
     cache = Path(cache) if cache else cache_directory()
@@ -141,11 +143,12 @@ def automatic_description(pkg, client=None, cache=None, cancel=None, progress=No
             metadata = asset(profiles[0], repo, tag, vita.MAX_METADATA)
             path = client.download(metadata, cache, cancel, progress)
             data = vita.read_description(path.read_bytes())
-            require(data['build'] == tag[1:], 'Vita profile version differs from release.')
-            if data['content_id'] != content or data['package']['bytes'] != Path(pkg).stat().st_size:
+            package = data.get('package',{})
+            if data.get('content_id',package.get('content_id')) != content or package.get('bytes') != Path(pkg).stat().st_size:
                 continue
+            require(data['build'] == tag[1:], 'Vita profile version differs from release.')
             zips = [item for item in items if isinstance(item.get('name'), str)
-                    and item['name'].endswith('-Vita-PKG-patches.zip')]
+                    and item['name'].endswith(getattr(vita, 'ZIP_SUFFIX', '-Vita-PKG-patches.zip'))]
             require(len(zips) == 1, 'This Vita release needs exactly one patch ZIP.')
             archive = asset(zips[0], repo, tag, vita.MAX_ZIP)
             candidates.setdefault(repo, []).append((data, archive))
@@ -163,6 +166,6 @@ def automatic_description(pkg, client=None, cache=None, cancel=None, progress=No
     data, archive = next(iter(matches.values()))
     report(progress, 'Downloading ' + data['name'] + '…', None)
     path = client.download(archive, cache, cancel, progress)
-    with vita.archive_description(path, cancel, progress) as resolved:
+    with vita.archive_description(path, cancel=cancel, progress=progress) as resolved:
         require(resolved[0] == data, 'Downloaded Vita ZIP differs from its published profile.')
         yield resolved

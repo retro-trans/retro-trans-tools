@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "version": "0.5.16",
+  "verified_at": "2026-10-12T11:37:38.815096+00:00",
+  "platform": "windows-x86_64",
+  "unit_tests": {
+    "total": 257,
+    "skipped": 4,
+    "failures": 0
+  },
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.16",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.16",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true
+  },
+  "packaged_next_launch_update_passed": true,
+  "update_backup_and_settings_preserved": true,
+  "zip_contains_same_executable_and_notices": true,
+  "assets": [
+    {
+      "name": "Retro-Trans.exe",
+      "bytes": 18024533,
+      "sha256": "3cdb81e749eac2afc2fd18b95699f19937745b586e56cbd68bb31b1648e9d6c0"
+    },
+    {
+      "name": "Retro-Trans-Windows.zip",
+      "bytes": 17796245,
+      "sha256": "d8eb6eeed7a0835cc9af1655aed5fa4a4dde0ac0c15b4a0fdd2400fbc910d203"
+    },
+    {
+      "name": "UPDATE.json",
+      "bytes": 212,
+      "sha256": "ada076f8018f03a1bc4f43a351797257d746a5837233e6d7b9091ef67e0217fd"
+    }
+  ],
+  "local_original_license_required": true,
+  "game_or_license_bundled": false,
+  "whole_pkg_xdelta_supported": false,
+  "prior_native_conversion": {
+    "frozen_automatic_passed": true,
+    "actual_automatic_ui_passed": true,
+    "installed_files_verified": 48,
+    "same_0_5_16_conversion_engine": true,
+    "proof": "https://github.com/retro-trans/Cross-Ange/blob/main/docs/pkg-rebuild-automatic-0.1.13.json"
+  },
+  "gameplay_tested": false,
+  "physical_vita_tested": false
+}

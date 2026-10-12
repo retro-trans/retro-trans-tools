@@ -16,22 +16,27 @@ from test_vita_translation import fixture, identity
 
 
 class Releases(GitHubClient):
-    def __init__(self, data, assets, pkg):
+    def __init__(self, data, assets, pkg, profile=v):
+        self.profile = profile
         self.calls = []
         self.blobs = {}
         self.records = {}
         self.add('retro-trans/fixture', data, assets, pkg)
 
     def add(self, repo, data, assets, pkg):
+        v = self.profile
         data = copy.deepcopy(data)
-        data['package'] = identity(pkg)
+        if v.SCHEMA != 'retro-trans-vita-repatch-v1' or 'package' in data:
+            content = data.get('package',{}).get('content_id')
+            data['package'] = identity(pkg)
+            if content is not None:data['package']['content_id']=content
         raw = json.dumps(data).encode()
         archive = io.BytesIO()
         with zipfile.ZipFile(archive, 'w') as bundle:
             bundle.writestr(v.MANIFEST, raw)
             for name, value in assets.items(): bundle.writestr(name, value)
         rows = []
-        for name, raw in ((v.MANIFEST, raw), ('Fixture-Vita-PKG-patches.zip', archive.getvalue())):
+        for name, raw in ((v.MANIFEST, raw), ('Fixture'+getattr(v, 'ZIP_SUFFIX', '-Vita-PKG-patches.zip'), archive.getvalue())):
             index = len(self.blobs) + 1
             url = 'https://api.github.com/repos/' + repo + '/releases/assets/' + str(index)
             self.blobs[url] = raw
@@ -70,6 +75,34 @@ class DownloadTests(unittest.TestCase):
 
     def run_download(self, cancel=None):
         return d.automatic_description(self.pkg, self.client, self.root/'cache', cancel)
+
+    def test_generic_hardware_profile_uses_nested_content_id_and_keyword_context(self):
+        from retro_trans import vita_repatch as hardware
+        data = dict(schema=hardware.SCHEMA,title_id='PCSG00597',app_version='01.00',
+            name='Hardware fixture',build='0.1.13',auth=None,minimum_app_version='0.5.13',
+            package=dict(content_id=self.data['content_id']),files=[dict(path='cpk/Ange.cpk',
+                source=identity(b'original'),target=identity(b'translated'),
+                patch=dict(name='hardware.xdelta',**identity(b'delta')))])
+        client = Releases(data,{'hardware.xdelta':b'delta'},self.pkg.read_bytes(),profile=hardware)
+        cancel = threading.Event()
+        with d.automatic_description(self.pkg,client,self.root/'hardware-cache',cancel,
+                progress=lambda *args:None,profile=hardware) as (found,folder,assets):
+            self.assertEqual(found['title_id'],'PCSG00597')
+            self.assertEqual((folder/'hardware.xdelta').read_bytes(),b'delta')
+            self.assertIsNone(assets)
+
+    def test_unrelated_legacy_hardware_build_does_not_block_game_discovery(self):
+        from retro_trans import vita_repatch as hardware
+        data = dict(schema=hardware.SCHEMA,title_id='PCSG00264',app_version='01.00',
+            name='Old hardware fixture',build='test18',auth=None,
+            files=[dict(path='DATA/x.cpk',source=identity(b'a'),target=identity(b'b'),
+                patch=dict(name='legacy.xdelta',**identity(b'delta')))])
+        client = Releases(data,{'legacy.xdelta':b'delta'},self.pkg.read_bytes(),profile=hardware)
+        client.records['retro-trans/fixture'][0]['tag_name']='v0.9.0'
+        for item in client.records['retro-trans/fixture'][0]['assets']:
+            item['browser_download_url']=item['browser_download_url'].replace('/vtest18/','/v0.9.0/')
+        with self.assertRaisesRegex(PatchError,'No automatic Vita translation'), \
+                d.automatic_description(self.pkg,client,self.root/'legacy-cache',profile=hardware):pass
 
     def test_detect_download_and_cache_two_titles(self):
         for title in ('PCSG00597', 'PCSE12345'):

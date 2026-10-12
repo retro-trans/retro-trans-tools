@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "version": "0.5.16",
+  "local_build_only": true,
+  "source_pushed": false,
+  "release_published": false,
+  "unit_tests": {
+    "total": 257,
+    "skipped": 4,
+    "failures": 0
+  },
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.16",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.16",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true
+  },
+  "frozen_automatic_small_download_and_native_install_passed": true,
+  "actual_automatic_ui_worker_passed": true,
+  "game_files_verified": 48,
+  "matching_local_license_required_for_pkg_patching": true,
+  "whole_pkg_xdelta_supported": false,
+  "manual_cpk_and_hardware_repatch_retained": true,
+  "original_game_license_emulator_and_saves_preserved": true,
+  "game_proof": "https://github.com/retro-trans/Cross-Ange/blob/main/docs/pkg-rebuild-automatic-0.1.13.json"
+}

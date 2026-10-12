@@ -1,6 +1,12 @@
 # Retro Trans
 
-The Windows release includes Vita PKG patching in the Automatic tab. Older Mac
+**Vita PKG release withdrawn:** v0.5.11 and its downloadable assets were removed
+on 2026-10-12 at the user's request because patching required `work.bin`/`.rif`.
+The remaining latest release, v0.5.4, does not provide the Automatic Vita PKG flow
+described below. Those instructions document the withdrawn build; a replacement
+that patches whole PKGs without a license has not been released.
+
+Older Mac
 0.5.6 test builds remain available from the
 [validated Mac workflow](https://github.com/retro-trans/retro-trans-tools/actions/runs/37947388822).
 See [Mac test-build instructions](docs/MAC_TEST_BUILD.md); Vita PKG output is

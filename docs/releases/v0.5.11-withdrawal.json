@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "repo": "retro-trans/retro-trans-tools",
+  "version": "0.5.11",
+  "date": "2026-10-12",
+  "status": "withdrawn",
+  "reason": "User requested removal of the version requiring a license during Vita PKG patching.",
+  "github_release_deleted": true,
+  "release_assets_deleted": ["Retro-Trans.exe", "Retro-Trans-Windows.zip", "UPDATE.json"],
+  "source_tag_retained": true,
+  "historical_validation_retained": true,
+  "latest_remaining_release": "v0.5.4",
+  "replacement_released": false
+}

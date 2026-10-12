@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-12 — Withdraw v0.5.11
+
+- Removed the GitHub release and its EXE, ZIP and update-metadata downloads at the user's explicit request. This version required a matching local license during Vita PKG patching.
+- Retained the source tag, prior validation records and local builds. Older releases are unchanged; v0.5.4 is now the latest published release and does not support the withdrawn Automatic Vita PKG route.
+- Marked the Vita instructions as historical. A whole-PKG xdelta replacement has not been published.
+
 ## 0.5.11 — Vita packages in Automatic
 
 - Verification: 247 tests passed with four platform-specific skips; frozen Windows health checks and 150%/200% Vita-field layout checks passed. The actual Automatic UI worker downloaded the private Cross Ange ZIP without a local patch selection and verified all 48 installed files in the completed 0.1.13 PKG. See `docs/releases/v0.5.11-validation.json`.

@@ -1,10 +1,16 @@
 # Profile-driven Vita patching
 
+**Availability:** v0.5.11 was withdrawn on 2026-10-12, including its downloadable
+assets. The instructions below describe that historical build, which required a
+license while patching. The remaining latest release, v0.5.4, does not provide
+Automatic Vita PKG patching. A replacement without a patch-time license has not
+been released.
+
 The **Automatic** tab recognizes original Vita PKGs and downloads their matching translation ZIP when you click **Patch**. Use the **Vita** tab for a local patch override or a **Hardware rePatch** overlay. Each release profile describes its game, exact source edition and patch inventory. Adding a game with a supported format requires a profile, not another game-specific panel or code registry.
 
 ## Vita3K PKG
 
-This flow is available in the **0.5.11 Windows release** and newer.
+This flow was verified in the now-withdrawn **0.5.11 Windows release**.
 
 1. In **Automatic**, browse to your original Vita `.pkg`, or use **Folder…** to find one. The title ID appears and **Matching license** replaces the output-format field. Browsing and scanning only inspect package headers.
 2. Select your matching local NoNpDrm `work.bin` or `.rif` and choose a new **Translated PKG** filename.

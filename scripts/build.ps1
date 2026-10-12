@@ -9,6 +9,8 @@ if (-not (Test-Path -LiteralPath $BuildPython)) {
 $env:PYINSTALLER_CONFIG_DIR = Join-Path (Get-Location) "build\pyinstaller-cache"
 & $BuildPython -m pip install --disable-pip-version-check --no-cache-dir "pyinstaller==6.22.3"
 if ($LASTEXITCODE -ne 0) { throw "Could not install PyInstaller." }
+& $BuildPython -m pip install --disable-pip-version-check --no-cache-dir -e .
+if ($LASTEXITCODE -ne 0) { throw "Could not install application dependencies." }
 & $BuildPython -m unittest discover -s tests -v
 if ($LASTEXITCODE -ne 0) { throw "Tests failed; executable was not built." }
 & $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' --distpath $OutputDirectory launch.py
@@ -23,6 +25,8 @@ if (Test-Path -LiteralPath $TkLicense) {
 }
 Copy-Item -LiteralPath README.md,THIRD_PARTY_NOTICES.md -Destination $OutputDirectory
 Copy-Item -LiteralPath 'retro_trans\resources\XDELTA-LICENSE.txt' -Destination $LicensesDirectory
+& $BuildPython -m retro_trans.dependency_notices $LicensesDirectory
+if ($LASTEXITCODE -ne 0) { throw "Could not package cryptography dependency notices." }
 & $BuildPython -c "from retro_trans.chd import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'chdman')
 if ($LASTEXITCODE -ne 0) { throw "Could not package CHD engine notices." }
 & $BuildPython scripts\make_update_metadata.py $OutputDirectory

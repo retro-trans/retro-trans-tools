@@ -1,10 +1,10 @@
 # Retro Trans
 
-Mac feature-parity test builds are available from the
-[validated Mac workflow](https://github.com/retro-trans/retro-trans-tools/actions/runs/37947388822)
-on `codex/macos-feature-parity`.
-See [Mac test-build instructions](docs/MAC_TEST_BUILD.md). The published Windows
-release is unchanged; this is not a Mac release announcement.
+The Windows release includes Vita PKG patching in the Automatic tab. Older Mac
+0.5.6 test builds remain available from the
+[validated Mac workflow](https://github.com/retro-trans/retro-trans-tools/actions/runs/37947388822).
+See [Mac test-build instructions](docs/MAC_TEST_BUILD.md); Vita PKG output is
+currently Windows-only.
 
 A compact Windows desktop toolkit for translation releases from
 [retro-trans](https://github.com/retro-trans). Download the standalone EXE or ZIP
@@ -30,7 +30,9 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
-- **Vita rePatch — Z3:** select your original PCSG00264 v01.00 **PKG**, its
+- **Automatic — Vita PKG:** from 0.5.11, browse to your original Vita PKG in **Automatic**. The app detects its title ID and shows **Matching license**; select your local `work.bin`/`.rif`, choose a new translated PKG filename and click **Patch**. The newest matching translation ZIP downloads automatically. The app verifies source files, applies patches, rebuilds encrypted PFS and verifies an isolated installation before saving. Browsing and scanning inspect headers without downloading patches; exact source matching happens on Patch. Private releases can use your existing GitHub CLI sign-in; public releases need none. Only translation assets are downloaded; your game and license stay local. Future games with supported formats use new profiles. See [generic Vita flow](docs/VITA_PKG.md).
+- **Vita — local override:** select **Vita3K PKG** in the Vita tab to supply a downloaded ZIP or local JSON under **Local patch (optional)**. Leaving it blank uses the same automatic download flow. Temporary Windows file locks are retried in both routes.
+- **Vita — Hardware rePatch:** select your original PCSG00264 v01.00 **PKG**, its
   matching NoNpDrm **work.bin**, and a new output folder, then **Create rePatch**.
   Downloads the official Vita3K tool and runs its package conversion in an
   isolated temporary folder, then verifies and patches the decrypted files.
@@ -178,6 +180,30 @@ those artifacts and optional extras, never the game binaries. The central catalo
 workflow discovers new standard releases hourly; it can also be run manually.
 
 ## Development
+
+### Local diagnostic logs
+
+Use **Open logs** at the bottom of the app after a failure. Share the newest
+`.log` file and its `.log.1` companion if present. Nothing is uploaded
+automatically. Logs contain UTC timestamps, app/OS/Python versions, operation
+IDs, phase changes, download/cache decisions, Vita input mode, file-check
+results, and exception types with code locations. Missing, wrong-size and
+wrong-hash patch failures are distinguished.
+
+Logs deliberately exclude full local paths, account names, raw exception
+messages, URLs/headers, subprocess arguments/output, environment variables,
+work.bin contents, zRIF/keys, game data and save contents. Only recognized
+public Vita patch filenames and public download/patch hashes are recorded.
+Review files before sharing.
+
+- Windows: `%LOCALAPPDATA%\RetroTrans\logs`
+- Mac: `~/Library/Application Support/RetroTrans/logs`
+
+The five newest sessions are retained; each rotates at 512 KiB with one backup
+(about 5 MiB maximum for those sessions). Failure to write a log does not stop
+patching. The logging directory follows `RETRO_TRANS_DATA_DIR` in isolated tests.
+
+### Running from source
 
 The runtime uses Python's standard library and Tkinter. Use Python 3.12+ with
 Tkinter for new builds; the source requires Python 3.8+.

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "version": "0.5.9",
+  "local_build": true,
+  "published": false,
+  "checked_on": "2026-10-12",
+  "unit_tests": {
+    "total": 236,
+    "skipped": 4,
+    "failures": 0
+  },
+  "frozen_health_check": {
+    "ok": true,
+    "version": "0.5.9",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.9",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 107,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true
+  },
+  "automatic_download_without_local_patch": true,
+  "private_release_download_verified": true,
+  "game_title_id": "PCSG00597",
+  "game_version": "0.1.13",
+  "native_pkg_install_verified": true,
+  "installed_file_hashes_verified": 48,
+  "pkg_sha256": "59bd8f558f8b657d6a298fa0760b7867f67475c579d531fbfffa9c69143d7c8d",
+  "standalone_pkg_hash_matches": true,
+  "original_pkg_unchanged": true,
+  "license_unchanged": true,
+  "game_runtime_tested": false,
+  "physical_vita_tested": false,
+  "credentials_bundled": false,
+  "credentials_recorded": false,
+  "artifacts": [
+    {
+      "name": "Retro-Trans.exe",
+      "bytes": 18007163,
+      "sha256": "9ae10f70a4501af80bd3383f73b91252d659ced64a63415e14acbd9168e6874e"
+    },
+    {
+      "name": "Retro-Trans-Windows.zip",
+      "bytes": 17779238,
+      "sha256": "00736de38217072dae944e258aa10efaa71e054cde4b10322649eaea4c1ce79a"
+    }
+  ]
+}

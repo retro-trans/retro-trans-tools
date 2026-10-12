@@ -21,6 +21,7 @@ jobs:
         run: |
           brew install rom-tools
           python -m pip install pyinstaller==6.22.3 certifi==2026.7.22
+          python -m pip install -e .
       - name: Test and package all features
         env:
           GH_TOKEN: ${{ github.token }}
@@ -46,4 +47,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python -m pip install -e .
       - run: python -m unittest discover -s tests -v

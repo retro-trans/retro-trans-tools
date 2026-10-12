@@ -24,6 +24,7 @@ import zipfile
 import sys
 from contextlib import contextmanager
 from . import __version__
+from . import diagnostics
 
 DEFAULT_REPO = "retro-trans/SRW-Z"
 CHUNK = 4 * 1024 * 1024
@@ -163,15 +164,21 @@ class GitHubClient:
         if parsed.hostname == "api.github.com" and os.environ.get("GH_TOKEN"):
             headers["Authorization"] = "Bearer " + os.environ["GH_TOKEN"]
         request = urllib.request.Request(url, headers=headers)
+        endpoint = 'api' if parsed.hostname == 'api.github.com' else ('catalog' if parsed.hostname == 'raw.githubusercontent.com' else 'release_asset')
+        diagnostics.event('network_open', host=parsed.hostname, endpoint=endpoint)
         try:
-            return urllib.request.urlopen(request, timeout=30, context=self.tls_context())
+            response = urllib.request.urlopen(request, timeout=30, context=self.tls_context())
+            diagnostics.event('network_ok', host=parsed.hostname, http_status=getattr(response, 'status', None))
+            return response
         except urllib.error.HTTPError as exc:
+            diagnostics.exception(exc)
             if exc.code == 404:
                 raise PatchError("No published release was found for this repository.") from exc
             if exc.code in (403, 429):
                 raise PatchError("GitHub has limited requests. Please try again later.") from exc
             raise PatchError("GitHub returned HTTP {}. Please try again.".format(exc.code)) from exc
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            diagnostics.exception(exc)
             reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc
             if isinstance(reason, ssl.SSLCertVerificationError):
                 raise PatchError('Could not verify GitHub\'s HTTPS certificate. Check your Mac/PC date '
@@ -267,8 +274,12 @@ class GitHubClient:
         destination = cache / (expected + ".download")
         if destination.is_file() and destination.stat().st_size == asset.size:
             if sha256_file(destination, cancel) == expected:
+                diagnostics.event('download', state='cache_hit', bytes=asset.size, sha256=expected)
                 report(progress, "Using verified download: " + asset.name, 1)
                 return destination
+        if destination.exists():
+            diagnostics.event('download', state='cache_rejected', bytes=asset.size, sha256=expected)
+        diagnostics.event('download', state='started', bytes=asset.size, sha256=expected)
         check_cancel(cancel)
         if shutil.disk_usage(cache).free < asset.size + 8 * 1024 * 1024:
             raise PatchError("Not enough free space in the download cache folder.")
@@ -290,8 +301,10 @@ class GitHubClient:
                     report(progress, "Downloading " + asset.name, done / max(asset.size, 1))
             check_cancel(cancel)
             if done != asset.size or digest.hexdigest() != expected:
+                diagnostics.event('download', state='verification_failed', bytes=done, sha256=digest.hexdigest())
                 raise PatchError("Download verification failed. Please try again.")
             os.replace(temporary, destination)
+            diagnostics.event('download', state='verified', bytes=done, sha256=expected)
             return destination
         finally:
             Path(temporary).unlink(missing_ok=True)

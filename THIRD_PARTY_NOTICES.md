@@ -29,8 +29,24 @@ It is not embedded in Retro Trans, rebuilt, or re-hosted by this project.
 The publisher's SHA-256 and byte size are verified before extraction; all
 archive files and notices remain intact in the temporary engine directory.
 Vita3K's [source and license](https://github.com/Vita3K/Vita3K) remain available
-from its publisher. The custom local PFS helper considered during development
-is not distributed or used by this workflow.
+from its publisher. Hardware rePatch uses the official installer for decryption.
+The new Vita3K PKG-output flow also uses an independently written native PFS/PKG
+writer and verifies its output with a second isolated official installation.
+
+## Vita PFS/PKG format and cryptography
+
+The profile-driven writer follows formats observed in
+[Vita3K/psvpfsparser](https://github.com/Vita3K/psvpfsparser) at
+`d14381f871a69009bd18b2aaec2213a6738bebba` and
+[pkg2zip](https://github.com/mmozeiko/pkg2zip) at
+`9222c4e00235dfe7914e9db0cc352da07e63d9f9`. It contains no copied parser
+implementation. Public format constants have provenance in
+`resources/vita-pfs-format.json`; these are not personal or title-specific licenses.
+
+AES is provided by pyca/cryptography 47.0.0 (Apache-2.0 OR BSD-3-Clause), with
+cffi and pycparser dependencies. Complete dependency license trees, including
+cryptography's bundled component notices, accompany packaged apps. Source:
+https://github.com/pyca/cryptography . No license keys are downloaded or bundled.
 
 ## xdelta3 3.2.0
 

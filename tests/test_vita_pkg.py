@@ -56,6 +56,12 @@ class PkgTests(unittest.TestCase):
         self.assertEqual(zlib.decompress(encoded[6:-4], -10), data)
         self.assertEqual(struct.unpack('>I', encoded[-4:])[0], zlib.adler32(data))
 
+    def test_license_matches_profile_title_for_another_game(self):
+        raw=bytearray(self.pkg.read_bytes());raw[0x37:0x40]=b'PCSE12345';self.pkg.write_bytes(raw)
+        data=bytearray(self.license.read_bytes());data[0x10:0x40]=raw[0x30:0x60];self.license.write_bytes(data)
+        self.assertEqual(p.license_bytes(self.pkg,self.license,'PCSE12345'),data)
+        with self.assertRaises(PatchError):p.license_bytes(self.pkg,self.license,'PCSG00597')
+
     def test_publisher_asset_identity(self):
         self.addCleanup(patch.stopall)
         patch.object(p, 'sys', SimpleNamespace(platform='win32')).start()
@@ -123,7 +129,9 @@ class PkgTests(unittest.TestCase):
             finally:
                 seen.append('exit')
         # Actual folder patching fails; the temporary package context still exits.
-        with patch.object(p, 'decrypted_source', source), patch.object(v, 'local_description'):
+        from test_vita_repatch import fixture
+        with patch.object(p, 'decrypted_source', source), patch.object(v, 'local_description',
+                return_value=(fixture()[0],self.root,None)):
             with self.assertRaises(PatchError):
                 v.apply(self.pkg, self.root/'output', 'profile.json', work_bin=self.license)
         self.assertEqual(seen, ['enter', 'exit'])

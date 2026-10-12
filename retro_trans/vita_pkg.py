@@ -21,9 +21,11 @@ import tempfile
 import time
 import zipfile
 import zlib
+from . import diagnostics
 
 from .core import Asset, GitHubClient, cache_directory, check_cancel, report, valid_hash, valid_size
 from .vita_repatch import require, no_links, independent, output_name, verify
+from .vita_io import temporary_workspace
 
 PKG = dict(bytes=2338423472,
            sha256='3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd')
@@ -31,7 +33,7 @@ API = 'https://api.github.com/repos/Vita3K/Vita3K/releases/tags/continuous'
 URL = 'https://github.com/Vita3K/Vita3K/releases/download/continuous/windows-latest.zip'
 
 
-def license_bytes(pkg, license_path):
+def license_bytes(pkg, license_path, title_id='PCSG00264'):
     with pkg.open('rb') as f:
         header = f.read(128)
     with license_path.open('rb') as f:
@@ -41,7 +43,7 @@ def license_bytes(pkg, license_path):
             struct.unpack_from('>Q', header, 0x18)[0] == pkg.stat().st_size,
             'The PKG is incomplete or unsupported.')
     require(header[0x30:0x60] == data[0x10:0x40] and
-            header[0x37:0x40] == b'PCSG00264', 'The PKG and work.bin do not match PCSG00264.')
+            header[0x37:0x40] == title_id.encode('ascii'), 'The PKG and license do not match '+title_id+'.')
     require(struct.unpack_from('>HHH', data) == (1, 1, 1) and
             struct.unpack_from('<Q', data, 8)[0] == 0x0123456789abcdef and any(data[0x50:0x60]),
             'Use the matching NoNpDrm work.bin, not an account-bound or empty license.')
@@ -187,6 +189,7 @@ def extract_runtime(archive, root, cancel=None):
 
 
 def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
+    diagnostics.event('installer', state='preparing')
     portable = portable_directory(exe)
     portable.mkdir()
     fs.mkdir(parents=True)
@@ -212,6 +215,7 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
     # Upstream CLI accepts zRIF only via argv. It is transiently visible to
     # same-user/system process inspection, never sent to GitHub or persisted.
     del args, secret
+    diagnostics.event('installer', state='running')
     start = time.monotonic()
     try:
         while process.poll() is None:
@@ -219,6 +223,7 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
             require(time.monotonic() - start < 3600, 'PKG conversion timed out. No overlay was created.')
             report(progress, 'Extracting and decrypting your PKG locally…', None)
             time.sleep(0.2)
+        diagnostics.event('installer', state='exited', exit_code=process.returncode)
         require(process.returncode == 0, 'PKG conversion failed. Check your matching work.bin and retry.')
     finally:
         if process.poll() is None:
@@ -229,7 +234,8 @@ def run_installer(exe, pkg, secret, fs, cancel=None, progress=None):
 
 
 @contextmanager
-def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=None, progress=None):
+def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=None, progress=None,
+                     title_id='PCSG00264', workspace=False, package_identity=None):
     require((os.name == 'nt' and platform.machine().lower() in ('amd64', 'x86_64'))
             or (sys.platform == 'darwin' and platform.machine().lower() in ('arm64', 'x86_64')),
             'Direct PKG conversion requires x64 Windows or an Apple Silicon/Intel Mac.')
@@ -245,16 +251,20 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
     with ExitStack() as locks:
         locks.enter_context(read_lock(pkg))
         locks.enter_context(read_lock(license_path))
-        data = license_bytes(pkg, license_path)
+        identities = {'PCSG00264': PKG, 'PCSG00597': dict(bytes=925548400,
+            sha256='962498429645bf92d0171280b075629ff6dc8100f365ce43805d2cd3e897ebcb')}
+        require(package_identity is not None or title_id in identities, 'Select a reviewed release profile for this Vita game.')
+        package_identity = package_identity or identities[title_id]
+        valid_size(package_identity['bytes']); valid_hash(package_identity['sha256'])
+        data = license_bytes(pkg, license_path, title_id)
         license_digest = hashlib.sha256(data).digest()
-        verify(pkg, PKG, cancel, progress)
+        verify(pkg, package_identity, cancel, progress)
         require(shutil.disk_usage(output.parent).free >= 6 * 1024**3,
                 'At least 6 GB of free temporary space is required on the output drive.')
         asset = runtime_asset(client, cancel)
         archive = client.download(asset, cache, cancel, progress)
         verify(archive, dict(bytes=asset.size, sha256=asset.sha256), cancel)
-        with tempfile.TemporaryDirectory(prefix='.retro-pkg-', dir=str(output.parent)) as folder:
-            root = Path(folder)
+        with temporary_workspace(output.parent, progress) as root:
             extractor = extract_mac_runtime if sys.platform == 'darwin' else extract_runtime
             exe = extractor(archive, root/'engine', cancel)
             fs = portable_directory(exe)/'fs'
@@ -262,11 +272,11 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
             del data
             # POSIX read locks are advisory: recheck user inputs after conversion.
             if sys.platform == 'darwin':
-                verify(pkg, PKG, cancel, progress)
-                require(hashlib.sha256(license_bytes(pkg, license_path)).digest() == license_digest,
+                verify(pkg, package_identity, cancel, progress)
+                require(hashlib.sha256(license_bytes(pkg, license_path, title_id)).digest() == license_digest,
                         'work.bin changed during conversion; no overlay was created.')
-            source = fs/'ux0/app/PCSG00264'
+            source = fs/'ux0/app'/title_id
             require((source/'eboot.bin').is_file(),
                     'PKG decryption did not finish. Verify your work.bin; no overlay was created.')
             check_cancel(cancel)
-            yield source
+            yield dict(source=source, root=root, archive=archive) if workspace else source

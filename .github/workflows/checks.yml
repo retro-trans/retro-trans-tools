@@ -14,6 +14,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install application dependencies
+        run: python -m pip install -e .
       - name: Test catalog, releases, UI, xdelta, CHD, saves and updater
         run: python -m unittest discover -s tests -v
       - name: Validate bundled catalog and offline engines

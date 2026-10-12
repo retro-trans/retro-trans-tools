@@ -10,12 +10,15 @@ from unittest.mock import patch
 from retro_trans.gui import Application
 from retro_trans.catalog import Catalog
 from retro_trans import z3_saves, __version__, chd
+from retro_trans import diagnostics
 from retro_trans.ps3 import INSTALLATION_WARNING
 from test_catalog import record, DATA
 from test_z3_saves import inputs
 from test_solutions import grouped_record, content, make_catalog
 from retro_trans.catalog import scan_root
 from retro_trans.solutions import SolutionPlan
+from retro_trans.vita_automatic import VitaAutomaticPlan
+from test_vita_downloads import pkg_bytes
 
 
 @unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native desktop UI')
@@ -39,7 +42,7 @@ class GuiTests(unittest.TestCase):
     def test_tabs_layout_and_long_diagnostics(self):
         app = self.app
         self.assertEqual(app.title(), 'Retro Trans ' + __version__)
-        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita rePatch"])
+        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita"])
         app.geometry("{}x{}".format(*app.minsize()))
         detail = "Hash mismatch: " + "a" * 64 + "\nCheck the binary.\n" * 12
         app.detail.set(detail)
@@ -54,6 +57,28 @@ class GuiTests(unittest.TestCase):
                 self.assertGreater(widget.winfo_height(), 1)
                 self.assertLessEqual(widget.winfo_rootx() + widget.winfo_width(), app.winfo_rootx() + app.winfo_width())
                 self.assertLessEqual(widget.winfo_rooty() + widget.winfo_height(), app.winfo_rooty() + app.winfo_height())
+
+    def test_open_logs_native_folder_and_worker_error_record(self):
+        app = self.app
+        expected = str(Path(self.storage.name)/'RetroTrans/logs')
+        if sys.platform == 'darwin':
+            with patch('retro_trans.gui.subprocess.Popen') as launch:
+                app.open_logs()
+                self.assertEqual(launch.call_args.args[0], ['/usr/bin/open', expected])
+        else:
+            with patch('retro_trans.gui.os.startfile') as launch:
+                app.open_logs()
+                launch.assert_called_once_with(expected)
+        def fail(cancel, progress):
+            progress('Checking /Users/private-user/work.bin', None)
+            raise ValueError('PRIVATE-LICENSE-CONTENT')
+        app.start(fail, 'vita_repatch')
+        for thread in app.threads: thread.join(timeout=5)
+        text = diagnostics.start_session().read_text()
+        self.assertIn('operation_end', text)
+        self.assertIn('ValueError', text)
+        self.assertNotIn('private-user', text)
+        self.assertNotIn('PRIVATE-LICENSE-CONTENT', text)
 
     def test_stale_result_ignored_and_manual_mode_without_recognition(self):
         app = self.app
@@ -99,6 +124,45 @@ class GuiTests(unittest.TestCase):
         self.assertEqual(app.saved_output, Path('new output'))
         self.assertEqual(str(app.folder_button['state']), 'normal')
 
+    def test_generic_vita_pkg_profile_and_worker(self):
+        app=self.app
+        app.notebook.select(3);app.vita_game.set('Vita3K PKG');app.update()
+        app.vita_source.set('any-original.pkg');app.vita_license.set('matching.rif');app.vita_output.set('new.pkg')
+        self.assertEqual(str(app.apply_button['state']),'normal')
+        app.vita_description.set('release-Vita-PKG-patches.zip');app.update()
+        self.assertEqual(str(app.apply_button['state']),'normal')
+        self.assertEqual(app.apply_button['text'],'Create translated PKG')
+        self.assertNotIn('Cross Ange',app.vita_summary.get())
+        jobs=[]
+        with patch.object(app,'start',side_effect=lambda work,kind:jobs.append((work,kind))):app.apply()
+        self.assertEqual(jobs[0][1],'vita_pkg')
+        from retro_trans import vita_translation
+        with patch.object(vita_translation,'apply',return_value=Path('new.pkg')) as apply:
+            result=jobs[0][0](None,None)
+        self.assertEqual(apply.call_args.args[:4],('any-original.pkg','matching.rif','new.pkg','release-Vita-PKG-patches.zip'))
+        self.assertEqual(result[0],Path('new.pkg'))
+        app.job_kind='vita_pkg';app.set_busy(True)
+        self.assertEqual(str(app.apply_button['state']),'disabled')
+        self.assertIn(str(app.readonly_controls[-1]['state']),('disabled',))
+        app.events.put(('done',app.job_id,('vita_pkg',result)));app.poll()
+        self.assertEqual(app.saved_output,Path('new.pkg'))
+        app.vita_game.set('Hardware rePatch');app.update()
+        self.assertEqual(app.vita_source.get(),'')
+        self.assertEqual(app.apply_button['text'],'Create rePatch')
+
+    def test_vita_pkg_blank_patch_requests_automatic_download(self):
+        app = self.app
+        app.notebook.select(3); app.vita_game.set('Vita3K PKG')
+        app.vita_source.set('original.pkg'); app.vita_license.set('matching.rif')
+        app.vita_output.set('new.pkg'); app.update()
+        self.assertEqual(str(app.apply_button['state']), 'normal')
+        self.assertIn('blank', app.vita_note.get())
+        self.assertIn('optional', app.vita_patch_label['text'])
+        with patch.object(app,'start') as start, patch('retro_trans.gui.vita_translation.apply', return_value=Path('new.pkg')) as run:
+            app.apply()
+            start.call_args.args[0](None, None)
+        self.assertEqual(run.call_args.args[:5], ('original.pkg','matching.rif','new.pkg',None,None))
+
     def test_multiple_matches_require_selection(self):
         app = self.app
         node = next(iter(app.catalog.nodes.values()))
@@ -109,6 +173,60 @@ class GuiTests(unittest.TestCase):
         app.file_box.current(0)
         app.select_found()
         self.assertIsNotNone(app.selection)
+
+    def test_automatic_vita_browse_license_and_patch_worker(self):
+        app=self.app
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder)/'original.pkg'
+            source.write_bytes(pkg_bytes('JP0700-PCSG00597_00-ABCDEFGHIJKLMNOP'))
+            with patch('retro_trans.gui.filedialog.askopenfilename',return_value=str(source)):
+                app.choose_source()
+            self.finish_worker()
+            app.update()
+            self.assertIsInstance(app.plan,VitaAutomaticPlan)
+            self.assertEqual(app.notebook.index(app.notebook.select()),0)
+            self.assertIn('PCSG00597',app.detected.get())
+            self.assertTrue(app.auto_vita_frame.winfo_ismapped())
+            self.assertFalse(app.output_format_box.winfo_ismapped())
+            self.assertEqual(app.auto_output_label['text'],'Translated PKG:')
+            self.assertEqual(app.target_box['values'],('Latest',))
+            self.assertEqual(str(app.apply_button['state']),'disabled')
+            self.assertIn('downloads automatically',app.detail.get())
+            app.auto_vita_license.set('matching.rif');app.update()
+            self.assertEqual(str(app.apply_button['state']),'normal')
+            with patch('retro_trans.gui.filedialog.asksaveasfilename',return_value=str(source.parent/'chosen.pkg')) as save:
+                app.pick_path(app.output,save=True)
+            self.assertEqual(save.call_args.kwargs['defaultextension'],'.pkg')
+            self.assertEqual(save.call_args.kwargs['filetypes'][0],('Vita package','*.pkg'))
+            with patch.object(app,'start') as start,patch('retro_trans.gui.vita_translation.apply',return_value=Path('verified.pkg')) as run:
+                app.apply()
+                start.call_args.args[0](None,None)
+            self.assertEqual(start.call_args.args[1],'vita_pkg')
+            self.assertEqual(run.call_args.args,(str(source),'matching.rif',app.output.get()))
+            self.assertNotIn('description',run.call_args.kwargs)
+            app.auto_vita_license.set('');app.update()
+            self.assertEqual(str(app.apply_button['state']),'disabled')
+
+    def test_automatic_vita_folder_switch_and_catalog_refresh(self):
+        app=self.app
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            source=root/'another-game.pkg';source.write_bytes(pkg_bytes('JP0700-PCSE12345_00-ABCDEFGHIJKLMNOP'))
+            with patch('retro_trans.gui.filedialog.askdirectory',return_value=folder):app.choose_folder()
+            self.finish_worker()
+            self.assertIsInstance(app.plan,VitaAutomaticPlan)
+            app.auto_vita_license.set('matching.bin')
+            fresh=Catalog(copy.deepcopy(app.catalog.data))
+            app.pending_catalog=fresh
+            with patch.object(app,'start') as restart:app.poll()
+            restart.assert_not_called()
+            self.assertEqual(app.auto_vita_license.get(),'matching.bin')
+            ordinary=root/'ordinary.bin';ordinary.write_bytes(b'not recognized')
+            app.identify_source(ordinary);self.finish_worker();app.update()
+            self.assertIsNone(app.plan)
+            self.assertFalse(app.auto_vita_frame.winfo_ismapped())
+            self.assertTrue(app.output_format_box.winfo_ismapped())
+            self.assertEqual(app.auto_vita_license.get(),'')
 
     def test_unchanged_catalog_does_not_repeat_identification(self):
         app = self.app
@@ -149,6 +267,8 @@ class GuiTests(unittest.TestCase):
             self.app.attributes("-alpha", 0)
             for tab in range(4):
                 self.app.notebook.select(tab)
+                if tab == 0:
+                    self.app.show_auto_vita_fields(True)
                 self.app.update()
                 for widget in self.app.controls + [self.app.cancel_button, self.app.detail_text]:
                     if widget.winfo_ismapped():

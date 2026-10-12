@@ -23,6 +23,11 @@ def diagnose(path):
             raise RuntimeError("Bundled MX save instructions are missing.")
         if mx_crypto.cmac(bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'), b'').hex() != 'bb1d6929e95937287fa37d129b756746':
             raise RuntimeError('Savedata cryptography self-check failed.')
+        from retro_trans import vita_pfs
+        vita_pfs.constants()
+        if vita_pfs.cbc_tail(bytes.fromhex('6bc1bee22e409f96e93d7e117393172a'),
+                bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'),bytes.fromhex('000102030405060708090a0b0c0d0e0f')).hex() != '7649abac8119b246cee98e9b12e9197d':
+            raise RuntimeError('Vita package cryptography self-check failed.')
         import tempfile
         import subprocess
         with tempfile.TemporaryDirectory() as cache:
@@ -39,7 +44,8 @@ def diagnose(path):
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
             chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
-            mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG')
+            mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
+            vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:
@@ -50,7 +56,33 @@ def diagnose(path):
 
 
 if __name__ == "__main__":
+    from retro_trans import diagnostics
+    import atexit
+    diagnostics.start_session()
+    atexit.register(diagnostics.close_session)
+    previous_excepthook = sys.excepthook
+    def log_uncaught(exc_type, exc, tb):
+        diagnostics.exception(exc)
+        previous_excepthook(exc_type, exc, tb)
+    sys.excepthook = log_uncaught
     args = sys.argv[1:]
+    if args and args[0] == '--vita-pkg':
+        import argparse
+        parser = argparse.ArgumentParser(description='Translate an original Vita PKG using its release profile.')
+        parser.add_argument('--package',required=True)
+        parser.add_argument('--license',required=True)
+        parser.add_argument('--patch',help='Local ZIP/JSON; omit to download the matching translation automatically.')
+        parser.add_argument('--output',required=True)
+        options = parser.parse_args(args[1:])
+        from retro_trans.vita_translation import apply
+        try:
+            with diagnostics.operation('vita_pkg'):
+                apply(options.package,options.license,options.output,options.patch,
+                      progress=lambda message,fraction: diagnostics.progress(message))
+        except Exception as exc:
+            diagnostics.exception(exc)
+            sys.exit(1)
+        sys.exit(0)
     if len(args) == 2 and args[0] in ("--diagnose", "--health-check"):
         sys.exit(diagnose(args[1]))
     if len(args) == 2 and args[0] == '--network-check':

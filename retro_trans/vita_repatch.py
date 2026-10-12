@@ -16,6 +16,7 @@ import sys
 import tempfile
 import zipfile
 import zlib
+from . import diagnostics
 
 from .core import (Asset, GitHubClient, MAX_METADATA, PatchError, cache_directory,
                    check_cancel, decode, engine_context, report, sha256_file,
@@ -47,8 +48,11 @@ def relative_name(name):
     require(1 <= len(parts) <= 10, 'Invalid Vita path depth.')
     for part in parts:
         output_name(part)
-    require(name == 'eboot.bin' or (name.startswith(('DATA/', 'CommonData/')) and
-            name.lower().endswith(('.bin', '.cpk'))), 'Unsupported Vita payload: ' + name)
+    require(all(part.casefold() not in ('work.bin','self_auth.bin') and not
+                part.casefold().endswith(('.rif','.zrif')) for part in parts) and
+            parts[0].casefold() not in ('license','nonpdrm','sce_pfs') and
+            (name == 'eboot.bin' or name.lower().endswith(('.bin','.cpk','.bnd','.dat','.png','.txt','.xml','.sfo'))),
+            'Unsupported Vita payload: ' + name)
     return name
 
 
@@ -84,11 +88,19 @@ def identity(row):
 
 def validate(data):
     try:
-        require(isinstance(data, dict) and set(data) ==
+        require(isinstance(data, dict) and set(data)-{'package'} ==
                 {'schema', 'title_id', 'app_version', 'name', 'build', 'files', 'auth'},
                 'Incomplete or unsupported Vita patch description.')
-        require(data['schema'] == SCHEMA and data['title_id'] == 'PCSG00264' and
-                data['app_version'] == '01.00', 'This profile requires PCSG00264 v01.00.')
+        require(data['schema'] == SCHEMA and isinstance(data['title_id'],str) and
+                re.fullmatch(r'[A-Z]{4}[0-9]{5}',data['title_id']) and
+                isinstance(data['app_version'],str) and re.fullmatch(r'[0-9]{2}\.[0-9]{2}',data['app_version']),
+                'Invalid Vita title or application version.')
+        if 'package' in data:
+            package = data['package']
+            require(isinstance(package,dict) and set(package) == {'bytes','sha256','content_id'}, 'Invalid Vita package identity.')
+            identity({key:package[key] for key in ('bytes','sha256')})
+            require(isinstance(package['content_id'],str) and re.fullmatch(r'[A-Z]{2}[0-9]{4}-'+data['title_id']+
+                    r'_00-[A-Z0-9_]{16}',package['content_id']), 'Vita package content ID mismatch.')
         for key in ('name', 'build'):
             require(isinstance(data[key], str) and 0 < len(data[key]) <= 150 and
                     all(ord(c) >= 32 for c in data[key]), 'Invalid Vita patch label.')
@@ -151,6 +163,7 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
     assets = {}
     prefix = 'https://github.com/{}/releases/download/{}/'.format(REPO, TAG)
     has_archive = any(item.get('name') == ARCHIVE for item in release.get('assets', []))
+    diagnostics.event('vita_profile', mode='online_zip' if has_archive else 'online_individual')
     for item in release.get('assets', []):
         name = item.get('name')
         if name in (MANIFEST, ARCHIVE) or (not has_archive and isinstance(name, str) and
@@ -168,6 +181,7 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
         require(0 < assets[ARCHIVE].size <= MAX_ARCHIVE, 'Vita patch ZIP is too large.')
     path = client.download(assets[MANIFEST], cache or cache_directory(), cancel, progress)
     data, _, _ = local_description(path)
+    diagnostics.event('vita_profile', mode='online_zip' if has_archive else 'online_individual', files=len(data['files']))
     if ARCHIVE not in assets:
         for row in data['files']:
             p = row['patch']; asset = assets.get(p['name'])
@@ -180,12 +194,14 @@ def online_description(client=None, cancel=None, progress=None, cache=None):
 def archive_description(path, expected=None, cancel=None, progress=None):
     """Extract only a bounded, exact flat inventory into a private temporary folder."""
     path = no_links(path)
+    diagnostics.event('vita_zip', state='opening')
     require(path.is_file() and 0 < path.stat().st_size <= MAX_ARCHIVE, 'Invalid Vita patch ZIP size.')
     with tempfile.TemporaryDirectory(prefix='retro-vita-patches-') as temporary:
         package = Path(temporary)
         try:
             with zipfile.ZipFile(path) as archive:
                 entries = archive.infolist()
+                diagnostics.event('vita_zip', state='extracting', files=len(entries))
                 require(2 <= len(entries) <= 590, 'Invalid Vita ZIP inventory.')
                 names = set()
                 for entry in entries:
@@ -226,7 +242,11 @@ def archive_description(path, expected=None, cancel=None, progress=None):
                 require((package / MANIFEST).read_bytes() == raw, 'Vita ZIP metadata changed.')
         except (zipfile.BadZipFile, zlib.error, KeyError, RuntimeError, NotImplementedError, EOFError) as exc:
             raise PatchError('Invalid or damaged Vita patch ZIP.') from exc
-        yield data, package, None
+        diagnostics.event('vita_zip', state='verified', files=len(data['files']))
+        try:
+            yield data, package, None
+        finally:
+            diagnostics.event('vita_zip', state='cleanup')
 
 
 @contextmanager
@@ -236,7 +256,9 @@ def description_context(description=None, client=None, cache=None, cancel=None, 
             with archive_description(description, cancel=cancel, progress=progress) as resolved:
                 yield resolved
         else:
-            yield local_description(description)
+            resolved = local_description(description)
+            diagnostics.event('vita_profile', mode='local_json', files=len(resolved[0]['files']))
+            yield resolved
         return
     client = client or GitHubClient()
     data, package, assets = online_description(client, cancel, progress, cache)
@@ -251,10 +273,24 @@ def description_context(description=None, client=None, cache=None, cancel=None, 
 
 
 def verify(path, row, cancel=None, progress=None):
+    from .vita_io import sharing_retry
+    return sharing_retry(lambda: _verify(path,row,cancel,progress),cancel,progress)
+
+
+def _verify(path, row, cancel=None, progress=None):
     path = no_links(path)
-    require(path.is_file() and path.stat().st_size == row['bytes'] and
-            sha256_file(path, cancel, progress, 'Verifying ' + path.name) == row['sha256'].lower(),
-            'File mismatch: {}. Use the original decrypted PCSG00264 v01.00 files and intact patches.'.format(path.name))
+    actual_size = path.stat().st_size if path.is_file() else None
+    actual_hash = sha256_file(path, cancel, progress, 'Verifying ' + path.name) if actual_size == row['bytes'] else None
+    result = ('missing' if actual_size is None else 'size_mismatch' if actual_size != row['bytes']
+              else 'hash_mismatch' if actual_hash != row['sha256'].lower() else 'verified')
+    public_patch = bool(re.fullmatch(r'VITA-PCSG00264-test[0-9]+-[0-9]+\.xdelta', path.name))
+    fields = dict(role='patch' if path.suffix == '.xdelta' else 'payload', result=result,
+                  expected_bytes=row['bytes'], actual_bytes=actual_size)
+    if public_patch:
+        fields.update(patch=path.name, expected_sha256=row['sha256'].lower(), actual_sha256=actual_hash)
+    diagnostics.event('file_check', **fields)
+    require(result == 'verified',
+            'File mismatch: {}. Use the original game revision required by the profile and intact patches.'.format(path.name))
 
 
 def auth_matches(eboot, auth):
@@ -271,6 +307,9 @@ def independent(a, b):
 
 
 def apply(source, output, description=None, client=None, cache=None, cancel=None, progress=None, work_bin=None):
+    diagnostics.event('vita_input', mode='automatic' if not description else
+                      ('local_zip' if Path(description).suffix.lower() == '.zip' else 'local_json'),
+                      pkg=work_bin is not None)
     # Resolve once, before package conversion; keep extracted patches alive until completion.
     if description:
         require(independent(Path(output).resolve(), no_links(description).resolve().parent),
@@ -278,7 +317,23 @@ def apply(source, output, description=None, client=None, cache=None, cancel=None
     with description_context(description, client, cache, cancel, progress) as resolved:
         if work_bin is not None:
             from .vita_pkg import decrypted_source
-            with decrypted_source(source, work_bin, output, client, cache, cancel, progress) as decrypted:
+            data = resolved[0]
+            options = {}
+            if data['title_id'] != 'PCSG00264' or 'package' in data:
+                require('package' in data, 'This game needs a profile with the original PKG identity, or a decrypted source folder.')
+                from . import vita_pfs,vita_pkg
+                source_path,license_path = no_links(source),no_links(work_bin)
+                package_identity = {key:data['package'][key] for key in ('bytes','sha256')}
+                verify(source_path,package_identity,cancel,progress)
+                license_data = vita_pkg.license_bytes(source_path,license_path,data['title_id'])
+                values = vita_pfs.constants()
+                parsed = vita_pfs.read_pkg(source_path,values,data['package']['content_id'])
+                excluded = {'sce_pfs/files.db','sce_pfs/unicv.db','sce_pfs/pflist',
+                            'sce_sys/package/digs.bin','sce_sys/package/temp.bin'}
+                expected = {row['name'] for row in parsed['entries'] if not row['directory']} - excluded
+                vita_pfs.validate_original_paths(source_path,parsed,license_data[0x50:0x60],expected,values)
+                options.update(title_id=data['title_id'],package_identity=package_identity)
+            with decrypted_source(source, work_bin, output, client, cache, cancel, progress,**options) as decrypted:
                 return _apply_files(decrypted, output, resolved, client, cache, cancel, progress)
         return _apply_files(source, output, resolved, client, cache, cancel, progress)
 
@@ -329,7 +384,12 @@ def _apply_files(source, output, resolved, client=None, cache=None, cancel=None,
         verify(tree / 'self_auth.bin', dict(bytes=144, sha256=data['auth']['sha256']), cancel)
         for row in data['files']:
             verify(beneath(source, row['path']), row['source'], cancel)
-        (result / 'README-INSTALL.txt').write_text(GUIDE + '\n', encoding='utf-8')
+        guide = GUIDE if data['title_id'] == 'PCSG00264' else (
+            'Close the game and back up saves and any existing overlay. Copy rePatch/'+data['title_id']+
+            ' into ux0:rePatch/'+data['title_id']+' using VitaShell. Launch your matching installed game with '
+            'compatible rePatch enabled. Do not merge old mods or overwrite app, updates or savedata. '
+            'This overlay has not been verified on physical hardware; it is not a Vita3K PKG.')
+        (result / 'README-INSTALL.txt').write_text(guide + '\n', encoding='utf-8')
         (result / 'VERIFIED.json').write_text(json.dumps(dict(schema=data['schema'], build=data['build'],
             title_id=data['title_id'], files={r['path']: r['target'] for r in data['files']},
             sanitized_auth_sha256=data['auth']['sha256'], originals_unchanged=True,

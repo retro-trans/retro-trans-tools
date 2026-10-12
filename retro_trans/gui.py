@@ -11,20 +11,23 @@ import tkinter as tk
 from tkinter import filedialog, font, messagebox, ttk
 
 from . import __version__
+from . import diagnostics
 from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_patch
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves, mx_converter, vita_repatch
+from . import z3_saves, mx_converter, vita_repatch, vita_translation
 from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
+from .vita_automatic import VitaPackage, VitaAutomaticPlan, detect as detect_vita, append_packages
 
 TEXT, MUTED, ACCENT, ERROR = "#202020", "#606060", "#166534", "#a4262c"
 
 
 class Application(tk.Tk):
     def __init__(self, startup=True, visible=True):
+        diagnostics.start_session()
         super().__init__()
         if not visible:
             self.withdraw()
@@ -46,6 +49,7 @@ class Application(tk.Tk):
         self.app_update_status = update_status()
         self.detected = tk.StringVar(value="No binary selected")
         self.file_label, self.output = tk.StringVar(), tk.StringVar()
+        self.auto_vita_license = tk.StringVar()
         self.target = tk.StringVar(value="Latest")
         self.output_format = tk.StringVar(value='Original format')
         self.manual_format = tk.StringVar(value='Original format')
@@ -83,6 +87,10 @@ class Application(tk.Tk):
         self.mx_difficulty_checkbox = None
         self.vita_source, self.vita_output = tk.StringVar(), tk.StringVar()
         self.vita_license = tk.StringVar()
+        self.vita_game = tk.StringVar(value='Hardware rePatch')
+        self.vita_summary = tk.StringVar(value='PCSG00264 v01.00 • Creates a hardware rePatch folder')
+        self.vita_note = tk.StringVar(value='Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
+                                    'Your license stays local. Originals, emulator setup and saves stay untouched.')
         sidecar = application_root() / vita_repatch.MANIFEST
         self.vita_description = tk.StringVar(value=str(sidecar) if sidecar.is_file() else '')
         self.mx_experimental = tk.BooleanVar(value=False)
@@ -93,7 +101,10 @@ class Application(tk.Tk):
             variable.trace_add('write', self.invalidate_saves)
         self.mx_psp_difficulty.trace_add('write', self.change_mx_difficulty)
         self.save_game.trace_add('write', self.change_save_game)
-        for variable in (self.vita_source, self.vita_output, self.vita_license):
+        for variable in (self.vita_source, self.vita_output, self.vita_license, self.vita_description):
+            variable.trace_add('write', lambda *args: self.update_action())
+        self.vita_game.trace_add('write', self.change_vita_game)
+        for variable in (self.auto_vita_license, self.output):
             variable.trace_add('write', lambda *args: self.update_action())
         self.update_idletasks()
         scale = self.winfo_fpixels("1i") / 96
@@ -139,7 +150,7 @@ class Application(tk.Tk):
         self.notebook = ttk.Notebook(outer)
         self.notebook.pack(fill="x")
         self.tabs = []
-        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita rePatch"):
+        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita"):
             page = ttk.Frame(self.notebook, padding=10)
             page.columnconfigure(1, weight=1)
             self.notebook.add(page, text=title)
@@ -174,6 +185,12 @@ class Application(tk.Tk):
         self.route_label.grid(row=3, column=0, columnspan=3, sticky="ew", pady=5)
         self.auto_output_label, self.auto_output_button = self.path_row(auto, 4, "Patched copy:", self.output, save=True)
         self.output_format_box = self.format_row(auto, 5, self.output_format, lambda: self.change_output_format())
+        self.auto_format_controls = list(auto.grid_slaves(row=5))
+        self.auto_vita_frame = ttk.Frame(auto)
+        self.auto_vita_frame.grid(row=5,column=0,columnspan=3,sticky='ew')
+        self.auto_vita_frame.columnconfigure(1,weight=1)
+        self.path_row(self.auto_vita_frame,0,'Matching license:',self.auto_vita_license,extension='.bin')
+        self.auto_vita_frame.grid_remove()
         self.path_row(self.tabs[1], 0, "Original file:", self.apply_source)
         self.path_row(self.tabs[1], 1, "Patch file:", self.apply_delta, extension=".xdelta")
         self.path_row(self.tabs[1], 2, "Patched copy:", self.apply_output, save=True)
@@ -213,24 +230,29 @@ class Application(tk.Tk):
         ttk.Label(saves, textvariable=self.save_summary, style='Muted.TLabel').grid(
             row=5, column=0, columnspan=3, sticky='w', pady=(3, 0))
         vita = self.tabs[3]
-        ttk.Label(vita, text='SRW Z3 Jigoku-hen • Physical Vita • PCSG00264 v01.00').grid(
-            row=0, column=0, columnspan=3, sticky='w', pady=(0, 6))
+        ttk.Label(vita,text='Destination:').grid(row=0,column=0,sticky='w',padx=(0,8))
+        game = ttk.Combobox(vita,textvariable=self.vita_game,state='readonly',width=1,
+                           values=('Hardware rePatch','Vita3K PKG'))
+        game.grid(row=0,column=1,columnspan=2,sticky='ew',pady=3)
+        self.readonly_controls.append(game)
+        self.controls.append(game)
         self.path_row(vita, 1, 'Original PKG:', self.vita_source, extension='.pkg')
-        self.path_row(vita, 2, 'Matching work.bin:', self.vita_license, extension='.bin')
+        self.path_row(vita, 2, 'Matching license:', self.vita_license, extension='.bin')
         for row, title, variable, is_output in (
                 (3, 'New output:', self.vita_output, True),):
-            ttk.Label(vita, text=title).grid(row=row, column=0, sticky='w', padx=(0, 8))
+            self.vita_output_label = ttk.Label(vita,text=title)
+            self.vita_output_label.grid(row=row,column=0,sticky='w',padx=(0,8))
             entry = ttk.Entry(vita, textvariable=variable, width=1)
             entry.grid(row=row, column=1, sticky='ew', pady=3)
             self.controls.append(entry)
             self.button(vita, 'Browse…', lambda v=variable, out=is_output: self.pick_vita_folder(v, out)).grid(
                 row=row, column=2, sticky='ew', padx=(8, 0))
-        self.path_row(vita, 4, 'Local patch (optional):', self.vita_description, extension='.zip')
-        ttk.Label(vita, text='Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
-                  'Your license stays local. Originals, emulator setup and saves stay untouched.',
-                  style='Muted.TLabel').grid(row=5, column=0, columnspan=3, sticky='w', pady=5)
-        self.button(vita, 'Instructions', lambda: messagebox.showinfo('Physical Vita rePatch',
-                    vita_repatch.GUIDE, parent=self)).grid(row=6, column=2, sticky='ew')
+        self.vita_patch_label,_ = self.path_row(vita,4,'Local patch (optional):',self.vita_description,extension='.zip')
+        ttk.Label(vita,textvariable=self.vita_note,style='Muted.TLabel').grid(
+            row=5,column=0,columnspan=3,sticky='w',pady=5)
+        ttk.Label(vita,textvariable=self.vita_summary,style='Muted.TLabel').grid(
+            row=6,column=0,columnspan=2,sticky='w')
+        self.button(vita,'Instructions',self.vita_instructions).grid(row=6,column=2,sticky='ew')
         self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
@@ -251,6 +273,7 @@ class Application(tk.Tk):
         actions.pack(fill="x")
         self.folder_button = ttk.Button(actions, text="Open output folder", command=self.open_folder, state="disabled")
         self.folder_button.pack(side="left")
+        ttk.Button(actions, text="Open logs", command=self.open_logs).pack(side="left", padx=6)
         self.apply_button = self.button(actions, "Patch", self.apply, default="active", state="disabled")
         self.apply_button.pack(side="right")
         self.cancel_button = ttk.Button(actions, text="Cancel", command=self.cancel_work, state="disabled")
@@ -287,7 +310,7 @@ class Application(tk.Tk):
         self.change_output_format(manual=True)
 
     def change_output_format(self, manual=False):
-        if not manual and isinstance(self.plan, SolutionPlan):
+        if not manual and isinstance(self.plan, (SolutionPlan,VitaAutomaticPlan)):
             self.output_format.set('Original format')
             return
         variable = self.apply_output if manual else self.output
@@ -314,12 +337,15 @@ class Application(tk.Tk):
             return parent
         options = {"initialdir": self.settings.get("last_browse_folder", str(application_root())),
                    "filetypes": [("All files", "*.*")]}
-        if variable is self.vita_description:
+        if save and variable is self.output and isinstance(self.plan,VitaAutomaticPlan):
+            extension = '.pkg'
+            options['filetypes'].insert(0, ('Vita package', '*.pkg'))
+        elif variable is self.vita_description:
             options['filetypes'].insert(0, ('Vita patch ZIP or JSON', '*.zip *.json'))
         elif variable is self.vita_source:
             options['filetypes'].insert(0, ('Original Vita package', '*.pkg'))
-        elif variable is self.vita_license:
-            options['filetypes'].insert(0, ('Vita license', '*.bin'))
+        elif variable in (self.vita_license,self.auto_vita_license):
+            options['filetypes'].insert(0, ('Vita license', '*.bin *.rif'))
         elif extension:
             options["filetypes"].insert(0, ("xdelta patches", "*.xdelta *.vcdiff"))
         if save:
@@ -568,11 +594,16 @@ class Application(tk.Tk):
     def identify_source(self, path):
         self.apply_source.set(str(path))
         self.selection, self.plan = None, None
+        self.show_auto_vita_fields(False)
+        self.auto_vita_license.set('')
         self.file_label.set(str(path))
         self.detected.set('Identifying…')
         catalog = self.catalog
-        self.start(lambda cancel, progress: [(Path(path), n) for n in recognize(
-            path, catalog, cancel, progress, defer_chd=True)], 'identify')
+        def identify(cancel,progress):
+            vita = detect_vita(path,cancel)
+            return [(Path(path),vita)] if vita else [(Path(path),n) for n in
+                recognize(path,catalog,cancel,progress,defer_chd=True)]
+        self.start(identify,'identify')
 
     def prepare_chd(self, path, manual=False, automatic=False):
         """Ask on the UI thread; extract once in the background and keep the result."""
@@ -611,23 +642,40 @@ class Application(tk.Tk):
             initialdir=self.settings.get('last_browse_folder', str(application_root())))
         if path:
             self.selection, self.plan = None, None
+            self.show_auto_vita_fields(False)
+            self.auto_vita_license.set('')
             self.file_label.set(path)
             self.detected.set('Identifying file set…')
             catalog = self.catalog
-            self.start(lambda cancel, progress: scan_root(path, catalog, cancel, progress, defer_chd=True), 'identify')
+            self.start(lambda cancel, progress: append_packages(path,
+                scan_root(path,catalog,cancel,progress,defer_chd=True),cancel), 'identify')
 
     def scan(self):
         self.selection, self.plan = None, None
+        self.show_auto_vita_fields(False)
+        self.auto_vita_license.set('')
         self.file_label.set("")
         self.detected.set("Scanning the app folder…")
         catalog = self.catalog
-        self.start(lambda cancel, progress: scan_root(application_root(), catalog, cancel, progress, defer_chd=True), "scan")
+        self.start(lambda cancel, progress: append_packages(application_root(),
+            scan_root(application_root(),catalog,cancel,progress,defer_chd=True),cancel), "scan")
 
     def select_found(self, event=None, automatic=False):
         index = self.file_box.current()
         if 0 <= index < len(self.found):
+            previous = self.selection
             self.selection = self.found[index]
+            if previous != self.selection:
+                self.auto_vita_license.set('')
+            if isinstance(self.selection[1], VitaPackage):
+                self.detected.set(self.selection[1].label)
+                self.apply_source.set(str(self.selection[0]))
+                self.target_box.configure(values=['Latest'])
+                self.target.set('Latest')
+                self.plan_selection()
+                return
             if isinstance(self.selection[1], ChdSource) or (self.selection[0].is_file() and is_chd(self.selection[0])):
+                self.show_auto_vita_fields(False)
                 self.prepare_chd(self.selection[0], automatic=automatic)
                 return True
             if isinstance(self.selection[1], SolutionSource):
@@ -645,6 +693,24 @@ class Application(tk.Tk):
         self.plan_problem = ''
         self.detail.set('Your originals are preserved. The route runs only when you click Patch.')
         grouped = self.selection and isinstance(self.selection[1], SolutionSource)
+        vita = self.selection and isinstance(self.selection[1], VitaPackage)
+        self.show_auto_vita_fields(bool(vita))
+        if vita:
+            self.plan = VitaAutomaticPlan(self.selection[1])
+            self.route.set(self.plan.summary)
+            self.detail.set('Select your matching work.bin or .rif, then click Patch. '
+                            'The translation ZIP downloads automatically; your original stays unchanged.')
+            self.auto_output_label.configure(text='Translated PKG:')
+            self.auto_output_button.configure(text='Save as…')
+            self.output_format.set('Original format')
+            path = self.selection[0]
+            output = path.with_name(path.stem+'-English.pkg')
+            index = 2
+            while output.exists() or output.with_suffix('.validation.json').exists():
+                output = path.with_name(path.stem+'-English-'+str(index)+'.pkg');index += 1
+            self.output.set(str(output))
+            self.update_action()
+            return
         self.auto_output_label.configure(text='New folder:' if grouped else 'Patched copy:')
         self.auto_output_button.configure(text='Folder…' if grouped else 'Save as…')
         if self.selection:
@@ -672,9 +738,16 @@ class Application(tk.Tk):
                 self.detail.set(self.plan_problem)
         self.update_action()
 
+    def show_auto_vita_fields(self, visible):
+        for widget in self.auto_format_controls:
+            widget.grid_remove() if visible else widget.grid()
+        self.auto_vita_frame.grid() if visible else self.auto_vita_frame.grid_remove()
+
     def route_details(self):
         if self.plan:
-            if isinstance(self.plan, SolutionPlan):
+            if isinstance(self.plan, VitaAutomaticPlan):
+                messagebox.showinfo('Vita package translation',self.plan.details,parent=self)
+            elif isinstance(self.plan, SolutionPlan):
                 dialog = tk.Toplevel(self)
                 dialog.title('Patch solution')
                 dialog.transient(self)
@@ -700,17 +773,27 @@ class Application(tk.Tk):
         if not hasattr(self, "apply_button"):
             return
         tab = self.notebook.index(self.notebook.select())
-        enabled = not self.busy and (tab != 0 or (self.plan and self.plan.edges))
+        auto_vita = isinstance(self.plan,VitaAutomaticPlan)
+        enabled = not self.busy and (tab != 0 or auto_vita or (self.plan and self.plan.edges))
+        if tab == 0 and auto_vita:
+            enabled = enabled and bool(self.auto_vita_license.get().strip()) and bool(self.output.get().strip())
         if tab == 2:
             enabled = enabled and self.save_closed.get() and all(v.get().strip() for v in
                 (self.save_ps3, self.save_vita, self.save_output))
         if tab == 3:
             enabled = enabled and all(v.get().strip() for v in
                 (self.vita_source, self.vita_output, self.vita_license))
-        self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves', 'Create rePatch')[tab],
+        self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves',
+            'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch')[tab],
             state="normal" if enabled else "disabled")
 
     def pick_vita_folder(self, variable, output=False):
+        if output and self.vita_game.get() == 'Vita3K PKG':
+            path = filedialog.asksaveasfilename(title='Save the translated PKG',defaultextension='.pkg',
+                initialfile='Translated.pkg',confirmoverwrite=False,filetypes=[('Vita package','*.pkg')])
+            if path:
+                variable.set(path)
+            return
         path = filedialog.askdirectory(title='Choose where to create the rePatch output' if output else
                                        'Choose decrypted PCSG00264 (contains eboot.bin)', mustexist=True)
         if path:
@@ -732,11 +815,38 @@ class Application(tk.Tk):
         work_bin = self.vita_license.get().strip()
         if not work_bin:
             return
+        if self.vita_game.get() == 'Vita3K PKG':
+            def english(cancel,progress):
+                result = vita_translation.apply(source,work_bin,output,description or None,
+                    self.client if description else None,
+                                            cancel=cancel,progress=progress)
+                return result,vita_translation.GUIDE
+            self.start(english,'vita_pkg')
+            return
         def work(cancel, progress):
             result = vita_repatch.apply(source, output, description or None, self.client,
                                        cancel=cancel, progress=progress, work_bin=work_bin)
-            return result, vita_repatch.GUIDE
+            guide = result/'README-INSTALL.txt'
+            return result, guide.read_text(encoding='utf-8') if guide.is_file() else vita_repatch.GUIDE
         self.start(work, 'vita_repatch')
+
+    def change_vita_game(self,*args):
+        english = self.vita_game.get() == 'Vita3K PKG'
+        self.vita_source.set(''); self.vita_license.set(''); self.vita_output.set(''); self.vita_description.set('')
+        self.vita_output_label.configure(text='Translated PKG:' if english else 'New output:')
+        self.vita_patch_label.configure(text='Local patch (optional):')
+        self.vita_summary.set('Detects the game and downloads its translation • Windows' if english else
+                              'Local profile, or SRW Z3 PCSG00264 when left blank')
+        self.vita_note.set('Uses your original PKG and matching local work.bin or .rif.\n'
+                          'Leave Local patch blank for automatic download; needs 6 GB free.' if english else
+                          'Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
+                          'Your license stays local. Originals, emulator setup and saves stay untouched.')
+        self.update_action()
+
+    def vita_instructions(self):
+        english = self.vita_game.get() == 'Vita3K PKG'
+        messagebox.showinfo('Translated PKG for Vita3K' if english else 'Physical Vita rePatch',
+                            vita_translation.GUIDE if english else vita_repatch.GUIDE,parent=self)
 
     def set_busy(self, busy):
         self.busy = busy
@@ -763,10 +873,13 @@ class Application(tk.Tk):
         self.progress.configure(mode="determinate", value=0)
         self.folder_button.configure(state="disabled")
         def progress(message, fraction):
+            diagnostics.progress(message)
             self.events.put(("progress", job, (message, fraction)))
         def run():
             try:
-                self.events.put(("done", job, (kind, work(cancel, progress))))
+                with diagnostics.operation(kind):
+                    result = work(cancel, progress)
+                self.events.put(("done", job, (kind, result)))
             except Exception as exc:
                 self.events.put(("error", job, exc))
         thread = threading.Thread(target=run, daemon=True)
@@ -780,11 +893,14 @@ class Application(tk.Tk):
         self.refresh_button.configure(state="disabled")
         def run():
             try:
-                self.events.put(("catalog", None, refresh_catalog(self.client, cancel=self.background_cancel)))
+                with diagnostics.operation('catalog_refresh'):
+                    result = refresh_catalog(self.client, cancel=self.background_cancel)
+                self.events.put(("catalog", None, result))
             except Exception as exc:
                 self.events.put(("catalog_error", None, str(exc)))
             try:
-                message = stage_update(self.client, cancel=self.background_cancel)
+                with diagnostics.operation('update_check'):
+                    message = stage_update(self.client, cancel=self.background_cancel)
                 if message:
                     self.events.put(("update", None, message))
             except Exception as exc:
@@ -806,6 +922,15 @@ class Application(tk.Tk):
             self.convert_saves()
             return
         if tab == 0:
+            if isinstance(self.plan,VitaAutomaticPlan):
+                if not self.selection or not self.auto_vita_license.get().strip() or not self.output.get().strip():
+                    return
+                source,license,output = str(self.selection[0]),self.auto_vita_license.get().strip(),self.output.get().strip()
+                def vita_work(cancel,progress):
+                    result = vita_translation.apply(source,license,output,cancel=cancel,progress=progress)
+                    return result,vita_translation.GUIDE
+                self.start(vita_work,'vita_pkg')
+                return
             if not self.selection or not self.plan or not self.plan.edges or not self.output.get():
                 return
             source, plan, catalog, output = self.selection[0], self.plan, self.catalog, self.output.get()
@@ -887,6 +1012,8 @@ class Application(tk.Tk):
                             self.file_box.configure(values=[])
                             self.detected.set('Identification cancelled.' if isinstance(value, Cancelled) else 'Could not identify this file set.')
                             self.route.set('See the details below.')
+                            self.show_auto_vita_fields(False)
+                            self.auto_vita_license.set('')
                             self.update_action()
                     elif value[0] in ("scan", "identify"):
                         self.found = value[1]
@@ -903,7 +1030,8 @@ class Application(tk.Tk):
                             self.detected.set("Choose a file to identify or patch" if self.found else "No recognized binary")
                             self.route.set("Select a file set above." if self.found else "Browse to another file or folder, or use Apply xdelta for a local patch.")
                         self.status.set("{} file/version entries found.".format(len(self.found)))
-                        self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
+                        if not isinstance(self.plan,VitaAutomaticPlan):
+                            self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
                         if not self.found and Path(self.apply_source.get()).resolve() in self.extracted_inputs:
                             self.detail.set('No catalog match. The extracted disc is kept at:\n' +
                                             self.apply_source.get() + '\nUse Apply xdelta if you have a local patch.')
@@ -966,7 +1094,8 @@ class Application(tk.Tk):
             self.catalog, self.pending_catalog = self.pending_catalog, None
             if self.selection and self.notebook.index(self.notebook.select()) == 0:
                 path, catalog = self.selection[0], self.catalog
-                self.start(lambda cancel, progress: [(path, n) for n in recognize(path, catalog, cancel, progress, defer_chd=True)], "identify")
+                if not isinstance(self.selection[1],VitaPackage):
+                    self.start(lambda cancel, progress: [(path, n) for n in recognize(path, catalog, cancel, progress, defer_chd=True)], "identify")
             elif Path(self.apply_source.get()).resolve() in self.extracted_inputs:
                 self.identify_source(self.apply_source.get())
             elif self.notebook.index(self.notebook.select()) == 0:
@@ -993,7 +1122,29 @@ class Application(tk.Tk):
     def about(self):
         messagebox.showinfo("Retro Trans " + __version__, self.app_update_status +
             "\n\nApp and releases:\nhttps://github.com/" + APP_REPO +
-            "\n\nAutomatic mode verifies catalog hashes. Manual xdelta and save conversion work offline.")
+            "\n\nAutomatic mode verifies catalog hashes. Manual xdelta and save conversion work offline."
+            "\n\nFor troubleshooting, click Open logs and share the newest .log file"
+            " (and its .log.1 companion if present). Logs stay local and rotate automatically."
+            " They exclude license contents, keys, private paths and raw command output.")
+
+    def open_logs(self):
+        path = diagnostics.start_session()
+        if path is None:
+            messagebox.showwarning('Logs unavailable', 'Could not create a local log. Check free disk space and folder permissions.', parent=self)
+            return
+        try:
+            if sys.platform == 'darwin':
+                subprocess.Popen(['/usr/bin/open', str(path.parent)])
+            else:
+                os.startfile(str(path.parent))
+        except OSError as exc:
+            diagnostics.exception(exc)
+            messagebox.showinfo('Log folder', str(path.parent), parent=self)
+
+    def report_callback_exception(self, exc_type, exc, tb):
+        diagnostics.exception(exc)
+        self.status.set('Could not complete this action. See Open logs for diagnostics.')
+        super().report_callback_exception(exc_type, exc, tb)
 
     def open_folder(self):
         if self.saved_output:
@@ -1007,6 +1158,7 @@ class Application(tk.Tk):
         for callback in self.tk.splitlist(self.tk.call("after", "info")):
             self.after_cancel(callback)
         super().destroy()
+        diagnostics.close_session()
 
 
 def main(health_report=None):
@@ -1016,7 +1168,13 @@ def main(health_report=None):
             ctypes.windll.shcore.SetProcessDpiAwareness(1)
         except (AttributeError, OSError):
             pass
-    app = Application()
-    if health_report:
-        atomic_json(health_report, {"ok": True, "version": __version__, "pid": os.getpid()})
-    app.mainloop()
+    try:
+        app = Application()
+        if health_report:
+            atomic_json(health_report, {"ok": True, "version": __version__, "pid": os.getpid()})
+        app.mainloop()
+    except BaseException as exc:
+        diagnostics.exception(exc)
+        raise
+    finally:
+        diagnostics.close_session()

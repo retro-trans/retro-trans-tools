@@ -1,0 +1,27 @@
+{
+  "constants": {
+    "contract": "e12213b48016b0e99ab81f8ec02ad4a2",
+    "hmac0": "e462258b1f3121560745db62b1436723d2bf80fe",
+    "hmac1": "afe656bb3c17256a3c809f6e9bf19fdd5a388543",
+    "iv": "74d20cc39881c213ee770b1010e4bea7",
+    "pkg2": "e31a70c9ce1dd72bf3c0622963f2eccb"
+  },
+  "sources": [
+    {
+      "repository": "https://github.com/Vita3K/psvpfsparser",
+      "commit": "d14381f871a69009bd18b2aaec2213a6738bebba",
+      "files": [
+        "F00DNativeKeyEncryptor.cpp",
+        "PfsKeys.cpp"
+      ]
+    },
+    {
+      "repository": "https://github.com/mmozeiko/pkg2zip",
+      "commit": "9222c4e00235dfe7914e9db0cc352da07e63d9f9",
+      "files": [
+        "pkg2zip.c"
+      ]
+    }
+  ],
+  "note": "Public format constants only; no title-specific license, personal data or derived content key."
+}

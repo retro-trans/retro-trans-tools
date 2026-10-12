@@ -108,6 +108,8 @@ def main():
         raise SystemExit('Run on macOS; this does not cross-compile.')
     os.chdir(ROOT)
     native = prepare()
+    from retro_trans.dependency_notices import copy_notices
+    copy_notices(native/'licenses')
     if '--prepare-only' in sys.argv:
         return
     subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v'], check=True)

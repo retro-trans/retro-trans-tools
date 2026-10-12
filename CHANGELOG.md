@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.5.11 — Vita packages in Automatic
+
+- Verification: 247 tests passed with four platform-specific skips; frozen Windows health checks and 150%/200% Vita-field layout checks passed. The actual Automatic UI worker downloaded the private Cross Ange ZIP without a local patch selection and verified all 48 installed files in the completed 0.1.13 PKG. See `docs/releases/v0.5.11-validation.json`.
+- Automatic now detects original supported Vita PKGs through Browse, Folder and app-folder Scan. It shows the Vita title ID and latest compatible Vita3K PKG route, reveals the matching license field and downloads translation assets only when Patch is clicked.
+- Reuse generic release discovery, original identity checks, encrypted package rebuilding, isolated native installation verification and Windows file-lock retries. Public/private download behavior is the same as the Vita tab.
+- Keep ordinary binary, PS3, CHD and grouped-file routes unchanged. Clear the license on input changes, keep Vita selection across unrelated catalog refreshes, and preserve local patch/hardware options in the Vita tab.
+
+## 0.5.10 — Retry temporary Vita file locks (local test build)
+
+- Verification: 242 tests passed with four platform-specific skips; frozen health checks passed. The packaged automatic conversion completed all 48 installed-file checks while a real Windows handle denied temporary CPK deletion, then retried and removed its workspace after the lock was released. See `docs/releases/v0.5.10-validation.json`.
+- Retry Windows sharing and lock violations while verifying Vita files and cleaning up owned PKG workspaces, with a bounded 12-second wait. Cancellation remains available during file verification. Ordinary permissions, missing files, disk errors and incorrect hashes still fail immediately.
+- Preserve the original conversion, verification or cancellation exception when cleanup also fails. If only cleanup fails after a verified output was saved, explain that the completed output is usable rather than exposing a misleading raw WinError 32.
+- Do not stop a user's Vita3K instance or operate on existing emulator data. Cleanup remains limited to the current operation's generated temporary directory.
+
+## 0.5.9 — Automatic Vita translation downloads (local test build)
+
+- Verified the frozen Windows app without a local patch argument: automatic discovery and authenticated private-release download, encrypted PKG conversion, and all 48 installed Cross Ange file hashes passed. The output matched the independently verified 0.1.13 package. The 236-test suite passed with four platform-specific skips; frozen health checks passed.
+
+- The Vita3K PKG flow now works with only an original PKG, matching license and new output filename. Leave Local patch blank to identify the game and download its translation ZIP automatically from Retro Trans releases.
+- Match exact content identity, original size and full SHA-256, then choose the newest matching published stable profile among each project's ten recent releases. Verify publisher asset checksums and require the downloaded ZIP profile to match published metadata. Other games need profiles, without a hardcoded game registry.
+- Keep local ZIP/JSON selection for offline use or unavailable releases. Explain missing profiles, wrong original revisions, competing projects and PS3 PKGs before rebuilding; PS3 users are directed to Automatic.
+- Private releases can use an existing local GitHub CLI sign-in or GH_TOKEN/GITHUB_TOKEN. No credentials are bundled, stored in files or logged; authentication is stripped on cross-host asset redirects. Original packages and licenses stay local.
+- Retain existing hardware rePatch behavior. This is a local app build; no application push or release publication is requested.
+
+## 0.5.8 — Generic Vita release profiles (local test build)
+
+- Verification: 226 tests passed with four platform-specific skips, frozen Windows health checks passed, and the packaged app converted Cross Ange's release ZIP to a PKG whose 48 installed files and full package hash matched an independently verified build. A second title's synthetic PKG and hardware profiles passed. See `docs/releases/v0.5.8-validation.json`; gameplay and hardware execution remain untested.
+
+- Renamed the Vita tab and added destination selection: translated Vita3K PKG or hardware rePatch. Game identity, source edition, inventories and extras come from the selected release profile. The PKG route has no Cross Ange registry or permanent game-specific UI.
+- Added `retro-trans-vita-pkg-v1` profiles and strict ZIP readback; future games using the supported native format can supply profiles without changing application code. Retained standard two-file Automatic compatibility for Cross Ange.
+- Rebuild encrypted PFS v5 and Vita key-type-2 PKGs, then verify a second isolated official Vita3K installation and every complete game-file hash before saving. Validate outer and authenticated inner paths before extracting arbitrary profile-pinned originals. Unsupported encryption formats fail explicitly.
+- Use only user-provided matching NoNpDrm licenses; no automatic license downloads or uploads. Preserve packages, licenses, real emulator settings and saves. Native logs and subprocess arguments are not recorded.
+- Retained the Z3 automatic hardware route. Local hardware profiles can identify other titles; their output directory and instructions use that title. Generic PKG inputs also declare and verify original package identity.
+- Added cryptography and full dependency notices, packaged native-format resources, frozen-app crypto checks and generic-profile/UI regressions. PKG rebuilding is Windows-only; Cross Ange installation is tested separately from gameplay and physical-Vita compatibility.
+- Preserved the earlier uncommitted 0.5.7 diagnostics work. No Retro Trans app push or release publication is implied by this local build.
+
+## 0.5.7 — Local diagnostics (unreleased)
+
+- Add bounded per-session JSON-line logs and an Open logs button on Windows
+  and Mac. Record versions, operation IDs, phases, network/cache decisions,
+  Vita automatic/local input mode, archive lifecycle, installer exit status,
+  and distinct missing/size/hash file-check failures.
+- Capture error types, numeric codes and code locations without raw exception
+  text, private paths, URL parameters/headers, subprocess output/arguments,
+  license contents, keys or saves. No automatic upload. Logging failures do
+  not stop operations; retain five sessions with one 512 KiB backup each.
+- Source change only; no build, push or release publication requested.
+
 ## 0.5.6 — Mac HTTPS test fix (2026-10-09)
 
 - Supersedes the 0.5.5 Mac test build: bundle certifi CA roots so secure GitHub

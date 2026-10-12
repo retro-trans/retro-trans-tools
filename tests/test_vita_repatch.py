@@ -88,6 +88,14 @@ class VitaTests(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(PatchError):
                 v.validate(data)
 
+    def test_hardware_profile_for_another_game(self):
+        self.data['title_id']='PCSE12345';self.save()
+        self.apply()
+        self.assertTrue((self.output/'rePatch/PCSE12345/eboot.bin').is_file())
+        guide=(self.output/'README-INSTALL.txt').read_text()
+        self.assertIn('ux0:rePatch/PCSE12345',guide)
+        self.assertNotIn('PCSG00264',guide)
+
     def test_invalid_auth_and_conflicts(self):
         for offset in (8, 80, 96, 143):
             data = copy.deepcopy(self.data)

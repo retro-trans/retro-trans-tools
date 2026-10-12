@@ -352,6 +352,101 @@
       }
     },
     {
+      "repo": "retro-trans/Cross-Ange",
+      "tag": "v0.1.12",
+      "manifest": {
+        "game_id": "cross-ange",
+        "game_name": "CROSS ANGE Rondo of Angel and Dragon tr.",
+        "platform": "PS Vita",
+        "version": "0.1.12",
+        "source_commit": "d10ad6622d4403340c5f82a161494d433529fe7b",
+        "schema_version": 2,
+        "patches": [
+          {
+            "patch": "Cross-Ange-English-0.1.12-Ange.xdelta",
+            "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "cpk",
+            "target_format": "cpk",
+            "source_sha256": "e04d94fac7ba1bc21acfd98c9ea8352995e32229c642485fb2537cd0d53213de",
+            "source_bytes": 882846536,
+            "target_sha256": "fccab176e91abdf15a263b6768557ffbf1e831e1b530ecfab020e7ba71a678f2",
+            "target_bytes": 902054728,
+            "patch_sha256": "52002f00bde276d3bf5a4e3060a1bd14a2632922cd2c5e34aa4b7aa20c22d03e",
+            "patch_bytes": 5349693
+          },
+          {
+            "patch": "Cross-Ange-English-0.1.12-param.xdelta",
+            "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "sfo",
+            "target_format": "sfo",
+            "source_sha256": "04924d2566147471c89464d568c8ae8708b43cc296b370c6b8f208317cebf603",
+            "source_bytes": 1328,
+            "target_sha256": "6d4414054f46e25b14e5ef25ae9d4c655f9c1111155cc51e43cf6e7c46d00c10",
+            "target_bytes": 1413,
+            "patch_sha256": "33b9e62e8aea9dc9485f029ca2a261d3c21f06ad38dc13950d35cb5e4151bc14",
+            "patch_bytes": 160
+          }
+        ],
+        "solutions": [
+          {
+            "id": "pcsg00597-english-components",
+            "name": "Cross Ange English components (PCSG00597)",
+            "edition": "Japan PCSG00597",
+            "language": "en",
+            "files": [
+              {
+                "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+                "output_name": "Ange.cpk"
+              },
+              {
+                "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+                "output_name": "param.sfo"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "Cross-Ange-English-0.1.12-Ange.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.12/Cross-Ange-English-0.1.12-Ange.xdelta",
+        "Cross-Ange-English-0.1.12-param.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.12/Cross-Ange-English-0.1.12-param.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Lost-Heroes",
+      "tag": "v0.1.9",
+      "manifest": {
+        "game_id": "lost-heroes",
+        "game_name": "Lost Heroes",
+        "platform": "PSP",
+        "version": "0.1.9",
+        "source_commit": "c5016b107e01ed1f1fda5defd1bc524ee6d3b0f6",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "LostHeroes-English-0.1.9.xdelta",
+            "edition": "NPJH50647",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "8c4b3f19aedc5d04b7df31ee1ecfa3257515af7dd958bca3f72fe469b5defbc9",
+            "source_bytes": 1145667584,
+            "target_sha256": "22f0393ccc7583771710f0b51d15e43903890f8c2646a80bce9f36573a3ec52e",
+            "target_bytes": 1598521344,
+            "patch_sha256": "853aaffee8aebaa6b5fdd5d9fada23aef35d235d7b17fc54ef2327dd4f53391f",
+            "patch_bytes": 250143193
+          }
+        ]
+      },
+      "assets": {
+        "LostHeroes-English-0.1.9.xdelta": "https://github.com/retro-trans/Lost-Heroes/releases/download/v0.1.9/LostHeroes-English-0.1.9.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Marionnete-Handler-2",
       "tag": "v0.1.17",
       "manifest": {
@@ -594,6 +689,90 @@
         "SRWMX-English-v0.4.12.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.12/SRWMX-English-v0.4.12.xdelta",
         "SRWMX-English-v0.4.9-to-v0.4.12.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.12/SRWMX-English-v0.4.9-to-v0.4.12.xdelta",
         "SRWMX-PS2-English-v0.4.12.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.12/SRWMX-PS2-English-v0.4.12.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-MX-Portable",
+      "tag": "v0.4.29",
+      "manifest": {
+        "game_id": "srw-mx-portable",
+        "game_name": "Super Robot Taisen MX Portable",
+        "platform": "PSP",
+        "version": "0.4.29",
+        "source_commit": "8714e03980396e4b5ef07214d3e8fa1d7a4c7782",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWMX-English-v0.4.29.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
+            "source_bytes": 1295122432,
+            "target_sha256": "6e795ed2579cba86f896f819cfe7bb64384557dc4950bfae226225a2ce9b8b5e",
+            "target_bytes": 1318922240,
+            "patch_sha256": "97652315ce43d417294e2b3c93d2373d5a1fd78dd891d92a1c70b41171b3f4f7",
+            "patch_bytes": 2409038,
+            "platform": "PSP",
+            "game_name": "Super Robot Taisen MX Portable"
+          },
+          {
+            "patch": "SRWMX-English-v0.4.12-to-v0.4.29.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "0.4.12",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "80f9d24f682884059742c89b0e60ab3a53f611ee384e0cb46b068b4478d9acae",
+            "source_bytes": 1317414912,
+            "target_sha256": "6e795ed2579cba86f896f819cfe7bb64384557dc4950bfae226225a2ce9b8b5e",
+            "target_bytes": 1318922240,
+            "patch_sha256": "b7fa513887f928f8c90eaeae3d0ec76019d730c970951fb3cd334b7989b8181f",
+            "patch_bytes": 34559,
+            "platform": "PSP",
+            "game_name": "Super Robot Taisen MX Portable"
+          },
+          {
+            "patch": "SRWMX-PS2-English-v0.4.29.xdelta",
+            "edition": "SLPS-25345",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "bcc9a6c5e20ffe4afc02aae482819de7b18c8bb1437a6d7a0feff096801934ce",
+            "source_bytes": 3777167360,
+            "target_sha256": "5a241ca699191293474731103687441f711c636b965fb74525eaa4c3613123b8",
+            "target_bytes": 4668092416,
+            "patch_sha256": "4b7f372203b0ef345aa60b8c661564a754ca7efff5e8af1e35dc48adf05174dd",
+            "patch_bytes": 127478150,
+            "platform": "PS2",
+            "game_name": "Super Robot Taisen MX"
+          },
+          {
+            "patch": "SRWMX-PS2-English-v0.4.12-to-v0.4.29.xdelta",
+            "edition": "SLPS-25345",
+            "language": "en",
+            "source_version": "0.4.12",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "10d491a0ce7331ecaf94270f5112c375276f0a987c1150e104fd22a67833dbdf",
+            "source_bytes": 4663269376,
+            "target_sha256": "5a241ca699191293474731103687441f711c636b965fb74525eaa4c3613123b8",
+            "target_bytes": 4668092416,
+            "patch_sha256": "6d479b83bdb93e7924ecf1fb3a2339df40837162b4aa5692e0254cb7d3f7cf1d",
+            "patch_bytes": 135849,
+            "platform": "PS2",
+            "game_name": "Super Robot Taisen MX"
+          }
+        ]
+      },
+      "assets": {
+        "SRWMX-English-v0.4.29.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.29/SRWMX-English-v0.4.29.xdelta",
+        "SRWMX-English-v0.4.12-to-v0.4.29.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.29/SRWMX-English-v0.4.12-to-v0.4.29.xdelta",
+        "SRWMX-PS2-English-v0.4.29.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.29/SRWMX-PS2-English-v0.4.29.xdelta",
+        "SRWMX-PS2-English-v0.4.12-to-v0.4.29.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.29/SRWMX-PS2-English-v0.4.12-to-v0.4.29.xdelta"
       }
     },
     {
@@ -1328,6 +1507,194 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z",
+      "tag": "v0.9.87",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "srw-z",
+        "game_name": "Super Robot Wars Z",
+        "platform": "PS2",
+        "version": "0.9.87",
+        "source_commit": "d766bc7c4d37e3989b2b0bd14b0ca8450cc8edd4",
+        "patches": [
+          {
+            "patch": "SRWZ-English-v0.9.87.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ddbedefc0061213c50928fb213a7fb277c0345f01dab7386adc0383638a78cd2",
+            "source_sha1": "e8dbe37e88afe8f82d48889b0775274ccde3cf99",
+            "source_bytes": 3758358528,
+            "target_sha256": "aff7e02688f56f7908aae39af07d464dcc602c679bb1b46705b639206ababe7e",
+            "target_sha1": "e8ef551cb946eb848fd05af436cddb4fb880a276",
+            "target_bytes": 3758358528,
+            "patch_sha256": "bb1233ac1e2fc62f67cef2defb9b488840fb50bbbeb775ae7679d97d191ee734",
+            "patch_bytes": 7435923
+          },
+          {
+            "patch": "SRWZ-English-v0.9.86-to-v0.9.87.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.9.86",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "8ce18fc847be10368969ea73c9d219a61d53b1c4beae2eece2fbe10d0f51f24a",
+            "source_sha1": "1d2db4e117150c25954591eea3d94a0dbe88e599",
+            "source_bytes": 3758358528,
+            "target_sha256": "aff7e02688f56f7908aae39af07d464dcc602c679bb1b46705b639206ababe7e",
+            "target_sha1": "e8ef551cb946eb848fd05af436cddb4fb880a276",
+            "target_bytes": 3758358528,
+            "patch_sha256": "788956b59038a60131a8beb352a4df4d364a021223c2b4852e8a3dd213282c07",
+            "patch_bytes": 417173
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.87.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "950e2759d0d7482387d97d6df31325d9e352097a23e0bb4724073d1538d8cf77",
+            "source_sha1": "2ebadb5c8fa764135206eaec2044ea5482dd4d6b",
+            "source_bytes": 3755081728,
+            "target_sha256": "cfdaede82d071d80383df981df1d326a115e3c48f52eca945a33150d4591ba0a",
+            "target_sha1": "c0859e0d6c054a9066b420c7c453e99478945dd0",
+            "target_bytes": 3755081728,
+            "patch_sha256": "21479793051f893e4ce5685b4c4b53b422e6c9231a981297f5676446f7eb6dd8",
+            "patch_bytes": 6382544
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.86-to-v0.9.87.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "0.9.86",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "33b7ae2043aba9031a804f7f2e85739116ddf861effbbaba5a9c9372d90e06c3",
+            "source_sha1": "77d550a1f3ca3e85cf1c3883ffe18a0dce7344d9",
+            "source_bytes": 3755081728,
+            "target_sha256": "cfdaede82d071d80383df981df1d326a115e3c48f52eca945a33150d4591ba0a",
+            "target_sha1": "c0859e0d6c054a9066b420c7c453e99478945dd0",
+            "target_bytes": 3755081728,
+            "patch_sha256": "525defebbf40290f66d31e1c18dbdbe106c2c64c5df7470e458ff2863d9becea",
+            "patch_bytes": 339609
+          }
+        ],
+        "build_provenance": {
+          "repository_snapshot_note": "The source_commit identifies the upstream repository snapshot. Local cumulative repair inputs and tools are identified separately; that snapshot alone is not a complete reproducible build recipe.",
+          "base_images": [
+            {
+              "edition": "original",
+              "sha256": "b473bc4040a37377e55dc4531db4982e06f991dcdd2b985596ec41d1ecd09bf2"
+            },
+            {
+              "edition": "best",
+              "sha256": "5ea2bb4e74e2c7ca0828609cf310b706ad0fb4b513466938e7c402476759d7c4"
+            }
+          ],
+          "local_tool_sha256": {
+            "_work/release-v0.9.87/build.py": "b0ba00b389221ee851c7acfe236e42cf31a80c815bc6e6081a57dd99e92160bf",
+            "_work/release-v0.9.87/package.py": "889ee929ca6ae903d1f2b9c67a82091200275ec0bedbec687d728d0d1469c3a8",
+            "_work/spirit-layout-2026-10-10/validate.py": "a9eec0c79ac671703182644e54929f6551b158762a3ec44996eb6587409e84e5",
+            "_work/tools/patch_backlog.py": "6f703cbba09a424aad71e19558663d29176f6eaedb5339afe5e139eafdc4fada",
+            "_work/tools/patch_battle_status.py": "565912e78d0d0ac5624cee3e73b5a4b120a56d85e36d11de1511dd3efc292a34",
+            "_work/tools/patch_bazaar_ads.py": "db3726ba512b9310eecb318c59059997ba6792b345b4ee4d2567ee86f847953b",
+            "_work/tools/patch_bazaar_buttons.py": "a59eefdf337e18ba595cc223f491640cb60feb3f7e5bc9a3357c3ca468dbabdd",
+            "_work/tools/patch_bazaar_heading.py": "69c2b7f7a6bb75e73686e93b005fac743d007815163ff7d40bf3fb4485ceaf7f",
+            "_work/tools/patch_caption_paging.py": "3605b63ca97e923511e90e9dc16b3ad76d7fd9e33567c372aad2e2137c102564",
+            "_work/tools/patch_chapter_stage_label.py": "4bc393e030d3194278caaf4157d55cca32f1586bca789959a28afe3a62aec40c",
+            "_work/tools/patch_chapter_stage_layout.py": "77b5ff7298d8b4dd178e0063d126c735484fe29cf2ba4b7abc71871112d78ce2",
+            "_work/tools/patch_chart_heading.py": "5a3c636fa978935a8357953304097567831baf1f2abf40c22f80bc285c9b55fc",
+            "_work/tools/patch_chart_live_labels.py": "217e072450fcabe04d9b658c3daaddbfadb9d61e95cc4e9c10dae71ce2d33b3e",
+            "_work/tools/patch_chart_recaps.py": "4e915cb10ee8c869a1d736a5b59bc723be5373ddf26339bb5eaf31cd94692a02",
+            "_work/tools/patch_cmdmenu.py": "d140dc8880f62dba6684f0f362232459f5466766323001e12f410af916811264",
+            "_work/tools/patch_compdata.py": "36b29dc6023c76d6850e3db12335a852f098ec128e489aa2f9f64b9886fa5526",
+            "_work/tools/patch_effect_strings.py": "af183b34a2868001dbfa056a4a66fd36fa3c27ce3511c2d34a02df4f997ad412",
+            "_work/tools/patch_elf_fixups.py": "25d65697f54b7b1114982111c77dd4c5276f22e3bb70e110f4f82f34130bdcf7",
+            "_work/tools/patch_elf_labels.py": "fa2ae79b3bcf7a9fd1c0b4a8d60c163115ea3a3180cdee2845d4beea8ecf6927",
+            "_work/tools/patch_ep_labels.py": "d0951cca6b45f932f22ea236430f5a28df8a8fe6642bf7201b873f985e060f22",
+            "_work/tools/patch_final_mode.py": "f1e2a74ed853fb0fc36e8954b3e317359ec4466c1767573d5f5f95886051aa30",
+            "_work/tools/patch_flushlog.py": "e9faf39f34b0e16430fff824e2fd962dc530cf1baf13bcbc0618435c4b52a8b1",
+            "_work/tools/patch_font.py": "a6c293ddbd918a7d24684320b1887ae8442536eafff6b7da7e0b12895db22fce",
+            "_work/tools/patch_font_advance.py": "585dccb2bf7b0777fb26ac3b8ddb64d31695b48c217f67d4d13b36012ac9445e",
+            "_work/tools/patch_font_destwidth.py": "9aec904197cf190506de50b3eaa99f89afc36167d07d73be5711972f497fbfdf",
+            "_work/tools/patch_font_linkstub.py": "a2c91561531148ee3e923db31b9aa70508e3de233910eab9054594e5884fbac1",
+            "_work/tools/patch_font_shadowadv.py": "a08b762dd78cc8c0cc4ab47d3e043ed3872a415e072f6004db8dec5713472f37",
+            "_work/tools/patch_font_squish.py": "180a69d72a5d00ef217b5c81e9474911599c6ce0e078eb574590ed8efb1e01a1",
+            "_work/tools/patch_fontinj.py": "95ed9083001d8cc1002400aeefe9e5efe4776227e199978f0a3ddbd86e765d46",
+            "_work/tools/patch_gainer_wounds.py": "0c8d940fcfb6f08f9b41cd0247b3d13abe3f560dc63841cfb6eac62b24edfde0",
+            "_work/tools/patch_geraba_voice.py": "f4d069b2e0e7411514eee8a98628ba26950912d99ee6bda0cceac348251549a1",
+            "_work/tools/patch_glyph_dedup.py": "b25a4f4a334b395123a10d78e0edcb85bec64789c6c951fa8a8a5b6093d07b50",
+            "_work/tools/patch_glyph_pool.py": "9108691454539199beb5ea6ee90455dc8ac6d5d21155930d2cae6099a2e49b0b",
+            "_work/tools/patch_hsfc_recaps.py": "358564ffa919a1d3ef4bf96a72f64aea3899832d42a46a47091146c52b107d6a",
+            "_work/tools/patch_hwexp.py": "72401e437eeccf4bbfbc2b208710657da6c5980c29281f1ccc14bdfe4d7444cd",
+            "_work/tools/patch_hwfont.py": "7832ae2c40c98c8afa25f782bdb191216baf977936ce68a81a3998244c9b5853",
+            "_work/tools/patch_hwfont_v1_atlas.py": "e75cf42702ef625cea8c7ec312465241461ba86d0611f62be0247f4badb1f216",
+            "_work/tools/patch_hwtest.py": "33f6a7d4a03b9df187152c3dde361d8b93377b40c9c66ce7fa5ba53fbd8a3bf2",
+            "_work/tools/patch_intermission_labels.py": "6d079a8be9c59b4bdbf3aa43470aa872d36371bc85a8d0799f6e8430de6f3d72",
+            "_work/tools/patch_keyword_highlight.py": "fec52272c4951e5c16b014ba19b178fee596356035815b5710dd5794b6efadf6",
+            "_work/tools/patch_library_menu.py": "957eef2892acceb4932725ebc867d40cf35c74f3ec4bdffa50340860d3fbf08e",
+            "_work/tools/patch_library_nisv.py": "28eabab7ea7df1e44b8c393c181865a6e421a83de173f3e3fce75c0daf79781a",
+            "_work/tools/patch_linkpos.py": "0cd7758cd2e2cf486195b0372db0eb7558a3929e7b32d011d50a0a0c103fa9b5",
+            "_work/tools/patch_log.py": "49b92f7acabadf731d35a843d630774522c148e14323bb7da86f6c12264e7eaa",
+            "_work/tools/patch_lvlup_spirits.py": "e44e63be5c8a3a317c90ca9a3bc699b9ee53490a5a8993a39ba04c14bb5801f1",
+            "_work/tools/patch_map_status.py": "6172c0cb4a35c6984121678a7c83a2aaedc2b2fe7b170cd0afd0e0813bec9053",
+            "_work/tools/patch_map_weapon.py": "646c277478628cc598c2a7ed7ee4f1b2e60cb8fde5da8737665238bbe91a88db",
+            "_work/tools/patch_mapmodel_terrain.py": "0f52f0c9a14492077fd215735a425234635e56c8db900cf22f85e039abde5480",
+            "_work/tools/patch_measure_ascii.py": "99959fbb147ff2fc531dd95af5a7cd42319e50e3329f917ff7ced577164898eb",
+            "_work/tools/patch_menu_atlas.py": "28cac7e7bcbf6df64bd95a6854b6b5f115eb299a221ecc4d74e0d139f93dfbc8",
+            "_work/tools/patch_micro_glyphs.py": "8119b98c02f631d7f15ead8b4dc994a40be79bc8d7f2d0e74d760ca6ef5c3029",
+            "_work/tools/patch_mtvpros.py": "f879cc77055be4e4db0cf4957d9dbf574951d568720bb085d39e197162bbdee3",
+            "_work/tools/patch_op_titles.py": "832d7959160b124abeb21886462b409d1c90fb639c958ea35cc8821dc5e72fc4",
+            "_work/tools/patch_outline_half.py": "ca2f37c72f9e7cb0c879ea07ed41d21445ec9bf08697801ac4ed3dad24be0f12",
+            "_work/tools/patch_pilot_shortnames.py": "8e7ae2e3783e621d45c07e98d5e5425f8a8f7686348ed6386ed6ef36cafa0211",
+            "_work/tools/patch_profile_labels.py": "b87e31800b3541df2de0d7738255789ca15e0fca4a579616e1742213e396227f",
+            "_work/tools/patch_prologue_cards.py": "624109efbfd9e6390a5b0769777c3f86c002f4790089bf7988b276c470b6b0d6",
+            "_work/tools/patch_renderer.py": "4ffce08b7113d3b8a859736f7cb5952b01375bddfc08923118ba96f269785c69",
+            "_work/tools/patch_reported_passages.py": "77cb9750f4227401aed5c2d52dacec7242f69afd7b7e7ccbf5bc48901927c57f",
+            "_work/tools/patch_scenario_headings.py": "3a4164dda4f5e7fef0ec103795e2e70cff6b3fef84175af18a7b6b5ff6946755",
+            "_work/tools/patch_speaker_names.py": "2b74ebc2c945d14ddb9e1d943c62fbe1f0f988fbb75e1deaa2eed6da8735deba",
+            "_work/tools/patch_spelling.py": "8802d5c6717df809c59a9117667b9dbce3bb2f682d4ca98ad62ae4fbce3bcd63",
+            "_work/tools/patch_spirit_abbrev.py": "b08d6744fcb368b3ea28994ac168ade346a091e61ede0d5fac9cd42f1f9ede3d",
+            "_work/tools/patch_spirit_layout.py": "0f6edf7b0cf3f2a00173d795e8dfd03624d7f48eec9550147e9a12de81b5e22f",
+            "_work/tools/patch_squad_join.py": "1d6140d6593fb6ac9b4161dbe70155027cf79a5bcc30b9d08bb019aba692f303",
+            "_work/tools/patch_squad_naming.py": "639ac280218908ddd629809238851a529cb8b16e7857a292c66f043716509911",
+            "_work/tools/patch_squad_panel.py": "79830c544249e2253d0c9d07bc59ec44572b59ae44e8a7a60920361f649d4b48",
+            "_work/tools/patch_srvc_kagi.py": "e58698bfe5c396e19ab60f728a03f796a9dec3e40d41d66ff7facbdcde80bfd3",
+            "_work/tools/patch_srvc_polish.py": "f8845f9613f34ecf8e41a9b4e2c56a604e48d23eab9db21593695c4416fcd83f",
+            "_work/tools/patch_stage45_dialogue.py": "2b3c38ac3ac3721932bcb858859a0c5130ca56b3bc1fcc3eacb7eaaf47bc3cf7",
+            "_work/tools/patch_stage48_subjects.py": "da45f6a94d51cb9d6fb4925b713bc1ee521f4f7d11d920695fb0ff088d786f6f",
+            "_work/tools/patch_terrain_glyphs.py": "ef8083e400e3b4691a92cfb64bc29a22a03be2bb878caeb9f490175c1c9b194b",
+            "_work/tools/patch_title_branding.py": "f5d235963c916d09dfc9b48cdf8d86b3a98c55aab25a002faea246d5c0ffd8fe",
+            "_work/tools/patch_title_glow.py": "bd781280105e5a97393371da7dde7f77d9469344c63defb17772fac421fa1bd5",
+            "_work/tools/patch_title_logo.py": "6374d03ed6aa62b8867a1e11fe10ea96ffc426c4efce76d7aba12c9427f49475",
+            "_work/tools/patch_titlecards.py": "cbd85f3c66ff0876a41cee8fb0ad5832d6fb8e49cca23c90d47e2beb050edd73",
+            "_work/tools/patch_titles.py": "b38c38282cf95f73194dd701ce37cfa47d24b71faf44fb33b5e5b7a17655ba43",
+            "_work/tools/patch_tutorial_titles.py": "83a47a26bdee0f1ef08044af29f9fb30de94788050ff6b6c4a82a12f89dfaeec",
+            "_work/tools/patch_underline.py": "92de28a200a3c9ff06020336a621c618ee5a16576dfbfd2ecc7a0a1558a2987b",
+            "_work/tools/patch_vlabels.py": "5f1eea8bf592e766684fbf13b7aedc9c49eb5f8c28d0411592f2e76d4301764b",
+            "_work/tools/patch_vwf1.py": "bad7736eace9eee8c8870d9a79e867eb611a7507cb71354c49bebbc0526fb612",
+            "_work/tools/patch_vwf_flag.py": "bf52f714e67bfb2fcacff2220dfbf2929e5feb0f6dc0f5640bc1f4bbca36f540",
+            "_work/tools/patch_vwf_widths.py": "711b2749cf1b9733bd15b4660c1e30f62c0aa72bf21598d129a16ff3c99b9494",
+            "_work/tools/patch_weapon_labels.py": "b665b76a64bf81420d349285ae40b6341abb5978cfc62af50a27dc8b66bd4e57",
+            "_work/tools/patch_world_map_labels.py": "6451e1b1324b923e48477500f4306ebeb5a04051040259e337d724d9a1e8e867",
+            "best_adapter/stage.py": "2b72e39e06e3aafe386f18f80fcc82f9e3fbf8be3dc559122527d392067e5780",
+            "best_adapter/elf.py": "879992d678fe12eafb9b9c5e37af669d32f106f6ae912b3c554eccff8c04cc00",
+            "best_adapter/pack.py": "d4156919807420683ac79bc9e77c6688e0071b4b81da3bc91ce45deeb7db7abe",
+            "best_adapter/verify.py": "d82f19602bb9cd76ffa74337e911f5c5b687351ec14a0bdc98d9815386f20749"
+          }
+        }
+      },
+      "assets": {
+        "SRWZ-English-v0.9.87.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.87/SRWZ-English-v0.9.87.xdelta",
+        "SRWZ-English-v0.9.86-to-v0.9.87.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.87/SRWZ-English-v0.9.86-to-v0.9.87.xdelta",
+        "SRWZ-English-Best-v0.9.87.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.87/SRWZ-English-Best-v0.9.87.xdelta",
+        "SRWZ-English-Best-v0.9.86-to-v0.9.87.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.87/SRWZ-English-Best-v0.9.86-to-v0.9.87.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z-Special-Disc",
       "tag": "v0.3.0",
       "manifest": {
@@ -1408,6 +1775,73 @@
       "assets": {
         "SRWZ-SP-English-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.16.xdelta",
         "SRWZ-SP-English-v0.3.0-to-v0.3.16.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.16/SRWZ-SP-English-v0.3.0-to-v0.3.16.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-Z-Special-Disc",
+      "tag": "v0.3.20",
+      "manifest": {
+        "game_id": "srw-z-special-disc",
+        "game_name": "Super Robot Taisen Z Special Disc",
+        "platform": "PS2",
+        "version": "0.3.20",
+        "source_commit": "b2bf43001456ee1c11b6f66b077cd0b9b83b239b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWZ-SP-English-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c3bd8c1af4e411e5ab2ae2d4be877170b6ab1ea9b51fa62bc0b91a51ba1a2952",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "690796ef790f1944fcbe31d758a8b6c54c097d2a622130a83ed8b0cca60e3e5c",
+            "patch_bytes": 17855985,
+            "source_sha1": "e1e484ff65688313b6acaea117b115d7ba6bfbc4",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          },
+          {
+            "patch": "SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "0.3.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ca444e5c078a6f3cb23a96c5b6d676de1df068cfa4219ecbc06e71cbea4186ec",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "eb1d9e69be06df95f4bd0a0577e36c6f744a8b893f4ef08404e378f82e6ee713",
+            "patch_bytes": 9514899,
+            "source_sha1": "aec2b234675630ed26ad3bf6bdc7240d9882a9f5",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          },
+          {
+            "patch": "SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta",
+            "edition": "Japan (SLPS-25920)",
+            "language": "en",
+            "source_version": "0.3.16",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "38199a3be48e759e2b887c369609b404afe9376a6f28a91d02036bfca914f5a7",
+            "source_bytes": 3791781888,
+            "target_sha256": "414c0228a9bf23caeeb697aacda6cf69a9bfc95d2fb88dc6ab0a2b31309053f6",
+            "target_bytes": 3791781888,
+            "patch_sha256": "f8e4cb4e8087e526cce9d5390cc17d3ce7aaf3e0b4823db977889687cb2ef720",
+            "patch_bytes": 600476,
+            "source_sha1": "5833c27eeb5c68ef547af2c173621568819b1af5",
+            "target_sha1": "0794ecd0543c512458514af62e6cd6269a8be23c"
+          }
+        ]
+      },
+      "assets": {
+        "SRWZ-SP-English-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.20.xdelta",
+        "SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.0-to-v0.3.20.xdelta",
+        "SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta": "https://github.com/retro-trans/SRW-Z-Special-Disc/releases/download/v0.3.20/SRWZ-SP-English-v0.3.16-to-v0.3.20.xdelta"
       }
     },
     {
@@ -1686,6 +2120,83 @@
       "vita_min_app_version": "0.5.4"
     },
     {
+      "repo": "retro-trans/SRW-Z3-2",
+      "tag": "v0.5.18",
+      "manifest": {
+        "game_id": "srw-z3-tengoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.5.18",
+        "source_commit": "f620443075739b2e7c58af5e8044142f29d44b9c",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-2-PS3-English-0.5.18-from-original.xdelta",
+            "edition": "jp-bljs10299",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "803df496be059d43a6045bd06e31a7def0d96f721ef8147e0d6efff81d125b99",
+            "source_bytes": 4888199168,
+            "target_sha256": "1139b7c2dbe8d7ce0de50e73f5480e2f2f19aff06b053a6855281e3772e34db4",
+            "target_bytes": 5284429824,
+            "patch_sha256": "bda2292c27708fba6c99029b82be19672efc9d19ec9066af94882f7166093f2b",
+            "patch_bytes": 198248385
+          },
+          {
+            "patch": "SRW-Z3-2-PS3-English-0.5.18-from-0.5.2.xdelta",
+            "edition": "jp-bljs10299",
+            "language": "en",
+            "source_version": "0.5.2",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "3351402913f80937bcf373acd4bdb26fcf1c04ac0dba03be4cedfffca51aca2b",
+            "source_bytes": 5282922496,
+            "target_sha256": "1139b7c2dbe8d7ce0de50e73f5480e2f2f19aff06b053a6855281e3772e34db4",
+            "target_bytes": 5284429824,
+            "patch_sha256": "8079f5409e5d8c0a78f49c08ba25be6d74614d4807b56cbe2bb7fb70f5dcf6e5",
+            "patch_bytes": 29693297
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-2-PS3-English-0.5.18-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3-2/releases/download/v0.5.18/SRW-Z3-2-PS3-English-0.5.18-from-original.xdelta",
+        "SRW-Z3-2-PS3-English-0.5.18-from-0.5.2.xdelta": "https://github.com/retro-trans/SRW-Z3-2/releases/download/v0.5.18/SRW-Z3-2-PS3-English-0.5.18-from-0.5.2.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-Z3-2",
+      "tag": "v0.5.2",
+      "manifest": {
+        "game_id": "srw-z3-tengoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.5.2",
+        "source_commit": "5e1f5083ce24b714f35a078627a32955bc44d857",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-2-PS3-English-0.5.2-from-original.xdelta",
+            "edition": "jp-bljs10299",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "803df496be059d43a6045bd06e31a7def0d96f721ef8147e0d6efff81d125b99",
+            "source_bytes": 4888199168,
+            "target_sha256": "3351402913f80937bcf373acd4bdb26fcf1c04ac0dba03be4cedfffca51aca2b",
+            "target_bytes": 5282922496,
+            "patch_sha256": "707410a712a74759549db8f645f591b5508e64ddcdf23b4600e9af8d009cc066",
+            "patch_bytes": 198690589
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-2-PS3-English-0.5.2-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3-2/releases/download/v0.5.2/SRW-Z3-2-PS3-English-0.5.2-from-original.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3-R",
       "tag": "v0.1.1",
       "manifest": {
@@ -1714,6 +2225,52 @@
       },
       "assets": {
         "SRW-Z3-R-NPJB00689-English-0.1.1-RPCS3.xdelta": "https://github.com/retro-trans/SRW-Z3-R/releases/download/v0.1.1/SRW-Z3-R-NPJB00689-English-0.1.1-RPCS3.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-Z3-R",
+      "tag": "v0.1.2",
+      "manifest": {
+        "game_id": "srw-z3-rengoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Rengoku-hen",
+        "platform": "PS3",
+        "version": "0.1.2",
+        "source_commit": "3df241c3864ae7c10885f106b052315530cb9e66",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-R-NPJB00689-English-0.1.2-RPCS3-from-original.xdelta",
+            "edition": "Japanese digital NPJB00689 (RPCS3 package)",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "pkg",
+            "target_format": "pkg",
+            "source_sha256": "77431599e49115ee14070d11df910ea48d5f3c812883870d9770755d15400307",
+            "source_bytes": 530382896,
+            "target_sha256": "2beeb00d12be6df166893da1fa28baf8e9279793288c22da1a24c24dcf82a818",
+            "target_bytes": 725958496,
+            "patch_sha256": "45e7ad2ecaf4f6c3dc09b6e0d9be4962a10b54025533794948a6eeeaacf435e2",
+            "patch_bytes": 195590222
+          },
+          {
+            "patch": "SRW-Z3-R-NPJB00689-English-0.1.1-to-0.1.2-RPCS3.xdelta",
+            "edition": "Japanese digital NPJB00689 (RPCS3 package)",
+            "language": "en",
+            "source_version": "0.1.1",
+            "source_format": "pkg",
+            "target_format": "pkg",
+            "source_sha256": "dc570db31edda1928885ed5647e6a962f88e847eb309bcd2119978202ef39f3a",
+            "source_bytes": 721946688,
+            "target_sha256": "2beeb00d12be6df166893da1fa28baf8e9279793288c22da1a24c24dcf82a818",
+            "target_bytes": 725958496,
+            "patch_sha256": "9faa94b90b08fc5c53b511a80f8248e2f61a0dd6b2b25805fc7722c1db59abce",
+            "patch_bytes": 149752593
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-R-NPJB00689-English-0.1.2-RPCS3-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3-R/releases/download/v0.1.2/SRW-Z3-R-NPJB00689-English-0.1.2-RPCS3-from-original.xdelta",
+        "SRW-Z3-R-NPJB00689-English-0.1.1-to-0.1.2-RPCS3.xdelta": "https://github.com/retro-trans/SRW-Z3-R/releases/download/v0.1.2/SRW-Z3-R-NPJB00689-English-0.1.1-to-0.1.2-RPCS3.xdelta"
       }
     },
     {

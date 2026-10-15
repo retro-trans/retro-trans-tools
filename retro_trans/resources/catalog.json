@@ -2719,6 +2719,52 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z3-2",
+      "tag": "v0.5.44",
+      "manifest": {
+        "game_id": "srw-z3-tengoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.5.44",
+        "source_commit": "13c822deb9d5853fd974aa2680ea9c2c5220cbf1",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-2-PS3-English-0.5.44-from-original.xdelta",
+            "edition": "jp-bljs10299",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "803df496be059d43a6045bd06e31a7def0d96f721ef8147e0d6efff81d125b99",
+            "source_bytes": 4888199168,
+            "target_sha256": "80d6b7f92ae584ecd78994bc1ab7c83abef0d3a302ee826d2b770cd61101c9dd",
+            "target_bytes": 5289607168,
+            "patch_sha256": "4084714f3b273208dd8dc163c211a85bd868adb47a14aa70d8c3d4ce172bceeb",
+            "patch_bytes": 204181888
+          },
+          {
+            "patch": "SRW-Z3-2-PS3-English-0.5.44-from-0.5.40.xdelta",
+            "edition": "jp-bljs10299",
+            "language": "en",
+            "source_version": "0.5.40",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "f80b9be177a4040b92488b745c9594906b2794ffa746787334a0eed974066fe4",
+            "source_bytes": 5289541632,
+            "target_sha256": "80d6b7f92ae584ecd78994bc1ab7c83abef0d3a302ee826d2b770cd61101c9dd",
+            "target_bytes": 5289607168,
+            "patch_sha256": "d0dcb00c1dd30af1bb30180c2e221d128234e718218fbe74c78d7f4793bf9c2a",
+            "patch_bytes": 21351721
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-2-PS3-English-0.5.44-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3-2/releases/download/v0.5.44/SRW-Z3-2-PS3-English-0.5.44-from-original.xdelta",
+        "SRW-Z3-2-PS3-English-0.5.44-from-0.5.40.xdelta": "https://github.com/retro-trans/SRW-Z3-2/releases/download/v0.5.44/SRW-Z3-2-PS3-English-0.5.44-from-0.5.40.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z3-R",
       "tag": "v0.1.1",
       "manifest": {

@@ -4,6 +4,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import tempfile
@@ -60,14 +61,27 @@ def release_record(repo, release, client, reviewed=None):
             imported['solutions'] = copy.deepcopy(reviewed['manifest'].get('solutions'))
             validate_manifest(imported)
         vita_record, vita_archive, vita_names = None, None, set()
-        if 'SRW-Z3-v0.9.0-Vita-patches.zip' in assets and 'VITA-REPATCH.json' not in assets:
+        from . import vita_repatch as vita
+        vita_zips = [name for name in assets if name == vita.ARCHIVE or name.endswith(vita.ZIP_SUFFIX)]
+        if len(vita_zips) > 1:
+            raise PatchError('Release must contain at most one Vita patch ZIP.')
+        archive_name = vita_zips[0] if vita_zips else None
+        legacy_vita = (repo, tag) == (vita.REPO, vita.TAG)
+        if archive_name and vita.MANIFEST not in assets:
             raise PatchError('Vita ZIP requires its published profile.')
-        if 'VITA-REPATCH.json' in assets:
-            from . import vita_repatch as vita
-            if (repo, tag) != (vita.REPO, vita.TAG):
+        if vita.MANIFEST in assets:
+            if repo != vita.REPO or (not legacy_vita and not re.fullmatch(r'v0\.\d+\.\d+', tag)):
                 raise PatchError('Vita extras are not registered for this release.')
             vita_raw = read_verified(vita.MANIFEST)
             description = vita.read_description(vita_raw)
+            if not legacy_vita:
+                if (description['build'] != tag[1:] or manifest['version'] != tag[1:]
+                        or description['title_id'] != 'PCSG00264'
+                        or 'package' not in description or not archive_name
+                        or not archive_name.endswith(vita.ZIP_SUFFIX)
+                        or description.get('minimum_app_version') != '0.5.16'):
+                    raise PatchError('New Z3 Vita releases require matching versions, original PKG identity, '
+                                     'one discoverable ZIP and app 0.5.16.')
             metadata, metadata_url = fetch(vita.MANIFEST)
             metadata_hash = hashlib.sha256(vita_raw).hexdigest()
             if metadata.get('digest') != 'sha256:' + metadata_hash:
@@ -84,19 +98,19 @@ def release_record(repo, release, client, reviewed=None):
                     raise PatchError('Vita extras must use separate VITA- patch names.')
                 # A verified complete ZIP replaces missing individual assets.
                 # Existing bare assets, if any, must still match the profile.
-                if name not in assets and vita.ARCHIVE in assets:
+                if name not in assets and archive_name:
                     continue
                 a, url = fetch(name)
                 if a['size'] != patch['bytes'] or a.get('digest') != 'sha256:' + patch['sha256']:
                     raise PatchError('Vita asset disagrees with its profile: ' + name)
                 client.download(Asset(name, url, patch['bytes'], patch['sha256']), directory/'vita-cache')
                 vita_names.add(name)
-            if vita.ARCHIVE in assets:
-                a, url = fetch(vita.ARCHIVE)
+            if archive_name:
+                a, url = fetch(archive_name)
                 digest = a.get('digest') or ''
                 if not digest.startswith('sha256:') or not 0 < a['size'] <= vita.MAX_ARCHIVE:
                     raise PatchError('Vita patch ZIP requires a checksum and bounded size.')
-                asset = Asset(vita.ARCHIVE, url, a['size'], valid_hash(digest[7:]))
+                asset = Asset(archive_name, url, a['size'], valid_hash(digest[7:]))
                 vita_archive = dict(url=url, bytes=asset.size, sha256=asset.sha256)
                 if reviewed and reviewed.get('vita_archive') and reviewed['vita_archive'] != vita_archive:
                     raise PatchError('Published Vita ZIP identity changed.')
@@ -127,7 +141,7 @@ def release_record(repo, release, client, reviewed=None):
         record['vita_repatch'] = vita_record
     if vita_archive:
         record['vita_archive'] = vita_archive
-        record['vita_min_app_version'] = '0.5.4'
+        record['vita_min_app_version'] = '0.5.4' if legacy_vita else '0.5.16'
     return record
 
 

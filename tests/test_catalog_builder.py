@@ -35,14 +35,20 @@ class ReleaseClient(GitHubClient):
 
 
 class CatalogBuilderTests(unittest.TestCase):
-    def vita_client(self):
+    def vita_client(self, version=None):
         from retro_trans import vita_repatch as vita
         from test_vita_repatch import fixture
         item = record()
         item['repo'], item['tag'] = vita.REPO, vita.TAG
-        item['manifest']['version'] = vita.TAG.lstrip('v')
+        if version:
+            item['tag'] = 'v' + version
+        item['manifest']['version'] = item['tag'].lstrip('v')
         client = ReleaseClient(item)
         data, _, targets = fixture()
+        if version:
+            data.update(build=version, minimum_app_version='0.5.16',
+                        package=dict(bytes=1234, sha256='1'*64,
+                                     content_id='JP0700-PCSG00264_00-' + 'A'*16))
         extra = {vita.MANIFEST: json.dumps(data).encode()}
         extra.update({row['patch']['name']: targets[row['path']] for row in data['files']})
         client.files.update(extra)
@@ -85,20 +91,93 @@ class CatalogBuilderTests(unittest.TestCase):
             with self.subTest(error=error), self.assertRaises(PatchError):
                 build_catalog(previous, client)
 
-    def add_vita_zip(self, client, extra=False):
+    def add_vita_zip(self, client, extra=False, name=None):
         from retro_trans import vita_repatch as vita
+        name = name or vita.ARCHIVE
         output = io.BytesIO()
         with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
-            for name, raw in client.files.items():
-                if name == vita.MANIFEST or name.startswith('VITA-') and name.endswith('.xdelta'):
-                    archive.writestr(name, raw)
+            for member, raw in client.files.items():
+                if member == vita.MANIFEST or member.startswith('VITA-') and member.endswith('.xdelta'):
+                    archive.writestr(member, raw)
             if extra:
                 archive.writestr('work.bin', b'not allowed')
         raw = output.getvalue()
-        client.files[vita.ARCHIVE] = raw
-        client.assets = [a for a in client.assets if a['name'] != vita.ARCHIVE]
-        client.assets.append(dict(name=vita.ARCHIVE, size=len(raw),
-            digest='sha256:'+hashlib.sha256(raw).hexdigest(), browser_download_url=client.prefix+vita.ARCHIVE))
+        client.files[name] = raw
+        client.assets = [a for a in client.assets if a['name'] != name]
+        client.assets.append(dict(name=name, size=len(raw),
+            digest='sha256:'+hashlib.sha256(raw).hexdigest(), browser_download_url=client.prefix+name))
+
+    def new_vita_client(self):
+        client = self.vita_client('0.9.2')
+        self.add_vita_zip(client, name='SRW-Z3-v0.9.2-Vita-rePatch-patches.zip')
+        client.assets = [a for a in client.assets if not a['name'].startswith('VITA-')
+                         or not a['name'].endswith('.xdelta')]
+        return client
+
+    def test_new_vita_release_preserves_cached_legacy_routes(self):
+        legacy = self.vita_client()
+        self.add_vita_zip(legacy)
+        previous = build_catalog(dict(schema_version=1, releases=[]), legacy)
+        saved = copy.deepcopy(previous)
+        client = self.new_vita_client()
+        result = build_catalog(previous, client)
+        self.assertEqual(previous, saved)
+        self.assertIn(saved['releases'][0], result['releases'])
+        current = next(r for r in result['releases'] if r['tag'] == 'v0.9.2')
+        self.assertEqual(current['manifest'], client.record['manifest'])
+        self.assertEqual(current['vita_min_app_version'], '0.5.16')
+        self.assertEqual(current['vita_repatch']['build'], '0.9.2')
+        self.assertEqual(build_catalog(result, client), result)
+        self.assertFalse(any(n.startswith('VITA-') for n in current['assets']))
+
+    def test_new_vita_release_invalid_or_ambiguous_packages_rejected(self):
+        for problem in ('orphan', 'missing_zip', 'two_zips', 'legacy_zip', 'build',
+                        'package', 'title', 'minimum', 'zip_checksum', 'corrupt', 'extra'):
+            client = self.new_vita_client()
+            name = 'SRW-Z3-v0.9.2-Vita-rePatch-patches.zip'
+            if problem == 'orphan':
+                client.assets = [a for a in client.assets if a['name'] != 'VITA-REPATCH.json']
+            elif problem == 'missing_zip':
+                client.assets = [a for a in client.assets if a['name'] != name]
+            elif problem in ('two_zips', 'legacy_zip'):
+                self.add_vita_zip(client)
+                if problem == 'legacy_zip':
+                    client.assets = [a for a in client.assets if a['name'] != name]
+            elif problem == 'zip_checksum':
+                next(a for a in client.assets if a['name'] == name).pop('digest')
+            elif problem == 'corrupt':
+                client.files[name] = b'corrupt'
+            elif problem == 'extra':
+                self.add_vita_zip(client, extra=True, name=name)
+            else:
+                data = json.loads(client.files['VITA-REPATCH.json'])
+                if problem == 'package':
+                    del data['package']
+                else:
+                    field, value = {'build': ('build', '0.9.1'), 'title': ('title_id', 'PCSG00000'),
+                                    'minimum': ('minimum_app_version', '0.5.4')}[problem]
+                    data[field] = value
+                raw = json.dumps(data).encode()
+                client.files['VITA-REPATCH.json'] = raw
+                next(a for a in client.assets if a['name'] == 'VITA-REPATCH.json').update(
+                    size=len(raw), digest='sha256:'+hashlib.sha256(raw).hexdigest())
+                self.add_vita_zip(client, name=name)
+            with self.subTest(problem=problem), self.assertRaises(PatchError):
+                build_catalog(dict(schema_version=1, releases=[]), client)
+
+    def test_new_vita_profile_and_archive_remain_immutable(self):
+        client = self.new_vita_client()
+        previous = build_catalog(dict(schema_version=1, releases=[]), client)
+        self.add_vita_zip(client, extra=True, name='SRW-Z3-v0.9.2-Vita-rePatch-patches.zip')
+        with self.assertRaisesRegex(PatchError, 'ZIP identity changed'):
+            build_catalog(previous, client)
+        client = self.new_vita_client()
+        raw = client.files['VITA-REPATCH.json'] + b'\n'
+        client.files['VITA-REPATCH.json'] = raw
+        next(a for a in client.assets if a['name'] == 'VITA-REPATCH.json').update(
+            size=len(raw), digest='sha256:'+hashlib.sha256(raw).hexdigest())
+        with self.assertRaisesRegex(PatchError, 'profile identity changed'):
+            build_catalog(previous, client)
 
     def test_vita_archive_additive_and_immutable(self):
         from retro_trans import vita_repatch as vita

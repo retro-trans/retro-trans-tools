@@ -231,8 +231,16 @@ PS3 BUILD-MANIFEST/checksums/report and records a separate `vita_repatch`
 metadata identity (URL, size, SHA-256, title, app version and build) on the
 catalog release. A recorded profile cannot be removed or replaced on refresh.
 Existing clients ignore this additional field and retain unchanged PS3 routes.
-The dedicated Vita tab obtains its profile from the registered release;
-Automatic remains disc patching. Adding another game/version requires review.
+The dedicated Vita tab retains that legacy fallback. Newly reviewed Z3 releases
+may also carry the profile with exactly one `*-Vita-rePatch-patches.zip`.
+Their numeric `v0.x.y` tag, PS3 manifest version and Vita `build` must match;
+the profile must identify the original PCSG00264 PKG (size, SHA-256 and content
+ID) and require app 0.5.16. The ZIP must contain exactly the declared profile
+and payloads, with every publisher checksum verified. Missing or ambiguous
+ZIPs are rejected. Existing cached records and all prior download identities
+remain immutable. Other combined game releases still require separate review.
+Retro Trans 0.5.16 discovers these overlays by original PKG identity in the
+hardware rePatch workflow; this catalog change needs no new app release.
 
 ### Publishing the application
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Z3 combined-release catalog validation
+
+- Permit reviewed Z3 numeric releases after the legacy v0.9.0 profile to carry a hash-verified Vita rePatch ZIP alongside their PS3 manifest. Require matching release/build versions, PCSG00264 original-PKG identity, the discoverable ZIP suffix and Retro Trans 0.5.16. Keep the legacy profile, downloads and cached PS3 routes immutable.
+- Reject missing, ambiguous, corrupt or replaced Vita profiles/ZIPs. This catalog-only change does not publish a new app version or change existing downloads.
+- Validation: all 260 tests pass (four platform-specific skips), including 14 catalog-builder tests and legacy/new-release cached-refresh checks.
+
 ## 0.5.16 — Small-download local PKG Automatic
 
 - Publish the Windows app at the user's request. Automatic downloads small component patches, decrypts the original locally using its matching work.bin/.rif, then rebuilds and verifies an English PKG. Cross Ange's translation download is about 5.4 MB; the native runtime downloads separately on first use. Allow 6 GB temporary space.

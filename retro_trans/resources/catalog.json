@@ -649,6 +649,37 @@
       }
     },
     {
+      "repo": "retro-trans/Macross-Ace-Frontier",
+      "tag": "v0.2.1",
+      "manifest": {
+        "game_id": "macross-ace-frontier",
+        "game_name": "Macross Ace Frontier",
+        "platform": "PSP",
+        "version": "0.2.1",
+        "source_commit": "22ebdfc2b0a49a0ec299ac7eddd24c36a259f90d",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MacrossAceFrontier-English-0.2.1.xdelta",
+            "edition": "ULJS00158",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "58e0020ebf971462fc033f24cc5fe2cbac06ed7ca1416a39302d396611ca4f1f",
+            "source_bytes": 646938624,
+            "target_sha256": "90ee13f53f598231cb6b40f9337d1bd06c42d0492e5c66ee9b097d03ba944993",
+            "target_bytes": 647364608,
+            "patch_sha256": "8055f89614beb595112bf90b648a6c42e7d557efa80a1d15c8525be38db86b38",
+            "patch_bytes": 3231175
+          }
+        ]
+      },
+      "assets": {
+        "MacrossAceFrontier-English-0.2.1.xdelta": "https://github.com/retro-trans/Macross-Ace-Frontier/releases/download/v0.2.1/MacrossAceFrontier-English-0.2.1.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Macross-Ultimate-Frontier",
       "tag": "v0.7.1",
       "manifest": {

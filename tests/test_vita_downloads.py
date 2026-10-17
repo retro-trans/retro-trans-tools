@@ -124,6 +124,15 @@ class DownloadTests(unittest.TestCase):
         self.client.add('retro-trans/fixture', newer, self.assets, self.pkg.read_bytes()[:-1]+b'X')
         with self.run_download() as (data, _): self.assertEqual(data['build'], '0.1.13')
 
+    def test_automatic_download_accepts_larger_complete_profile(self):
+        self.data['minimum_app_version'] = '0.5.17'
+        self.data['source_files'].extend(dict(path='DATA/synthetic-fixture{:04d}.cpk'.format(i),
+            **identity(b'original fixture')) for i in range(1000))
+        self.client = Releases(self.data, self.assets, self.pkg.read_bytes())
+        self.assertGreater(self.client.records['retro-trans/fixture'][0]['assets'][0]['size'], 128*1024)
+        with self.run_download() as (data, _):
+            self.assertEqual(len(data['source_files']), 1002)
+
     def test_wrong_pkg_revision_rejected_without_zip_download(self):
         self.pkg.write_bytes(self.pkg.read_bytes()[:-1] + b'X')
         with self.assertRaisesRegex(PatchError, 'revision'):

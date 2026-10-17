@@ -51,6 +51,44 @@ class TranslationTests(unittest.TestCase):
             data,_ = fixture(title)
             self.assertEqual(v.validate(data)['title_id'],title)
 
+    def test_large_complete_profile_and_archive_keep_all_checks(self):
+        # Synthetic metadata only: no game data or licenses in this fixture.
+        for index in range(587):
+            name = 'DATA/STAGE/STG{:04d}_synthetic.cpk'.format(index)
+            source = identity(b'original fixture')
+            self.data['source_files'].append(dict(path=name, **source))
+            if index < 159:
+                patch_name = 'VITA3K-{:03d}.xdelta'.format(index)
+                raw = b'component patch fixture'
+                self.assets[patch_name] = raw
+                self.data['files'].append(dict(path=name, source=source,
+                    target=identity(b'translated fixture'),
+                    patch=dict(name=patch_name, **identity(raw))))
+        self.data['minimum_app_version'] = '0.5.17'
+        raw = json.dumps(self.data, separators=(',', ':')).encode()
+        self.assertGreater(len(raw), 128*1024)
+        self.assertLess(len(raw), v.MAX_METADATA)
+        self.assertEqual(v.read_description(raw), self.data)
+        with v.archive_description(self.archive()) as (data, _):
+            self.assertEqual(len(data['source_files']), 589)
+            self.assertEqual(len(data['files']), 160)
+        self.data['files'][-1]['source'] = identity(b'wrong original')
+        with self.assertRaises(PatchError):
+            v.read_description(json.dumps(self.data).encode())
+
+    def test_metadata_limit_in_json_and_zip(self):
+        raw = json.dumps(self.data).encode()
+        boundary = raw + b' '*(v.MAX_METADATA-len(raw))
+        self.assertEqual(v.read_description(boundary), self.data)
+        with self.assertRaisesRegex(PatchError, 'too large'):
+            v.read_description(boundary+b' ')
+        path = self.root/'oversized.zip'
+        with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr(v.MANIFEST, boundary+b' ')
+            for name, content in self.assets.items(): archive.writestr(name, content)
+        with self.assertRaisesRegex(PatchError, 'Oversized'):
+            with v.archive_description(path): pass
+
     def test_wrong_game_content_and_engine_rejected(self):
         for key,value in [('content_id','JP0700-PCSG11111_00-CROSSANGEGAME000'),
                           ('title_id','../PCSG00597'),('engine','run-downloaded-script'),

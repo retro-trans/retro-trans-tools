@@ -22,7 +22,9 @@ from .vita_repatch import require, no_links, independent, verify
 SCHEMA = 'retro-trans-vita-pkg-v1'
 MANIFEST = 'VITA-PKG.json'
 MAX_ZIP = 64*1024**2
-MAX_METADATA = 128*1024
+# Complete inventories for larger games (e.g. Z3: 589 originals, 160 deltas)
+# exceed 128 KiB. Retain a bounded reader and every per-file integrity check.
+MAX_METADATA = 256*1024
 GUIDE = ('Install the translated PKG through Vita3K: File → Install .pkg. '
          'Supply the same matching local work.bin or .rif when requested. '
          'Restart the game and check the title-screen version. Back up existing saves before installation. '

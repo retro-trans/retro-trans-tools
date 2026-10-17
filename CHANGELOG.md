@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.17 — Larger complete Vita3K profiles (in preparation)
+
+- Raise the bounded Vita PKG JSON reader from 128 KiB to 256 KiB so Z3's
+  complete 589-file original inventory and 160 component deltas can be verified.
+  Keep ZIP size, path safety, license exclusion and all hash checks unchanged.
+- Add complete-profile, exact-boundary, oversized compressed ZIP and mismatched
+  component-source regressions. Existing PS3 and hardware rePatch routes stay
+  unchanged. This entry does not itself mean the app has been published.
+- Local verification: all 264 tests pass (four platform skips); standalone
+  health check and isolated next-launch update preserve startup, backup and
+  settings. Real Z3 original-PKG integration is still in progress.
+
 ## Unreleased — Z3 combined-release catalog validation
 
 - Permit reviewed Z3 numeric releases after the legacy v0.9.0 profile to carry a hash-verified Vita rePatch ZIP alongside their PS3 manifest. Require matching release/build versions, PCSG00264 original-PKG identity, the discoverable ZIP suffix and Retro Trans 0.5.16. Keep the legacy profile, downloads and cached PS3 routes immutable.

@@ -130,6 +130,27 @@ class CatalogBuilderTests(unittest.TestCase):
         self.assertEqual(build_catalog(result, client), result)
         self.assertFalse(any(n.startswith('VITA-') for n in current['assets']))
 
+    def test_separate_pkg_bundle_keeps_existing_combined_catalog_entry(self):
+        # PKG discovery validates these separately; they must not be mistaken
+        # for hardware ZIPs or whole-image catalog edges.
+        from test_vita_translation import fixture
+        client = self.new_vita_client()
+        previous = build_catalog(dict(schema_version=1, releases=[]), client)
+        data, patches = fixture('PCSG00264')
+        data.update(build='0.9.2', minimum_app_version='0.5.17')
+        raw = json.dumps(data).encode()
+        bundle = io.BytesIO()
+        with zipfile.ZipFile(bundle, 'w') as archive:
+            archive.writestr('VITA-PKG.json', raw)
+            for name, content in patches.items(): archive.writestr(name, content)
+        for name, content in [('VITA-PKG.json', raw),
+                ('SRW-Z3-v0.9.2-Vita-PKG-patches.zip', bundle.getvalue())]:
+            client.files[name] = content
+            client.assets.append(dict(name=name, size=len(content),
+                digest='sha256:'+hashlib.sha256(content).hexdigest(),
+                browser_download_url=client.prefix+name))
+        self.assertEqual(build_catalog(previous, client), previous)
+
     def test_new_vita_release_invalid_or_ambiguous_packages_rejected(self):
         for problem in ('orphan', 'missing_zip', 'two_zips', 'legacy_zip', 'build',
                         'package', 'title', 'minimum', 'zip_checksum', 'corrupt', 'extra'):

@@ -1,0 +1,31 @@
+{
+  "version": "0.5.17",
+  "date": "2026-10-17",
+  "code_checkpoint": "fef70589d727a54176342264a70e169082ec86fe",
+  "tests": {"run": 264, "skipped": 4, "passed": true},
+  "standalone_health": true,
+  "isolated_next_launch_update": true,
+  "local_executable": {
+    "bytes": 18027727,
+    "sha256": "2365da14624ae143bc51cf6c28b3ceae9d39f61bba3c7d08930cddd528c92878"
+  },
+  "z3_vita3k": {
+    "build": "0.9.2",
+    "title_id": "PCSG00264",
+    "source_and_standalone_native_installs_verified": true,
+    "verified_files_per_install": 589,
+    "component_roundtrips": 160,
+    "complete_profile_bytes": 135578,
+    "profile_limit_bytes": 262144,
+    "original_pkg_unchanged": true,
+    "matching_license_unchanged": true,
+    "local_output": {
+      "bytes": 2452725744,
+      "sha256": "2efebf9e023f45df7c0dde8ae935749f03f30786af5db502cd835655752459b9"
+    },
+    "sony_signed": false,
+    "gameplay_tested": false
+  },
+  "public_game_discovery": "separate post-publication gate",
+  "no_game_or_license_in_app_release": true
+}

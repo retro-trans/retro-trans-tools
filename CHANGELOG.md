@@ -1,16 +1,21 @@
 # Changelog
 
-## 0.5.17 — Larger complete Vita3K profiles (in preparation)
+## 0.5.17 — Larger complete Vita3K profiles
 
 - Raise the bounded Vita PKG JSON reader from 128 KiB to 256 KiB so Z3's
   complete 589-file original inventory and 160 component deltas can be verified.
   Keep ZIP size, path safety, license exclusion and all hash checks unchanged.
 - Add complete-profile, exact-boundary, oversized compressed ZIP and mismatched
   component-source regressions. Existing PS3 and hardware rePatch routes stay
-  unchanged. This entry does not itself mean the app has been published.
+  unchanged.
 - Local verification: all 264 tests pass (four platform skips); standalone
   health check and isolated next-launch update preserve startup, backup and
-  settings. Real Z3 original-PKG integration is still in progress.
+  settings. Source and standalone EXE both rebuild Z3 and verify all 589
+  native-installed files, producing the same complete PKG hash. Original PKG
+  and matching license are unchanged. Full gameplay remains untested.
+- User authorized the scoped source push and Windows release. See
+  docs/builds/v0.5.17-validation.json for local proof; game patch publication
+  is separate from this app release.
 
 ## Unreleased — Z3 combined-release catalog validation
 

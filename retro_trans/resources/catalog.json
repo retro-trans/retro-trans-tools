@@ -3551,6 +3551,37 @@
       "assets": {
         "STT2001-English-v0.3.6.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.6/STT2001-English-v0.3.6.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/Wizardry-Perfect-Pack",
+      "tag": "v0.1.11",
+      "manifest": {
+        "game_id": "wizardry-perfect-pack",
+        "game_name": "Wizardry Perfect Pack: Prisoners of the Lost City",
+        "platform": "PS3",
+        "version": "0.1.11",
+        "source_commit": "95b518f558d5cb9ab9c0316717b942dc227bff2b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11.xdelta",
+            "edition": "perfect-pack-bljm61008-iso",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "25dc1f842f42dbd9e24ee1a23e23e51e339fc406bed997c8fbdb9815d41a42a7",
+            "source_bytes": 2081947648,
+            "target_sha256": "1e92be73fa5456f04245705e880f64a9464e881e418fb4828b2fd334f2fa8877",
+            "target_bytes": 2123663360,
+            "patch_sha256": "b6312e8582b81fd73156dd270b09b5704d8614bfdff569ec42571e3133c18114",
+            "patch_bytes": 220820763
+          }
+        ]
+      },
+      "assets": {
+        "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.11/Wizardry-Perfect-Pack-Prisoners-English-v0.1.11.xdelta"
+      }
     }
   ],
   "withdrawn_releases": [

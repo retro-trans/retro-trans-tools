@@ -4154,6 +4154,52 @@
       }
     },
     {
+      "repo": "retro-trans/Summon-Night-3",
+      "tag": "v0.1.83",
+      "manifest": {
+        "game_id": "summon-night-3",
+        "game_name": "Summon Night 3",
+        "platform": "PSP",
+        "version": "0.1.83",
+        "source_commit": "fc353bb5cf9e41f2628998a07162a35399623ece",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SN3-English-v0.1.83.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "00b9fe052e7f516a2975cb3e625682640ec17edb7bd23f3a785f6c73d4bbefda",
+            "source_bytes": 1658159104,
+            "target_sha256": "6cac982807c5cb6672fbbb74e166f973352ac7d30375fe4ccfee48d41babb5e6",
+            "target_bytes": 1696403456,
+            "patch_sha256": "05d6ab2fd4736302baf063bac569d65ceeaceb8a02e981f0cdd8de0d8badaf71",
+            "patch_bytes": 18611475
+          },
+          {
+            "patch": "SN3-English-v0.1.81-to-v0.1.83.xdelta",
+            "edition": "Japanese NPJH50380",
+            "language": "en",
+            "source_version": "0.1.81",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1e574f8ec2ed2917a2ee90b7c75427a6acb2ecca64727ca1215a3c683f2f89a8",
+            "source_bytes": 1695072256,
+            "target_sha256": "6cac982807c5cb6672fbbb74e166f973352ac7d30375fe4ccfee48d41babb5e6",
+            "target_bytes": 1696403456,
+            "patch_sha256": "2f0c909ed03951d2ac1b6d60510e6591107363912c0673cb85963409ce537fbb",
+            "patch_bytes": 7822
+          }
+        ]
+      },
+      "assets": {
+        "SN3-English-v0.1.83.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.83/SN3-English-v0.1.83.xdelta",
+        "SN3-English-v0.1.81-to-v0.1.83.xdelta": "https://github.com/retro-trans/Summon-Night-3/releases/download/v0.1.83/SN3-English-v0.1.81-to-v0.1.83.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.18",
       "manifest": {

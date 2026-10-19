@@ -3720,6 +3720,52 @@
       "assets": {
         "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.11/Wizardry-Perfect-Pack-Prisoners-English-v0.1.11.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/Wizardry-Perfect-Pack",
+      "tag": "v0.1.14",
+      "manifest": {
+        "game_id": "wizardry-perfect-pack",
+        "game_name": "Wizardry Perfect Pack: Prisoners of the Lost City",
+        "platform": "PS3",
+        "version": "0.1.14",
+        "source_commit": "d506bf227247710983887eaf220d8f1e1a2b4437",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Wizardry-Perfect-Pack-Prisoners-English-v0.1.14.xdelta",
+            "edition": "perfect-pack-bljm61008-iso",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "25dc1f842f42dbd9e24ee1a23e23e51e339fc406bed997c8fbdb9815d41a42a7",
+            "source_bytes": 2081947648,
+            "target_sha256": "736471ff2087f1f735693c7c227de377481f1ccea111d8a7fc22b6db43f94f6b",
+            "target_bytes": 2123663360,
+            "patch_sha256": "5174d18fa8e6e89b55a7466acb95b8642196eda4884d8fd2076c0dd0d850f852",
+            "patch_bytes": 220820779
+          },
+          {
+            "patch": "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11-to-v0.1.14.xdelta",
+            "edition": "perfect-pack-bljm61008-iso",
+            "language": "en",
+            "source_version": "0.1.11",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1e92be73fa5456f04245705e880f64a9464e881e418fb4828b2fd334f2fa8877",
+            "source_bytes": 2123663360,
+            "target_sha256": "736471ff2087f1f735693c7c227de377481f1ccea111d8a7fc22b6db43f94f6b",
+            "target_bytes": 2123663360,
+            "patch_sha256": "d7a6e190a477a115ef8ef1d0681c9b047d754b4555497c38d469f72ab890f8a5",
+            "patch_bytes": 32164804
+          }
+        ]
+      },
+      "assets": {
+        "Wizardry-Perfect-Pack-Prisoners-English-v0.1.14.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.14/Wizardry-Perfect-Pack-Prisoners-English-v0.1.14.xdelta",
+        "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11-to-v0.1.14.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.14/Wizardry-Perfect-Pack-Prisoners-English-v0.1.11-to-v0.1.14.xdelta"
+      }
     }
   ],
   "withdrawn_releases": [

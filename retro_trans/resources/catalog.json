@@ -960,6 +960,52 @@
       }
     },
     {
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "tag": "v0.1.25",
+      "manifest": {
+        "game_id": "macross-triangle-frontier",
+        "game_name": "Macross Triangle Frontier",
+        "platform": "PSP",
+        "version": "0.1.25",
+        "source_commit": "458f953194f8f30b434c80df5c22e67c2f9d5007",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MacrossTriangleFrontier-English-0.1.25.xdelta",
+            "edition": "ULJS00321",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ebfebecfdc0980c5d7a78baac9aee36a393019795bf376aaf4838fed07b9531c",
+            "source_bytes": 1676050432,
+            "target_sha256": "d76ddd1d33b91ba633e4bf0ff391b20761cbbef382277816edeb63dc6af9cd7b",
+            "target_bytes": 1704689664,
+            "patch_sha256": "5aa3965bbbbc9a821ca60be13efc3f84af44d80aa2fc4303b3767a723919c5f0",
+            "patch_bytes": 19653433
+          },
+          {
+            "patch": "MacrossTriangleFrontier-English-0.1.23-to-0.1.25.xdelta",
+            "edition": "ULJS00321",
+            "language": "en",
+            "source_version": "0.1.23",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "085d09a53dc606c96bf42bb0f52709dc7392175ef953ce4e3c05fc500bf8f311",
+            "source_bytes": 1704689664,
+            "target_sha256": "d76ddd1d33b91ba633e4bf0ff391b20761cbbef382277816edeb63dc6af9cd7b",
+            "target_bytes": 1704689664,
+            "patch_sha256": "af2f1cfc76af247ef4bbfaa20db5d959182c848d676f45d71e18fa8831a23bf1",
+            "patch_bytes": 39593
+          }
+        ]
+      },
+      "assets": {
+        "MacrossTriangleFrontier-English-0.1.25.xdelta": "https://github.com/retro-trans/Macross-Triangle-Frontier/releases/download/v0.1.25/MacrossTriangleFrontier-English-0.1.25.xdelta",
+        "MacrossTriangleFrontier-English-0.1.23-to-0.1.25.xdelta": "https://github.com/retro-trans/Macross-Triangle-Frontier/releases/download/v0.1.25/MacrossTriangleFrontier-English-0.1.23-to-0.1.25.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Macross-Ultimate-Frontier",
       "tag": "v0.7.1",
       "manifest": {

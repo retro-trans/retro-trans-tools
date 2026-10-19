@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-19T06:21:29.119307+00:00",
+  "live_repositories": [
+    "retro-trans/Cross-Ange",
+    "retro-trans/Marionnete-Handler-2"
+  ],
+  "published_rejections": [
+    {
+      "repo": "retro-trans/Cross-Ange",
+      "tag": "v0.1.13",
+      "error": "Missing release asset: VALIDATION.json",
+      "action": "skipped"
+    }
+  ],
+  "published_batch_continued": true,
+  "staged_metadata_overlay_passed_strict_validation": true,
+  "existing_catalog_immutable": true,
+  "original_releases": 74,
+  "candidate_releases": 75,
+  "cross_ange_catalog_components": 2,
+  "hardware_title_id": "PCSG00597",
+  "source_pushed": false,
+  "release_metadata_uploaded": false,
+  "hosted_refresh_rerun": false,
+  "unit_tests": {
+    "total": 276,
+    "skipped": 4,
+    "failures": 0
+  },
+  "targeted_catalog_tests": 43,
+  "confirmed_failed_run": "https://github.com/retro-trans/retro-trans-tools/actions/runs/39201243950",
+  "candidate_catalog": ".integration/catalog-repair-candidate.json",
+  "cross_ange_pending_assets": [
+    "VALIDATION.json",
+    "SHA256SUMS.txt"
+  ]
+}

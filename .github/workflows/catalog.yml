@@ -29,7 +29,7 @@ jobs:
           if [ -n "$CATALOG_REPOSITORY" ]; then
             python -m retro_trans.catalog_builder --repo "$CATALOG_REPOSITORY"
           else
-            python -m retro_trans.catalog_builder
+            python -m retro_trans.catalog_builder --continue-on-error --report catalog-refresh-report.json
           fi
       - name: Commit validated changes
         shell: bash
@@ -42,3 +42,10 @@ jobs:
           git add retro_trans/resources/catalog.json
           git commit -m 'Update verified patch catalog'
           git push
+      - name: Save refresh validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-refresh-report
+          path: catalog-refresh-report.json
+          if-no-files-found: ignore

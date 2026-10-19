@@ -216,7 +216,7 @@ to Retro Trans 0.3.1 or later before refreshing a catalog with withdrawals.
 
 ## Application releases
 
-### Registered Vita overlay extras
+### Vita overlay extras
 
 SRW Z3 `retro-trans/SRW-Z3` tag `v0.9.0` may additionally carry one
 `VITA-REPATCH.json` and its declared bare `VITA-*.xdelta` assets. They are a
@@ -230,17 +230,43 @@ download. Undeclared xdelta assets still fail. It preserves the canonical
 PS3 BUILD-MANIFEST/checksums/report and records a separate `vita_repatch`
 metadata identity (URL, size, SHA-256, title, app version and build) on the
 catalog release. A recorded profile cannot be removed or replaced on refresh.
-Existing clients ignore this additional field and retain unchanged PS3 routes.
-The dedicated Vita tab retains that legacy fallback. Newly reviewed Z3 releases
-may also carry the profile with exactly one `*-Vita-rePatch-patches.zip`.
-Their numeric `v0.x.y` tag, PS3 manifest version and Vita `build` must match;
-the profile must identify the original PCSG00264 PKG (size, SHA-256 and content
-ID) and require app 0.5.16. The ZIP must contain exactly the declared profile
-and payloads, with every publisher checksum verified. Missing or ambiguous
-ZIPs are rejected. Existing cached records and all prior download identities
-remain immutable. Other combined game releases still require separate review.
+Existing clients ignore this additional field and retain unchanged binary routes.
+The dedicated Vita tab retains that legacy fallback. Other numeric `v0.x.y`
+releases may carry a generic profile and exactly one `*-Vita-rePatch-patches.zip`.
+The tag, binary manifest version and Vita `build` must match. Profiles declare
+the original PKG size/hash/content ID and a minimum app version of 0.5.14 or
+newer; catalog metadata requires at least published app 0.5.16. The existing Z3
+policy still requires PCSG00264 and profile minimum 0.5.16.
+
+The ZIP must contain exactly the declared profile, deltas and bounded credit
+picture/text extras, with all publisher and payload hashes verified. Asset-only
+overlays use `auth: null` and preserve the executable; executable overlays retain
+sanitized-auth requirements. Missing, ambiguous, corrupt or replaced profiles
+and ZIPs are rejected. Cached binary, solution and overlay identities stay
+immutable. Profile-only Vita releases remain independent of the binary catalog.
 Retro Trans 0.5.16 discovers these overlays by original PKG identity in the
 hardware rePatch workflow; this catalog change needs no new app release.
+
+Canonical `SHA256SUMS.txt` may also cover supplemental JSON, text, Markdown,
+PNG and ZIP assets (at most 64 MiB each). The builder downloads and verifies
+every listed asset before running the shared validator. It never drops checksum
+lines to bypass validation. Custom proof names such as `CPK-VALIDATION.json`
+do not replace the required manifest-bound `VALIDATION.json`.
+
+### Resilient scheduled catalog refresh
+
+The hourly unscoped workflow uses `--continue-on-error --report
+catalog-refresh-report.json`. A rejected release is skipped, or retains its
+previous verified record, while other releases continue. Each candidate passes
+integrity and whole-catalog immutability checks before being admitted. Repository
+fetch failures preserve their cached entries. Invalid starting catalogs, failed
+organization discovery, cancellation and unexpected programming errors still
+abort publication. Withdrawals remain preserved.
+
+Rejected repositories/tags and reasons produce visible workflow warnings and a
+JSON artifact; the report status is `partial` when any rejection remains. Scoped
+manual refreshes and the Python API remain strict by default. Thus a green
+scheduled job can contain warnings; consult its report when reviewing coverage.
 
 ### Publishing the application
 

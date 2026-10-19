@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Resilient catalog refresh and generic Vita extras
+
+- Validate generic Vita rePatch profiles/ZIPs, including Cross Ange's asset-only overlay and bounded credits/font attribution, alongside standard binary manifests. Preserve the stricter legacy/new Z3 policy and all existing integrity checks.
+- Scheduled unscoped refreshes isolate rejected releases/repository fetches, keep cached verified entries, continue other releases and upload a JSON rejection report with workflow warnings. Explicit scoped refreshes remain strict; cancellation and global integrity errors remain fatal.
+- Validate and download every checksummed supplemental asset rather than rejecting valid credits/check reports or omitting checksum lines. Standard VALIDATION.json remains mandatory and bound to the exact manifest; custom CPK evidence is not a substitute.
+- Regression checks cover generic overlays, damaged/undeclared credits, immutable metadata, supplemental checksums, per-release/repository isolation, cached identities, cancellation and report safety. Full suite: 276 tests with four platform skips.
+- Live validation continued past Cross Ange's missing standard proof, then accepted both Cross Ange and a healthy repository using staged metadata. All 74 existing records stayed immutable; the candidate has 75 releases. The user explicitly approved the source push, existing-release metadata repair and full hosted refresh on 2026-10-19. No app release is needed.
+
+
 ## 0.5.17 — Larger complete Vita3K profiles
 
 - Raise the bounded Vita PKG JSON reader from 128 KiB to 256 KiB so Z3's

@@ -29,6 +29,21 @@ healthy repository. All 74 old catalog records remain immutable; the candidate
 adds Cross Ange as release 75. This is a sampled live validation, not a hosted
 full-organization workflow run.
 
+## Hosted result
+
+The [full unscoped refresh](https://github.com/retro-trans/retro-trans-tools/actions/runs/39210109626)
+succeeded with **77 releases and zero rejections**. Its report status is
+`complete`. The published catalog now includes Cross Ange v0.1.13 and two
+previously blocked Macross Triangle Frontier releases. All previous patch,
+binary and solution identities passed immutability checks. The corresponding
+[CI checks](https://github.com/retro-trans/retro-trans-tools/actions/runs/39210087958)
+passed as well.
+
+The two repaired metadata assets passed published readback and strict live
+Cross Ange validation; the other 15 release assets were unchanged. No app or
+game release was created. Local Cross Ange 0.1.14 was kept unpublished.
+See [deployment evidence](catalog-refresh-repair-deployment.json).
+
 ## Authorized deployment
 
 1. Push the tools source/workflow/docs changes to main, preserving concurrent catalog commits.

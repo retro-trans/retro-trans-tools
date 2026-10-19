@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-19T06:36:09.108008+00:00",
+  "tools_fix_commit": "f4f7239309d8d76071d5847d2faf2c3db5ba3102",
+  "catalog_commit": "b712494f2be23e767d602730c082cfa40fbcb6ea",
+  "source_pushed": true,
+  "release_metadata_uploaded": true,
+  "hosted_refresh_rerun": true,
+  "refresh": {
+    "conclusion": "success",
+    "headSha": "f4f7239309d8d76071d5847d2faf2c3db5ba3102",
+    "status": "completed",
+    "url": "https://github.com/retro-trans/retro-trans-tools/actions/runs/39210109626"
+  },
+  "checks": {
+    "conclusion": "success",
+    "headSha": "f4f7239309d8d76071d5847d2faf2c3db5ba3102",
+    "status": "completed",
+    "url": "https://github.com/retro-trans/retro-trans-tools/actions/runs/39210087958"
+  },
+  "report": {
+    "schema_version": 1,
+    "status": "complete",
+    "releases": 77,
+    "rejections": []
+  },
+  "published_catalog_url": "https://raw.githubusercontent.com/retro-trans/retro-trans-tools/main/retro_trans/resources/catalog.json",
+  "published_catalog_releases": 77,
+  "previous_patch_and_binary_identities_preserved": true,
+  "cross_ange_catalog_verified": true,
+  "added_releases": [
+    {
+      "repo": "retro-trans/Cross-Ange",
+      "tag": "v0.1.13"
+    },
+    {
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "tag": "v0.1.22"
+    },
+    {
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "tag": "v0.1.23"
+    }
+  ],
+  "game_or_app_release_created": false
+}

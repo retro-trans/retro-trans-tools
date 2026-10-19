@@ -2,6 +2,8 @@
 
 ## Unreleased — Resilient catalog refresh and generic Vita extras
 
+- Deployment verified: full hosted refresh succeeded with 77 releases, zero rejections and unchanged existing patch/binary/solution identities. Cross Ange v0.1.13 plus two blocked Macross Triangle Frontier releases are now cataloged. Hosted CI checks passed. See docs/catalog-refresh-repair-deployment.json.
+
 - Validate generic Vita rePatch profiles/ZIPs, including Cross Ange's asset-only overlay and bounded credits/font attribution, alongside standard binary manifests. Preserve the stricter legacy/new Z3 policy and all existing integrity checks.
 - Scheduled unscoped refreshes isolate rejected releases/repository fetches, keep cached verified entries, continue other releases and upload a JSON rejection report with workflow warnings. Explicit scoped refreshes remain strict; cancellation and global integrity errors remain fatal.
 - Validate and download every checksummed supplemental asset rather than rejecting valid credits/check reports or omitting checksum lines. Standard VALIDATION.json remains mandatory and bound to the exact manifest; custom CPK evidence is not a substitute.

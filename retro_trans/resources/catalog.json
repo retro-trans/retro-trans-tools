@@ -482,6 +482,84 @@
       }
     },
     {
+      "repo": "retro-trans/Cross-Ange",
+      "tag": "v0.1.13",
+      "manifest": {
+        "game_id": "cross-ange",
+        "game_name": "CROSS ANGE Rondo of Angel and Dragon tr.",
+        "platform": "PS Vita",
+        "version": "0.1.13",
+        "source_commit": "3114b9b19ae49f3852c8838056afde9dfdcb40b3",
+        "schema_version": 2,
+        "patches": [
+          {
+            "patch": "Cross-Ange-English-0.1.13-Ange.xdelta",
+            "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "cpk",
+            "target_format": "cpk",
+            "source_sha256": "e04d94fac7ba1bc21acfd98c9ea8352995e32229c642485fb2537cd0d53213de",
+            "source_bytes": 882846536,
+            "target_sha256": "4d6b444ee37994d5282a8fd377cee964f056a68e7a2be9a1f0b075b761601a3a",
+            "target_bytes": 902054728,
+            "patch_sha256": "cdb726f114b55e0876bd0ce0b9fc635a748361fb5d6af487bc7f25e11fdec7ce",
+            "patch_bytes": 5349702
+          },
+          {
+            "patch": "Cross-Ange-English-0.1.13-param.xdelta",
+            "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "sfo",
+            "target_format": "sfo",
+            "source_sha256": "04924d2566147471c89464d568c8ae8708b43cc296b370c6b8f208317cebf603",
+            "source_bytes": 1328,
+            "target_sha256": "6d4414054f46e25b14e5ef25ae9d4c655f9c1111155cc51e43cf6e7c46d00c10",
+            "target_bytes": 1413,
+            "patch_sha256": "33b9e62e8aea9dc9485f029ca2a261d3c21f06ad38dc13950d35cb5e4151bc14",
+            "patch_bytes": 160
+          }
+        ],
+        "solutions": [
+          {
+            "id": "pcsg00597-english-components",
+            "name": "Cross Ange English components (PCSG00597)",
+            "edition": "Japan PCSG00597",
+            "language": "en",
+            "files": [
+              {
+                "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+                "output_name": "Ange.cpk"
+              },
+              {
+                "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+                "output_name": "param.sfo"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "Cross-Ange-English-0.1.13-Ange.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.13/Cross-Ange-English-0.1.13-Ange.xdelta",
+        "Cross-Ange-English-0.1.13-param.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.13/Cross-Ange-English-0.1.13-param.xdelta"
+      },
+      "vita_repatch": {
+        "url": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.13/VITA-REPATCH.json",
+        "bytes": 1417,
+        "sha256": "2c9407c9cdbe0764b0d8604fdf74e88f1bef36b2d578116cdfc59cf28abd724b",
+        "title_id": "PCSG00597",
+        "app_version": "01.00",
+        "build": "0.1.13"
+      },
+      "vita_archive": {
+        "url": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.13/Cross-Ange-English-0.1.13-Vita-rePatch-patches.zip",
+        "bytes": 5397094,
+        "sha256": "ed5411aff296c03a27ffa7a1e4e19d172f26ffb1233e4231f964cbb497930b1a"
+      },
+      "vita_min_app_version": "0.5.16"
+    },
+    {
       "repo": "retro-trans/Heroes-Phantasia",
       "tag": "v0.1.45",
       "manifest": {
@@ -756,6 +834,83 @@
       "assets": {
         "MacrossAceFrontier-English-0.2.3.xdelta": "https://github.com/retro-trans/Macross-Ace-Frontier/releases/download/v0.2.3/MacrossAceFrontier-English-0.2.3.xdelta",
         "MacrossAceFrontier-English-0.2.1-to-0.2.3.xdelta": "https://github.com/retro-trans/Macross-Ace-Frontier/releases/download/v0.2.3/MacrossAceFrontier-English-0.2.1-to-0.2.3.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "tag": "v0.1.22",
+      "manifest": {
+        "game_id": "macross-triangle-frontier",
+        "game_name": "Macross Triangle Frontier",
+        "platform": "PSP",
+        "version": "0.1.22",
+        "source_commit": "d08cbd153eca8cdfea5a6236b1d30639bb136ccc",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MacrossTriangleFrontier-English-0.1.22.xdelta",
+            "edition": "ULJS00321",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ebfebecfdc0980c5d7a78baac9aee36a393019795bf376aaf4838fed07b9531c",
+            "source_bytes": 1676050432,
+            "target_sha256": "0b2bee48309c64a8e09342c9c13e56f189d7d08c4e28497634dbde02eabb5979",
+            "target_bytes": 1704689664,
+            "patch_sha256": "c39be609b2c51160e56a52b9bf1691eb9a7c37af75a51a835cc284e2b791e585",
+            "patch_bytes": 19654323
+          }
+        ]
+      },
+      "assets": {
+        "MacrossTriangleFrontier-English-0.1.22.xdelta": "https://github.com/retro-trans/Macross-Triangle-Frontier/releases/download/v0.1.22/MacrossTriangleFrontier-English-0.1.22.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "tag": "v0.1.23",
+      "manifest": {
+        "game_id": "macross-triangle-frontier",
+        "game_name": "Macross Triangle Frontier",
+        "platform": "PSP",
+        "version": "0.1.23",
+        "source_commit": "287c29c2d1737dcea07714ac91670ebea8514a17",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MacrossTriangleFrontier-English-0.1.23.xdelta",
+            "edition": "ULJS00321",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ebfebecfdc0980c5d7a78baac9aee36a393019795bf376aaf4838fed07b9531c",
+            "source_bytes": 1676050432,
+            "target_sha256": "085d09a53dc606c96bf42bb0f52709dc7392175ef953ce4e3c05fc500bf8f311",
+            "target_bytes": 1704689664,
+            "patch_sha256": "d54479133ad4e33adaf3ee0964785b1e21a86538045ae8aea0fc08bfb1259c1d",
+            "patch_bytes": 19653553
+          },
+          {
+            "patch": "MacrossTriangleFrontier-English-0.1.22-to-0.1.23.xdelta",
+            "edition": "ULJS00321",
+            "language": "en",
+            "source_version": "0.1.22",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0b2bee48309c64a8e09342c9c13e56f189d7d08c4e28497634dbde02eabb5979",
+            "source_bytes": 1704689664,
+            "target_sha256": "085d09a53dc606c96bf42bb0f52709dc7392175ef953ce4e3c05fc500bf8f311",
+            "target_bytes": 1704689664,
+            "patch_sha256": "39ece970a619621c8225deb04ad45da09d95034da793021576df7639418ad345",
+            "patch_bytes": 84741
+          }
+        ]
+      },
+      "assets": {
+        "MacrossTriangleFrontier-English-0.1.23.xdelta": "https://github.com/retro-trans/Macross-Triangle-Frontier/releases/download/v0.1.23/MacrossTriangleFrontier-English-0.1.23.xdelta",
+        "MacrossTriangleFrontier-English-0.1.22-to-0.1.23.xdelta": "https://github.com/retro-trans/Macross-Triangle-Frontier/releases/download/v0.1.23/MacrossTriangleFrontier-English-0.1.22-to-0.1.23.xdelta"
       }
     },
     {

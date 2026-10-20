@@ -3415,6 +3415,66 @@
       "vita_min_app_version": "0.5.16"
     },
     {
+      "repo": "retro-trans/SRW-Z3",
+      "tag": "v0.9.3",
+      "manifest": {
+        "game_id": "srw-z3-jigoku-ps3",
+        "game_name": "Super Robot Taisen Z3: Jigoku-hen (PS3)",
+        "platform": "PS3",
+        "version": "0.9.3",
+        "source_commit": "bdcb6fc84983fe82d76f9e04510182e8f20ee265",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRW-Z3-PS3-English-0.9.3-from-original.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1b45cdd1651b98fe24b544223488289790ae87d5f82f1db272285fb4e4dffa89",
+            "source_bytes": 4431872000,
+            "target_sha256": "4eecf514ea06880676ec673f5dc2421c5cb92c240572cc9f03e2203ed0c197f5",
+            "target_bytes": 5044961280,
+            "patch_sha256": "ee48ed2dd59a964713d07fa15d94267553b1f0c5944d29cea9681989eb786c9e",
+            "patch_bytes": 155350602
+          },
+          {
+            "patch": "SRW-Z3-PS3-English-0.9.2-to-0.9.3.xdelta",
+            "edition": "jp-bljs10256",
+            "language": "en",
+            "source_version": "0.9.2",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1f9d1d83274769decc1389a49d5fdf32fa06d58e3d1b3448dd22c24f76ba03d3",
+            "source_bytes": 5044961280,
+            "target_sha256": "4eecf514ea06880676ec673f5dc2421c5cb92c240572cc9f03e2203ed0c197f5",
+            "target_bytes": 5044961280,
+            "patch_sha256": "2dfdff3af79431ed95fccbf26cbdfb6df61150cc623e78cd1debefcb2c373aea",
+            "patch_bytes": 21239920
+          }
+        ]
+      },
+      "assets": {
+        "SRW-Z3-PS3-English-0.9.3-from-original.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.3/SRW-Z3-PS3-English-0.9.3-from-original.xdelta",
+        "SRW-Z3-PS3-English-0.9.2-to-0.9.3.xdelta": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.3/SRW-Z3-PS3-English-0.9.2-to-0.9.3.xdelta"
+      },
+      "vita_repatch": {
+        "url": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.3/VITA-REPATCH.json",
+        "bytes": 82542,
+        "sha256": "7345b099560f21befd108c85b67a564a579db8528b5468fe13a6dbeedfc11855",
+        "title_id": "PCSG00264",
+        "app_version": "01.00",
+        "build": "0.9.3"
+      },
+      "vita_archive": {
+        "url": "https://github.com/retro-trans/SRW-Z3/releases/download/v0.9.3/SRW-Z3-v0.9.3-Vita-rePatch-patches.zip",
+        "bytes": 16284928,
+        "sha256": "3edeeaa675641edfa0e364662991c81ce608ed027466f495efbfd8d68b91471b"
+      },
+      "vita_min_app_version": "0.5.16"
+    },
+    {
       "repo": "retro-trans/SRW-Z3-2",
       "tag": "v0.5.18",
       "manifest": {

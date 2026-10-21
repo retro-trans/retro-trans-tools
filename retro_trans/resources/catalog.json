@@ -1299,6 +1299,97 @@
       }
     },
     {
+      "repo": "retro-trans/Macross-Ultimate-Frontier",
+      "tag": "v0.7.9",
+      "manifest": {
+        "game_id": "macross-ultimate-frontier",
+        "game_name": "Macross Ultimate Frontier",
+        "platform": "PSP",
+        "version": "0.7.9",
+        "source_commit": "19b63ce606da6be7631b83e49297408846bc1987",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MacrossUltimateFrontier-English-0.7.9.xdelta",
+            "edition": "NPJH50050",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "86e942c37f8edaaf9ed1ac4e9292bbcacbef331b7aee6027fb896e015751b205",
+            "source_bytes": 1237843968,
+            "target_sha256": "e8620443e6c15db580b13afe31f88459386814129b664da41ee60ca91e7e031e",
+            "target_bytes": 1238269952,
+            "patch_sha256": "dedc193d9989b4979051a337bcc648012d765ecfba9fd06d1f4701cf237df3d1",
+            "patch_bytes": 4515354
+          },
+          {
+            "patch": "MacrossUltimateFrontier-English-0.7.8-to-0.7.9.xdelta",
+            "edition": "NPJH50050",
+            "language": "en",
+            "source_version": "0.7.8",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "fa9614697c3821aa4280a1e3bf6773c9a96717f04174067d68774d2ddc89fbd0",
+            "source_bytes": 1238269952,
+            "target_sha256": "e8620443e6c15db580b13afe31f88459386814129b664da41ee60ca91e7e031e",
+            "target_bytes": 1238269952,
+            "patch_sha256": "3df8b83e6583b5b4cbee5ef24d9988b468dc58474f437baf06085dda8b2cb507",
+            "patch_bytes": 77707
+          },
+          {
+            "patch": "MacrossUltimateFrontier-English-0.7.5-to-0.7.9.xdelta",
+            "edition": "NPJH50050",
+            "language": "en",
+            "source_version": "0.7.5",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "e10fc6a208312c46178a7c17e1a4488e6197482966c2c719d78a6d7f8ca8cbb4",
+            "source_bytes": 1238269952,
+            "target_sha256": "e8620443e6c15db580b13afe31f88459386814129b664da41ee60ca91e7e031e",
+            "target_bytes": 1238269952,
+            "patch_sha256": "8174da4ffd3398c80cf25bf180d0d4efedba7314365ebcfb0189942311bdd167",
+            "patch_bytes": 410596
+          },
+          {
+            "patch": "MacrossUltimateFrontier-English-0.7.3-to-0.7.9.xdelta",
+            "edition": "NPJH50050",
+            "language": "en",
+            "source_version": "0.7.3",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c8d64a7e8d006e88e4532e81d538f7211eafa808de6911c9c0bc746f58dd6a4f",
+            "source_bytes": 1238269952,
+            "target_sha256": "e8620443e6c15db580b13afe31f88459386814129b664da41ee60ca91e7e031e",
+            "target_bytes": 1238269952,
+            "patch_sha256": "539931eb0276b26105ab3027f8af2ebe7905b760cb671fd7d57d50241fd281f5",
+            "patch_bytes": 412214
+          },
+          {
+            "patch": "MacrossUltimateFrontier-English-0.7.1-to-0.7.9.xdelta",
+            "edition": "NPJH50050",
+            "language": "en",
+            "source_version": "0.7.1",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "01fdc0b61ea21578593d2fb7c1450c768372bbd02e691aa55ef18554d4e344bc",
+            "source_bytes": 1238269952,
+            "target_sha256": "e8620443e6c15db580b13afe31f88459386814129b664da41ee60ca91e7e031e",
+            "target_bytes": 1238269952,
+            "patch_sha256": "114a339a21fe5fa6c2df482f2a197a5e0fa04d9bfb05ff20670d53007126ae9d",
+            "patch_bytes": 402578
+          }
+        ]
+      },
+      "assets": {
+        "MacrossUltimateFrontier-English-0.7.9.xdelta": "https://github.com/retro-trans/Macross-Ultimate-Frontier/releases/download/v0.7.9/MacrossUltimateFrontier-English-0.7.9.xdelta",
+        "MacrossUltimateFrontier-English-0.7.8-to-0.7.9.xdelta": "https://github.com/retro-trans/Macross-Ultimate-Frontier/releases/download/v0.7.9/MacrossUltimateFrontier-English-0.7.8-to-0.7.9.xdelta",
+        "MacrossUltimateFrontier-English-0.7.5-to-0.7.9.xdelta": "https://github.com/retro-trans/Macross-Ultimate-Frontier/releases/download/v0.7.9/MacrossUltimateFrontier-English-0.7.5-to-0.7.9.xdelta",
+        "MacrossUltimateFrontier-English-0.7.3-to-0.7.9.xdelta": "https://github.com/retro-trans/Macross-Ultimate-Frontier/releases/download/v0.7.9/MacrossUltimateFrontier-English-0.7.3-to-0.7.9.xdelta",
+        "MacrossUltimateFrontier-English-0.7.1-to-0.7.9.xdelta": "https://github.com/retro-trans/Macross-Ultimate-Frontier/releases/download/v0.7.9/MacrossUltimateFrontier-English-0.7.1-to-0.7.9.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Marionnete-Handler-2",
       "tag": "v0.1.17",
       "manifest": {

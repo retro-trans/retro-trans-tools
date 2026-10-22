@@ -4741,6 +4741,112 @@
     },
     {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.3.27",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.3.27",
+        "source_commit": "d0acb475a3ea634a3fbd3007deaa2346bdac1289",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "a949b10de64d5f16a0e074759479c04392bb43b39ba7fbf8503a6e9467a59476",
+            "patch_bytes": 62250188
+          },
+          {
+            "patch": "STT2001-English-v0.3.18-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.18",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "a002b82cc05c7184e3bb5cfac0d0e43ea41a7875ccfc82b2e110446dbc73df7a",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "954ecedc903f6297ffc1b4fbf63095beb89b1944d8063afd74f19cf3bd94c347",
+            "patch_bytes": 619681
+          },
+          {
+            "patch": "STT2001-English-v0.3.23-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.23",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "ff82d45d62ee7a67cd81eec90460036b3d3b33bbe78b61b3ec3a8e02cfec9c6b",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "b684b0f0c1719b8534a7732428e408ef49c0ddbce7aac400a2568863912ccc09",
+            "patch_bytes": 596928
+          },
+          {
+            "patch": "STT2001-English-v0.3.24-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.24",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "95ef11ea570f72e9849a9d22d2b0c9b99f7626d201ba09a45ef612d46c1cf3cc",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "99e09d9dce7519735c75beb005627139c2df8fb3977be3397001cbc74f84299f",
+            "patch_bytes": 7130
+          },
+          {
+            "patch": "STT2001-English-v0.3.25-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.25",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "f6749d6ef90704e61a2d5bae5e5ef494bc43c2b3e3f6a14911f96ca3a03fc9c5",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "e7c69b80355b2fd8cc38e0be2bfd74996c305a83aac4e9ca8d5a27f26b8e2488",
+            "patch_bytes": 7033
+          },
+          {
+            "patch": "STT2001-English-v0.3.26-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.26",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "2e0b906bdda24f5ec69a9bf7f0fc1cfa5ae6af60ef392af9cfbfd99feca9921c",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "f958fcbef1a663639da1827ef74590629b4c54385cfe5e18fc4c3c3c8ff86740",
+            "patch_bytes": 6031
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.27.xdelta",
+        "STT2001-English-v0.3.18-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.18-to-v0.3.27.xdelta",
+        "STT2001-English-v0.3.23-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.23-to-v0.3.27.xdelta",
+        "STT2001-English-v0.3.24-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.24-to-v0.3.27.xdelta",
+        "STT2001-English-v0.3.25-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.25-to-v0.3.27.xdelta",
+        "STT2001-English-v0.3.26-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.26-to-v0.3.27.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.6",
       "manifest": {
         "game_id": "super-tokusatsu-taisen-2001",

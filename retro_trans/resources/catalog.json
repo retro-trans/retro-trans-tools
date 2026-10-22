@@ -4779,34 +4779,6 @@
             "patch_bytes": 619681
           },
           {
-            "patch": "STT2001-English-v0.3.23-to-v0.3.27.xdelta",
-            "edition": "original",
-            "language": "en",
-            "source_version": "0.3.23",
-            "source_format": "bin",
-            "target_format": "bin",
-            "source_sha256": "ff82d45d62ee7a67cd81eec90460036b3d3b33bbe78b61b3ec3a8e02cfec9c6b",
-            "source_bytes": 725316816,
-            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
-            "target_bytes": 725316816,
-            "patch_sha256": "b684b0f0c1719b8534a7732428e408ef49c0ddbce7aac400a2568863912ccc09",
-            "patch_bytes": 596928
-          },
-          {
-            "patch": "STT2001-English-v0.3.24-to-v0.3.27.xdelta",
-            "edition": "original",
-            "language": "en",
-            "source_version": "0.3.24",
-            "source_format": "bin",
-            "target_format": "bin",
-            "source_sha256": "95ef11ea570f72e9849a9d22d2b0c9b99f7626d201ba09a45ef612d46c1cf3cc",
-            "source_bytes": 725316816,
-            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
-            "target_bytes": 725316816,
-            "patch_sha256": "99e09d9dce7519735c75beb005627139c2df8fb3977be3397001cbc74f84299f",
-            "patch_bytes": 7130
-          },
-          {
             "patch": "STT2001-English-v0.3.25-to-v0.3.27.xdelta",
             "edition": "original",
             "language": "en",
@@ -4839,8 +4811,6 @@
       "assets": {
         "STT2001-English-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.27.xdelta",
         "STT2001-English-v0.3.18-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.18-to-v0.3.27.xdelta",
-        "STT2001-English-v0.3.23-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.23-to-v0.3.27.xdelta",
-        "STT2001-English-v0.3.24-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.24-to-v0.3.27.xdelta",
         "STT2001-English-v0.3.25-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.25-to-v0.3.27.xdelta",
         "STT2001-English-v0.3.26-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.26-to-v0.3.27.xdelta"
       }
@@ -5240,6 +5210,53 @@
         "OreNoShikabane-English-0.2.38.xdelta": "https://github.com/retro-trans/Ore-no-Shikabane-o-Koete-Yuke/releases/download/v0.2.38/OreNoShikabane-English-0.2.38.xdelta"
       },
       "reason": "Replaced at maintainer request with a 2.44 MiB compact delta; source and output ISO bytes unchanged."
+    },
+    {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.3.27",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.3.27",
+        "source_commit": "d0acb475a3ea634a3fbd3007deaa2346bdac1289",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.3.23-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.23",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "ff82d45d62ee7a67cd81eec90460036b3d3b33bbe78b61b3ec3a8e02cfec9c6b",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "b684b0f0c1719b8534a7732428e408ef49c0ddbce7aac400a2568863912ccc09",
+            "patch_bytes": 596928
+          },
+          {
+            "patch": "STT2001-English-v0.3.24-to-v0.3.27.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.24",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "95ef11ea570f72e9849a9d22d2b0c9b99f7626d201ba09a45ef612d46c1cf3cc",
+            "source_bytes": 725316816,
+            "target_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "target_bytes": 725316816,
+            "patch_sha256": "99e09d9dce7519735c75beb005627139c2df8fb3977be3397001cbc74f84299f",
+            "patch_bytes": 7130
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.3.23-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.23-to-v0.3.27.xdelta",
+        "STT2001-English-v0.3.24-to-v0.3.27.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.27/STT2001-English-v0.3.24-to-v0.3.27.xdelta"
+      },
+      "reason": "Nonpublic local test source builds; upgrades withdrawn at the maintainer's request."
     }
   ]
 }

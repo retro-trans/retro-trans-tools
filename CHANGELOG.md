@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.18 — Accurate app version and update status
+
+- Always show the running app version in About. Read update history when the dialog opens so a late update-helper result is visible, and suppress success messages belonging to a different executable version.
+- Clear an earlier update-check error after a successful check while retaining current download notices and installation failures. Malformed history safely uses the default message without modifying diagnostic records.
+- Include the latest verified catalog and the catalog validation improvements documented below.
+- Validation: the 280-test suite passes with four platform-specific skips; packaged Windows startup and next-launch update checks pass, including backup and settings preservation.
+
 ## Unreleased — Resilient catalog refresh and generic Vita extras
 
 - Deployment verified: full hosted refresh succeeded with 77 releases, zero rejections and unchanged existing patch/binary/solution identities. Cross Ange v0.1.13 plus two blocked Macross Triangle Frontier releases are now cataloged. Hosted CI checks passed. See docs/catalog-refresh-repair-deployment.json.

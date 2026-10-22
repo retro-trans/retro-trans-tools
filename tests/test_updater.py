@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from retro_trans.core import GitHubClient, PatchError
 from retro_trans.catalog import atomic_json
-from retro_trans.updater import stage_update, pending_update, install_staged
+from retro_trans.updater import stage_update, pending_update, install_staged, update_status
 
 
 class UpdateClient(GitHubClient):
@@ -104,6 +104,31 @@ class UpdateTests(unittest.TestCase):
         client.metadata = json.dumps(metadata).encode()
         with self.assertRaises(PatchError):
             stage_update(client, self.directory)
+
+    def test_status_ignores_success_for_another_executable_version(self):
+        default = update_status(self.directory, current='0.5.17')
+        for version in ('0.5.16', '0.5.18'):
+            with self.subTest(version=version):
+                path = self.directory / 'status.json'
+                atomic_json(path, {'message': 'Updated to ' + version})
+                before = path.read_bytes()
+                self.assertEqual(update_status(self.directory, current='0.5.17'), default)
+                self.assertEqual(path.read_bytes(), before)  # Keep historical diagnostics intact.
+        atomic_json(self.directory / 'status.json', {'message': 'Updated to 0.5.17'})
+        self.assertEqual(update_status(self.directory, current='0.5.17'), 'Updated to 0.5.17')
+
+    def test_status_preserves_install_failure_and_handles_invalid_history(self):
+        default = update_status(self.directory, current='0.5.17')
+        path = self.directory / 'status.json'
+        message = 'Automatic update failed: destination locked. Existing app retained.'
+        atomic_json(path, {'failed_version': '0.5.18', 'message': message})
+        self.assertEqual(update_status(self.directory, current='0.5.17'), message)
+        for data in (None, [], {}, {'message': None}, {'message': []}, {'message': ' '}):
+            with self.subTest(data=data):
+                atomic_json(path, data)
+                self.assertEqual(update_status(self.directory, current='0.5.17'), default)
+        path.write_text('{incomplete', encoding='utf-8')
+        self.assertEqual(update_status(self.directory, current='0.5.17'), default)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,24 @@
+{
+  "version": "0.5.18",
+  "date": "2026-10-22",
+  "base_commit": "80db7e4d0f2578485cf07935511bffd9bf5283b5",
+  "tests": {"run": 280, "skipped": 4, "passed": true},
+  "standalone_health": true,
+  "standalone_title": "Retro Trans 0.5.18",
+  "bundled_catalog_patches": 186,
+  "isolated_next_launch_update": true,
+  "update_backup_preserved": true,
+  "update_settings_preserved": true,
+  "local_executable": {
+    "bytes": 18036373,
+    "sha256": "9bcb814443a329acc1aab9f4b7e5c6c3a0edf9e062ec27966b465d162f7d6af2"
+  },
+  "regressions": [
+    "About displays the running version and rereads late helper status",
+    "Old and newer success messages are suppressed without deleting history",
+    "Malformed history safely uses the default message",
+    "Current-session notices and installation failures remain visible",
+    "Successful update checks clear an earlier check error"
+  ],
+  "release_artifacts": "GitHub Actions rebuilds and verifies the tagged source independently. Local executable hash is not the published artifact hash."
+}

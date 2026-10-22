@@ -15,7 +15,8 @@ from retro_trans.ps3 import INSTALLATION_WARNING
 from test_catalog import record, DATA
 from test_z3_saves import inputs
 from test_solutions import grouped_record, content, make_catalog
-from retro_trans.catalog import scan_root
+from retro_trans.catalog import scan_root, atomic_json
+from retro_trans.updater import update_directory
 from retro_trans.solutions import SolutionPlan
 from retro_trans.vita_automatic import VitaAutomaticPlan
 from test_vita_downloads import pkg_bytes
@@ -38,6 +39,39 @@ class GuiTests(unittest.TestCase):
         self.app.destroy()
         self.environment.stop()
         self.storage.cleanup()
+
+    def test_about_uses_running_version_and_reads_update_history_on_open(self):
+        status = update_directory() / 'status.json'
+        atomic_json(status, {'message': 'Updated to 0.0.1'})
+        with patch('retro_trans.gui.messagebox.showinfo') as show:
+            self.app.about()
+            title, body = show.call_args.args
+            self.assertEqual(title, 'Retro Trans ' + __version__)
+            self.assertIn('Running version: ' + __version__, body)
+            self.assertNotIn('Updated to 0.0.1', body)
+            # The helper finishes after the app starts; About must see the new record.
+            atomic_json(status, {'message': 'Updated to ' + __version__})
+            self.app.about()
+            self.assertIn('Updated to ' + __version__, show.call_args.args[1])
+            for message in ('App 9.0.0 downloaded; installs on next launch.',
+                            'Update check unavailable: offline'):
+                self.app.events.put(('update', None, message))
+                self.app.poll()
+                self.app.about()
+                self.assertIn(message, show.call_args.args[1])
+                self.assertIn('Running version: ' + __version__, show.call_args.args[1])
+
+    def test_successful_update_check_clears_previous_session_message(self):
+        app = self.app
+        app.app_update_status = 'Update check unavailable: offline'
+        with patch('retro_trans.gui.refresh_catalog', return_value=app.catalog), \
+                patch('retro_trans.gui.stage_update', return_value=None):
+            app.refresh()
+            for thread in app.threads:
+                thread.join(timeout=5)
+                self.assertFalse(thread.is_alive())
+            app.poll()
+        self.assertIsNone(app.app_update_status)
 
     def test_tabs_layout_and_long_diagnostics(self):
         app = self.app

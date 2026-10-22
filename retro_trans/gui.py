@@ -46,7 +46,9 @@ class Application(tk.Tk):
         self.status = tk.StringVar(value="Ready.")
         self.detail = tk.StringVar(value="Select a binary, apply a local patch, or convert saves.")
         self.catalog_status = tk.StringVar(value="Catalog: {} patches".format(len(self.catalog.edges)))
-        self.app_update_status = update_status()
+        # The update helper records success after this app finishes starting.
+        # Read that status when About opens instead of caching the previous run.
+        self.app_update_status = None
         self.detected = tk.StringVar(value="No binary selected")
         self.file_label, self.output = tk.StringVar(), tk.StringVar()
         self.auto_vita_license = tk.StringVar()
@@ -904,8 +906,7 @@ class Application(tk.Tk):
             try:
                 with diagnostics.operation('update_check'):
                     message = stage_update(self.client, cancel=self.background_cancel)
-                if message:
-                    self.events.put(("update", None, message))
+                self.events.put(("update", None, message))
             except Exception as exc:
                 self.events.put(("update", None, "Update check unavailable: " + str(exc)))
             finally:
@@ -1123,7 +1124,8 @@ class Application(tk.Tk):
             self.destroy()
 
     def about(self):
-        messagebox.showinfo("Retro Trans " + __version__, self.app_update_status +
+        messagebox.showinfo("Retro Trans " + __version__, "Running version: " + __version__ +
+            "\n\n" + (self.app_update_status or update_status()) +
             "\n\nApp and releases:\nhttps://github.com/" + APP_REPO +
             "\n\nAutomatic mode verifies catalog hashes. Manual xdelta and save conversion work offline."
             "\n\nFor troubleshooting, click Open logs and share the newest .log file"

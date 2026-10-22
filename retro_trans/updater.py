@@ -233,8 +233,17 @@ def helper_main(target, directory):
     return 0 if success else 1
 
 
-def update_status():
+def update_status(directory=None, current=__version__):
+    """Read current installation status without presenting an older success as current."""
+    default = "Updates install automatically on the next launch."
+    directory = Path(directory) if directory else update_directory()
     try:
-        return json.loads((update_directory() / "status.json").read_text(encoding="utf-8"))["message"]
-    except (OSError, ValueError, KeyError):
-        return "Updates install automatically on the next launch."
+        data = json.loads((directory / "status.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return default
+    message = data.get("message") if isinstance(data, dict) else None
+    if not isinstance(message, str) or not message.strip():
+        return default
+    if message.startswith("Updated to ") and message != "Updated to " + current:
+        return default
+    return message

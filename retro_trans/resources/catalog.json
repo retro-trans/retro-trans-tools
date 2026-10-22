@@ -4771,6 +4771,37 @@
       }
     },
     {
+      "repo": "retro-trans/Vampir",
+      "tag": "v0.6.0",
+      "manifest": {
+        "game_id": "vampir-kyuuketsuki-densetsu",
+        "game_name": "Vampir: Kyuuketsuki Densetsu",
+        "platform": "PS1",
+        "version": "0.6.0",
+        "source_commit": "10cb079a4d08b577a131ba9bbe8eefbf60c0a38f",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Vampir-Track1-English-v0.6.0.xdelta",
+            "edition": "Japan / Track 1 raw MODE2/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "32381c58de0d9fa79cc3b64397f2a8da03111e9e1af28edfc51bc546e74efc4e",
+            "source_bytes": 104581680,
+            "target_sha256": "61f9ee4c23a91501b4116a195cffbe359e3f9a435d7dc459abc8ab0b67af16a1",
+            "target_bytes": 108669456,
+            "patch_sha256": "d0b762ad99e45ff878a5ecebfd560d0f875255ce7cdfddd5fca1747257a9e89a",
+            "patch_bytes": 792545
+          }
+        ]
+      },
+      "assets": {
+        "Vampir-Track1-English-v0.6.0.xdelta": "https://github.com/retro-trans/Vampir/releases/download/v0.6.0/Vampir-Track1-English-v0.6.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Wizardry-Perfect-Pack",
       "tag": "v0.1.11",
       "manifest": {

@@ -4817,6 +4817,67 @@
     },
     {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.3.29",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.3.29",
+        "source_commit": "93a95acf089fb540abc0ffa3c2940e4c83e13c40",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.3.29.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "fdd7f1522336b38a9b2defb6cf5485a8cb62cccaef01c410e02a525e650da750",
+            "target_bytes": 725316816,
+            "patch_sha256": "c9f11fc287440d9b4fd95be307b19e73b59ebb9dbd79e41daf0a8daffab44ac7",
+            "patch_bytes": 62250366
+          },
+          {
+            "patch": "STT2001-English-v0.3.18-to-v0.3.29.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.18",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "a002b82cc05c7184e3bb5cfac0d0e43ea41a7875ccfc82b2e110446dbc73df7a",
+            "source_bytes": 725316816,
+            "target_sha256": "fdd7f1522336b38a9b2defb6cf5485a8cb62cccaef01c410e02a525e650da750",
+            "target_bytes": 725316816,
+            "patch_sha256": "883f87f34fc1a1746d006d3f109b63b7c41ca0263d62278807e51884970a4100",
+            "patch_bytes": 619784
+          },
+          {
+            "patch": "STT2001-English-v0.3.27-to-v0.3.29.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.27",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "source_bytes": 725316816,
+            "target_sha256": "fdd7f1522336b38a9b2defb6cf5485a8cb62cccaef01c410e02a525e650da750",
+            "target_bytes": 725316816,
+            "patch_sha256": "59a05ba92084c01e1b17a19e16db5cc662f01945ee8e88354fe25a411f10f72b",
+            "patch_bytes": 7687
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.3.29.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.29/STT2001-English-v0.3.29.xdelta",
+        "STT2001-English-v0.3.18-to-v0.3.29.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.29/STT2001-English-v0.3.18-to-v0.3.29.xdelta",
+        "STT2001-English-v0.3.27-to-v0.3.29.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.3.29/STT2001-English-v0.3.27-to-v0.3.29.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.6",
       "manifest": {
         "game_id": "super-tokusatsu-taisen-2001",

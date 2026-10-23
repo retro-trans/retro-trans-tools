@@ -4261,6 +4261,106 @@
       }
     },
     {
+      "repo": "retro-trans/Seireiki-Rayblade",
+      "tag": "v0.7.0",
+      "manifest": {
+        "game_id": "seireiki-rayblade",
+        "game_name": "Seireiki Rayblade",
+        "platform": "Dreamcast",
+        "version": "0.7.0",
+        "source_commit": "3c98dca5d5c3ede50221a275182fb8806dd09e6c",
+        "schema_version": 2,
+        "patches": [
+          {
+            "patch": "Rayblade-English-v0.7.0-Track03.xdelta",
+            "edition": "Japan / Track 3 raw MODE1-2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "6513b0292f67ddf25ae53db6157deabce46c0bc1abc5dd261b5884ce2a242886",
+            "source_bytes": 26535264,
+            "target_sha256": "c8fdd40416db1c34cd90969f653ce8624b705dafe69475f432b3b6b312d9af31",
+            "target_bytes": 26535264,
+            "patch_sha256": "85f6fe57cc59aa00ee9a41fda0490d62d60906f16729c734ffa79dc5e7088204",
+            "patch_bytes": 433
+          },
+          {
+            "patch": "Rayblade-English-v0.7.0-Track05.xdelta",
+            "edition": "Japan / Track 5 raw MODE1-2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "b8a0c55de28b1a486183ba11da0677ccb30c48d98d13a02bab636a8022b2841d",
+            "source_bytes": 1157188704,
+            "target_sha256": "0fbf237a8aa60080d0d023dcf637357c24b6d20ea56cf0a1ec5df5e93f2b518d",
+            "target_bytes": 1157188704,
+            "patch_sha256": "856b141e69667b64b015e808941dbac50ed5a6e7871fa1cd2a59ac03d697beff",
+            "patch_bytes": 29008929
+          },
+          {
+            "patch": "Rayblade-English-v0.7.0-GDI.xdelta",
+            "edition": "Japan / Disc descriptor",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "cue",
+            "target_format": "gdi",
+            "source_sha256": "3c001dba5ab4e53cb9ae421a3aefc6c9800a29b818ef4e82a40ff79a01ffe479",
+            "source_bytes": 612,
+            "target_sha256": "25e23a903fc55476eda48eb35cb9df36a06d17fc7a5529cf1410dff0f3638142",
+            "target_bytes": 312,
+            "patch_sha256": "ffc1341d67394c545fdce6c0c7e1e812cd9dbdc1a35ad0d5f4e72804b803ccff",
+            "patch_bytes": 208
+          }
+        ],
+        "solutions": [
+          {
+            "id": "japan-disc",
+            "name": "Complete English Dreamcast disc",
+            "edition": "Japan (T-42201M)",
+            "language": "en",
+            "files": [
+              {
+                "edition": "Japan / Track 3 raw MODE1-2352",
+                "output_name": "Seireiki Rayblade (Japan) (Track 3).bin"
+              },
+              {
+                "edition": "Japan / Track 5 raw MODE1-2352",
+                "output_name": "Seireiki Rayblade (Japan) (Track 5).bin"
+              },
+              {
+                "edition": "Japan / Disc descriptor",
+                "output_name": "Seireiki Rayblade English v0.7.0.gdi"
+              }
+            ],
+            "copy_files": [
+              {
+                "name": "Seireiki Rayblade (Japan) (Track 1).bin",
+                "sha256": "7b1aa484d8182e4cde8df5e9d7027d15e653528948c1c4ad5f62e940124f2664",
+                "bytes": 705600
+              },
+              {
+                "name": "Seireiki Rayblade (Japan) (Track 2).bin",
+                "sha256": "4e62562304cd5995cf525d0edead622f1286195d43dc9ba613a443d57536474b",
+                "bytes": 2389632
+              },
+              {
+                "name": "Seireiki Rayblade (Japan) (Track 4).bin",
+                "sha256": "0f417136fb40bb897fd90c7185312133bbba5c94f1e99f8ec3739bb9909eadfa",
+                "bytes": 2036832
+              }
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "Rayblade-English-v0.7.0-Track03.xdelta": "https://github.com/retro-trans/Seireiki-Rayblade/releases/download/v0.7.0/Rayblade-English-v0.7.0-Track03.xdelta",
+        "Rayblade-English-v0.7.0-Track05.xdelta": "https://github.com/retro-trans/Seireiki-Rayblade/releases/download/v0.7.0/Rayblade-English-v0.7.0-Track05.xdelta",
+        "Rayblade-English-v0.7.0-GDI.xdelta": "https://github.com/retro-trans/Seireiki-Rayblade/releases/download/v0.7.0/Rayblade-English-v0.7.0-GDI.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Summon-Night-3",
       "tag": "v0.1.35",
       "manifest": {

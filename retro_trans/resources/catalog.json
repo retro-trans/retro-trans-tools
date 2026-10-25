@@ -643,6 +643,84 @@
       "vita_min_app_version": "0.5.16"
     },
     {
+      "repo": "retro-trans/Cross-Ange",
+      "tag": "v0.1.16",
+      "manifest": {
+        "schema_version": 2,
+        "game_id": "cross-ange",
+        "game_name": "CROSS ANGE Rondo of Angel and Dragon tr.",
+        "platform": "PS Vita",
+        "version": "0.1.16",
+        "source_commit": "63ddecda7e41aee9f853534cf4361a5a6bc6321e",
+        "patches": [
+          {
+            "patch": "Cross-Ange-English-0.1.16-Ange.xdelta",
+            "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "cpk",
+            "target_format": "cpk",
+            "source_bytes": 882846536,
+            "source_sha256": "e04d94fac7ba1bc21acfd98c9ea8352995e32229c642485fb2537cd0d53213de",
+            "target_bytes": 902331208,
+            "target_sha256": "e75631ba8d1e33cb155e55a99b3a050f53d8b3a53f5e1085ece52157dc6367bd",
+            "patch_bytes": 5388565,
+            "patch_sha256": "531937fe70390e31d6b9c6a2b6964c959a6f6667344c0f12291b2d549ae212ce"
+          },
+          {
+            "patch": "Cross-Ange-English-0.1.16-param.xdelta",
+            "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "sfo",
+            "target_format": "sfo",
+            "source_bytes": 1328,
+            "source_sha256": "04924d2566147471c89464d568c8ae8708b43cc296b370c6b8f208317cebf603",
+            "target_bytes": 1413,
+            "target_sha256": "6d4414054f46e25b14e5ef25ae9d4c655f9c1111155cc51e43cf6e7c46d00c10",
+            "patch_bytes": 160,
+            "patch_sha256": "33b9e62e8aea9dc9485f029ca2a261d3c21f06ad38dc13950d35cb5e4151bc14"
+          }
+        ],
+        "solutions": [
+          {
+            "id": "pcsg00597-english-components",
+            "name": "Cross Ange English components (PCSG00597)",
+            "edition": "Japan PCSG00597",
+            "language": "en",
+            "files": [
+              {
+                "edition": "Japan PCSG00597 / cpk/Ange.cpk",
+                "output_name": "Ange.cpk"
+              },
+              {
+                "edition": "Japan PCSG00597 / sce_sys/param.sfo",
+                "output_name": "param.sfo"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "Cross-Ange-English-0.1.16-Ange.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.16/Cross-Ange-English-0.1.16-Ange.xdelta",
+        "Cross-Ange-English-0.1.16-param.xdelta": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.16/Cross-Ange-English-0.1.16-param.xdelta"
+      },
+      "vita_repatch": {
+        "url": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.16/VITA-REPATCH.json",
+        "bytes": 1417,
+        "sha256": "606a332f3d86a910b0c237710e6f550cebe052a0968ebaee8168817c6e68e292",
+        "title_id": "PCSG00597",
+        "app_version": "01.00",
+        "build": "0.1.16"
+      },
+      "vita_archive": {
+        "url": "https://github.com/retro-trans/Cross-Ange/releases/download/v0.1.16/Cross-Ange-English-0.1.16-Vita-rePatch-patches.zip",
+        "bytes": 5435403,
+        "sha256": "4aaa4589ae0b3011d595c7efd25c2eb477f4c701b0066839ba28ddf6a7b1f38f"
+      },
+      "vita_min_app_version": "0.5.16"
+    },
+    {
       "repo": "retro-trans/Heroes-Phantasia",
       "tag": "v0.1.45",
       "manifest": {

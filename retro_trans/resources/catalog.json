@@ -5114,6 +5114,97 @@
       }
     },
     {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.9.0",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.9.0",
+        "source_commit": "6758c7aff52ce8d8491b14e0a43997aeb667d5c0",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.9.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "000762aaaa9b16416546e4c11e97177175bd4a5be95155b2ab262c7243d82c8a",
+            "target_bytes": 725316816,
+            "patch_sha256": "890fb2c19e56d75e04a7f73fc37192ddd05122ae61235d29d5c368d19eb055ca",
+            "patch_bytes": 66880252
+          },
+          {
+            "patch": "STT2001-English-v0.3.6-to-v0.9.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.6",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "3360e045c6045a8efd45bb6b0f03d647221011fcc661c398560461ecb26e5cb6",
+            "source_bytes": 725316816,
+            "target_sha256": "000762aaaa9b16416546e4c11e97177175bd4a5be95155b2ab262c7243d82c8a",
+            "target_bytes": 725316816,
+            "patch_sha256": "397fc7d411db723da529ac47fb90033b20fc96a6e36f822975741045c2836296",
+            "patch_bytes": 21935160
+          },
+          {
+            "patch": "STT2001-English-v0.3.18-to-v0.9.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.18",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "a002b82cc05c7184e3bb5cfac0d0e43ea41a7875ccfc82b2e110446dbc73df7a",
+            "source_bytes": 725316816,
+            "target_sha256": "000762aaaa9b16416546e4c11e97177175bd4a5be95155b2ab262c7243d82c8a",
+            "target_bytes": 725316816,
+            "patch_sha256": "7f3f65d574c1fa64e2a3adf8bca94d5fe632fc4cba150b7127029bdc5353f164",
+            "patch_bytes": 21575909
+          },
+          {
+            "patch": "STT2001-English-v0.3.27-to-v0.9.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.27",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "fa4ddddacbfa9c6f3ae8dcc3ca5bdd3c82699fe745450e0c6a3f513d2f8732fa",
+            "source_bytes": 725316816,
+            "target_sha256": "000762aaaa9b16416546e4c11e97177175bd4a5be95155b2ab262c7243d82c8a",
+            "target_bytes": 725316816,
+            "patch_sha256": "c16d50773e2f169f5ffb844f2b89e379c9fdc4775e6a6822705d11d1a0c0b773",
+            "patch_bytes": 21119439
+          },
+          {
+            "patch": "STT2001-English-v0.3.29-to-v0.9.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.3.29",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "fdd7f1522336b38a9b2defb6cf5485a8cb62cccaef01c410e02a525e650da750",
+            "source_bytes": 725316816,
+            "target_sha256": "000762aaaa9b16416546e4c11e97177175bd4a5be95155b2ab262c7243d82c8a",
+            "target_bytes": 725316816,
+            "patch_sha256": "4785f0b1ecb11e2af7a4a34d6d8027fa48570ca33eec96939fcbb89287d0d71d",
+            "patch_bytes": 21117805
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.9.0.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.0/STT2001-English-v0.9.0.xdelta",
+        "STT2001-English-v0.3.6-to-v0.9.0.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.0/STT2001-English-v0.3.6-to-v0.9.0.xdelta",
+        "STT2001-English-v0.3.18-to-v0.9.0.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.0/STT2001-English-v0.3.18-to-v0.9.0.xdelta",
+        "STT2001-English-v0.3.27-to-v0.9.0.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.0/STT2001-English-v0.3.27-to-v0.9.0.xdelta",
+        "STT2001-English-v0.3.29-to-v0.9.0.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.0/STT2001-English-v0.3.29-to-v0.9.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Vampir",
       "tag": "v0.6.0",
       "manifest": {

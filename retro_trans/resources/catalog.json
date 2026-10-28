@@ -1952,6 +1952,52 @@
       }
     },
     {
+      "repo": "retro-trans/Ore-no-Shikabane-o-Koete-Yuke",
+      "tag": "v0.2.52",
+      "manifest": {
+        "game_id": "ore-no-shikabane-o-koete-yuke",
+        "game_name": "Ore no Shikabane o Koete Yuke",
+        "platform": "PSP",
+        "version": "0.2.52",
+        "source_commit": "22ce4f1fd5409a04291631e22385e5915ec22f99",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "OreNoShikabane-English-0.2.52-full.xdelta",
+            "edition": "UCJS10117",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "03791a833656ddebadff7848a6296fc1698b52dfd7052c91572dd8b800fd569a",
+            "source_bytes": 847937536,
+            "target_sha256": "5e821290c20f25f0642c4834f602e9fc7d46925d820f3ccfd83b78cc7f86590b",
+            "target_bytes": 1077544960,
+            "patch_sha256": "b4e2dc1d7e358f60a4faaa3b1c923645e757cefd5301ba7eb2708964cfe25525",
+            "patch_bytes": 2561631
+          },
+          {
+            "patch": "OreNoShikabane-English-0.2.48-to-0.2.52.xdelta",
+            "edition": "UCJS10117",
+            "language": "en",
+            "source_version": "0.2.48",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "43569c29fb58ece6ade5f02f4ac39ea8df86041ba6bce7fc461f7293e1dcc907",
+            "source_bytes": 1081337856,
+            "target_sha256": "5e821290c20f25f0642c4834f602e9fc7d46925d820f3ccfd83b78cc7f86590b",
+            "target_bytes": 1077544960,
+            "patch_sha256": "637c1b9c3b55b85148db711abe2910fea7dcd7d1ea7bec6eff23880519a9cef3",
+            "patch_bytes": 1384899
+          }
+        ]
+      },
+      "assets": {
+        "OreNoShikabane-English-0.2.52-full.xdelta": "https://github.com/retro-trans/Ore-no-Shikabane-o-Koete-Yuke/releases/download/v0.2.52/OreNoShikabane-English-0.2.52-full.xdelta",
+        "OreNoShikabane-English-0.2.48-to-0.2.52.xdelta": "https://github.com/retro-trans/Ore-no-Shikabane-o-Koete-Yuke/releases/download/v0.2.52/OreNoShikabane-English-0.2.48-to-0.2.52.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-MX-Portable",
       "tag": "v0.4.1",
       "manifest": {

@@ -78,7 +78,7 @@ class DcpTests(unittest.TestCase):
 
     def test_zero_offsets_no_copy_missing_and_cancelled_inputs(self):
         source = self.disc()
-        self.assertEqual(dcp.prepare_gdi(source, self.root/'unused'), source)
+        self.assertTrue(dcp.prepare_gdi(source, self.root/'unused').samefile(source))
         self.assertFalse((self.root/'unused').exists())
         (self.root/'Track 3.bin').unlink()
         with self.assertRaises(PatchError): dcp.prepare_gdi(source, self.root/'bad')

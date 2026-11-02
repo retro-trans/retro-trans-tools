@@ -25,6 +25,11 @@ New-Item -ItemType Directory -Force $LicensesDirectory | Out-Null
 $DcpNotices = Join-Path $LicensesDirectory 'dcp'
 New-Item -ItemType Directory -Force $DcpNotices | Out-Null
 Copy-Item -LiteralPath 'retro_trans/resources/native/dcp/win-x64/UDP-GPL-3.0.txt','retro_trans/resources/native/dcp/win-x64/CORRESPONDING-SOURCE.zip' -Destination $DcpNotices
+foreach ($Notice in @('DOTNET-LICENSE.txt','DOTNET-THIRD-PARTY-NOTICES.txt','System.IO.Hashing-LICENSE.txt','System.IO.Hashing-THIRD-PARTY-NOTICES.txt')) {
+    $NoticePath = Join-Path 'retro_trans/resources/native/dcp/win-x64' $Notice
+    if (-not (Test-Path -LiteralPath $NoticePath)) { throw 'Rebuild the pinned DCP engine in a clean resource folder to include its dependency notices.' }
+    Copy-Item -LiteralPath $NoticePath -Destination $DcpNotices
+}
 Copy-Item -LiteralPath (Join-Path $RuntimeHome 'LICENSE.txt') -Destination (Join-Path $LicensesDirectory 'Python-LICENSE.txt')
 $TkLicense = Join-Path $RuntimeHome 'tcl\tk8.6\license.terms'
 if (Test-Path -LiteralPath $TkLicense) {

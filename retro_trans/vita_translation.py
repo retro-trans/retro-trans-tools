@@ -209,6 +209,7 @@ def description_context(description=None,client=None,cache=None,cancel=None,prog
 
 
 def apply(pkg,license_path,output,description=None,client=None,cache=None,cancel=None,progress=None):
+    check_cancel(cancel)
     require(os.name == 'nt', 'Vita PKG rebuilding is currently verified on Windows only.')
     from . import vita_pfs as pfs
     pkg,license_path,output = no_links(pkg).resolve(),no_links(license_path).resolve(),no_links(output).absolute()

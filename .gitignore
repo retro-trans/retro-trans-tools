@@ -10,3 +10,5 @@ dist/
 *.egg-info/
 release-local.json
 retro_trans/resources/native/
+integrations/dcp/bin/
+integrations/dcp/obj/

@@ -5,6 +5,7 @@ from pathlib import Path
 import struct
 import tempfile
 import threading
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import zipfile
@@ -164,6 +165,18 @@ class TranslationTests(unittest.TestCase):
         with patch.object(v.GitHubClient,'json') as network,self.assertRaises(PatchError):
             with v.description_context():pass
         network.assert_not_called()
+
+    def test_cancel_precedes_platform_gate_without_enabling_pkg_rebuilding(self):
+        cancel=threading.Event();cancel.set()
+        with patch.object(v,'os',SimpleNamespace(name='posix')),patch.object(v,'no_links') as paths, \
+                patch.object(v,'description_context') as description:
+            with self.assertRaises(Cancelled):
+                v.apply('original.pkg','work.bin','translated.pkg',cancel=cancel)
+            cancel.clear()
+            with self.assertRaisesRegex(PatchError,'Windows only'):
+                v.apply('original.pkg','work.bin','translated.pkg',cancel=cancel)
+            paths.assert_not_called()
+            description.assert_not_called()
 
 
 class NativeFormatTests(unittest.TestCase):

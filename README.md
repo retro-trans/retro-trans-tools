@@ -1,17 +1,19 @@
 # Retro Trans
 
-**Retro Trans 0.5.17:** Automatic supports larger complete Vita profiles, including
+**Windows 0.5.19:** adds single-file Dreamcast **DCP** patch application,
+including version upgrades and GDI/CUE/CHD output. See [DCP instructions](docs/DCP.md).
+
+Automatic supports larger complete Vita profiles, including
 SRW Z3's Vita3K package. It downloads small Vita translation patches and
 rebuilds an English PKG locally using your original PKG and matching
 `work.bin`/`.rif`. Generic hardware rePatch and manual installed CPK patching
 are also supported. Download the Windows EXE or ZIP from
 [Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).
 
-Older Mac
-0.5.6 test builds remain available from the
-[validated Mac workflow](https://github.com/retro-trans/retro-trans-tools/actions/runs/37947388822).
-See [Mac test-build instructions](docs/MAC_TEST_BUILD.md); Vita PKG output is
-currently Windows-only.
+Mac **0.5.18** and Android **0.1.0-test1** downloads remain available on the
+[0.5.18 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.18).
+DCP is currently included in the Windows release only; Vita PKG output is also
+Windows-only. The Mac ZIPs are ad hoc signed and are not notarized by Apple.
 
 A compact Windows desktop toolkit for translation releases from
 [retro-trans](https://github.com/retro-trans). Download the standalone EXE or ZIP
@@ -37,6 +39,9 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
+- **DCP:** choose a Dreamcast GDI/CUE/CHD, one local `.dcp` patch and a new output
+  folder. Apply full or compatible version-upgrade patches and save GDI, CUE/BIN
+  or CHD. The bundled engine works offline. See [DCP instructions](docs/DCP.md).
 - **Automatic — Vita PKG:** select the original game PKG, its matching local work.bin/.rif and a new translated PKG filename. On Patch, the app discovers the newest compatible small component ZIP, decrypts the original locally, applies deltas/extras, rebuilds encrypted PFS/PKG and verifies a second isolated native installation before saving. Requires Windows and temporary space according to the game's release notes (12 GB for Z3); private releases use existing GitHub CLI sign-in. Translation downloads are small; a first-use official Vita3K runtime download is separate. No license is downloaded or uploaded. Whole-PKG xdelta remains withdrawn. See [Vita flow](docs/VITA_PKG.md).
 - **Vita — local PKG override:** select Vita3K PKG with the same original/license/output, and choose a downloaded small Vita-PKG-patches.zip or VITA-PKG.json under Local patch. Blank uses release discovery.
 - **Vita3K — installed CPK:** install the original game with its matching license, close Vita3K, then select its installed CPK in **Apply xdelta** with the downloaded small translation delta and a new output filename. Verify the output before replacing the installed file with a backup. The current app and published 0.5.4 both support this route. Automatic also supports ordinary binary releases when their standard manifest is in the accessible catalog. Whole-PKG xdelta remains withdrawn because distributing differences between rebuilt encrypted packages can produce a package-size delta. No license is read during CPK patching. See [Vita instructions](docs/VITA_PKG.md).
@@ -67,7 +72,7 @@ never uploaded. ISO, BIN, VPK, and other binary formats are handled as exact byt
 Supported CHDs are unpacked with your permission into a new child folder; ZIP, 7z and
 other archives still need to be extracted separately.
 
-Both engines and the initial catalog are bundled, so manual xdelta and CHD conversion work offline from
+The engines and initial catalog are bundled, so manual xdelta, DCP and CHD conversion work offline from
 the first launch. Automatic mode can also use cached patches offline. Network
 access is needed for new catalogs, new patch downloads, app updates, and the
 official package-conversion tool used by the Vita rePatch workflow.
@@ -88,12 +93,13 @@ The app applies the patch route and optionally compresses the result back to CHD
 again and compared with the verified patched disc before it is saved. The
 original CHD and extracted source are preserved. No separate chdman installation is needed.
 
-Supports standalone **CHD v5 DVDs** and **single data-track CDs** in MODE1/2048,
+Automatic and Apply xdelta support standalone **CHD v5 DVDs** and **single data-track CDs** in MODE1/2048,
 MODE1/2352 or MODE2/2352, without gaps or subchannels. CD BIN output includes a
 new CUE sheet, and an existing CUE is also refused. Multi-track/audio CDs,
 GD-ROM, parent-dependent CHDs, hard disks and other layouts are rejected.
-Unpacked Dreamcast tracks are supported through explicit multi-file solutions;
-multi-track/GD-ROM CHD extraction and recompression are not supported.
+Unpacked Dreamcast tracks are supported through explicit multi-file solutions.
+For Dreamcast GD-ROM CHD extraction and recompression, use the separate **DCP**
+tab with a compatible `.dcp` patch.
 
 The actual extracted bytes are verified before patch downloads or patch
 execution. Compressed file size and filename are not binary identities.

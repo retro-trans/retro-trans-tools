@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.19 — Dreamcast DCP support (Windows, 2026-11-02)
+
+- Add a DCP tab and command line for single-file full and version-upgrade packages. The pinned Universal Dreamcast Patcher 2.1.8 core runs in a separate self-contained process; no user .NET installation is required. Keep existing Automatic/xdelta routes.
+- Accept GDI/CUE and explicitly approved CHD sources; rebuild GDI, CUE/BIN or CHD into a new folder. Keep completed CHD extraction beside its source and select the extracted GDI before patching. Normalize GDI byte offsets before invoking the upstream reader.
+- Validate archive paths and engine hashes, preserve originals and existing outputs, cancel only the owned helper, and re-extract outputs with unchanged CD audio checks. Optional compatible ZIP-comment metadata verifies every game file and boot-code invariants; no metadata file is added to the game's filesystem.
+- Bundle corresponding helper/upstream source and license notices. Rayblade 0.7.23 original-input and last-public 0.7.11 upgrade DCPs pass real application and exact game-file/boot-code verification. Native hardware progression and rebuilt-disc gameplay verification remain separate checks.
+- Include the latest verified catalog and the cross-platform cancellation fix for Vita PKG operations. Mac 0.5.18 and Android 0.1.0-test1 remain separate downloads without DCP support.
+- Validation: 293 tests pass with four platform-specific skips; packaged startup verifies the bundled DCP engine, and the next-launch update check preserves the previous EXE and settings. See `docs/builds/v0.5.19-validation.json` for local preflight evidence.
+
 ## 0.5.18 — Accurate app version and update status
 
 - Always show the running app version in About. Read update history when the dialog opens so a late update-helper result is visible, and suppress success messages belonging to a different executable version.

@@ -1,5 +1,19 @@
 # Third-party components
 
+## Dreamcast DCP process engine
+
+DCP-enabled builds include a separate self-contained process compiled from
+Universal Dreamcast Patcher 2.1.8, commit
+`8b352f959bcc56ab39174c9e311b7ab7f0d522a2`, by Derek Pascarella (ateam).
+Source and license: https://github.com/DerekPascarella/UniversalDreamcastPatcher .
+The helper/bridge is distributed under GPL-3.0; `UDP-GPL-3.0.txt` and
+`CORRESPONDING-SOURCE.zip` accompany the engine and the Windows package's
+`licenses/dcp` folder. The source archive preserves upstream notices for
+DiscUtilsGD (MIT), xdelta3 (Apache-2.0), and native CHD/LZMA dependencies.
+The self-contained .NET runtime and System.IO.Hashing are Microsoft components;
+their included runtime license and third-party notices remain in the bundle.
+The helper runs as a separate process and exchanges JSON with Retro Trans.
+
 ## Mac test build
 
 Mac builds include the official xdelta3 3.2.0 executable for the selected

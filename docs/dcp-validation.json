@@ -1,0 +1,83 @@
+{
+  "version": "0.5.19",
+  "date": "2026-10-29",
+  "status": "local development build; not published",
+  "upstream": "Universal Dreamcast Patcher 2.1.8",
+  "upstream_commit": "8b352f959bcc56ab39174c9e311b7ab7f0d522a2",
+  "tests": {
+    "run": 292,
+    "skipped": 4,
+    "result": "pass",
+    "log": ".integration/dcp/all-tests-final.log"
+  },
+  "packaged_health": {
+    "ok": true,
+    "version": "0.5.19",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.19",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 186,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true
+  },
+  "windows_executable": {
+    "bytes": 64669022,
+    "sha256": "3ef645b5109d7e020a73b8a72eef76fb3580f266dca099400edf657d7d81484c"
+  },
+  "real_rayblade_routes": {
+    "full": {
+      "game_tree_sha256": "c1f73e677d4edf93fea4f897a0d07ef78e510a8e712feba5ca926e587512d476",
+      "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+      "release_metadata_verified": true,
+      "output_format": "GDI",
+      "audio_content_verified": "not checked in this earlier route; CUE/CHD routes verify audio"
+    },
+    "upgrade": {
+      "game_tree_sha256": "c1f73e677d4edf93fea4f897a0d07ef78e510a8e712feba5ca926e587512d476",
+      "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+      "release_metadata_verified": true,
+      "output_format": "GDI",
+      "audio_content_verified": "not checked in this earlier route; CUE/CHD routes verify audio"
+    },
+    "cue": {
+      "game_tree_sha256": "c1f73e677d4edf93fea4f897a0d07ef78e510a8e712feba5ca926e587512d476",
+      "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+      "release_metadata_verified": true,
+      "output_format": "CUE/BIN",
+      "audio_content_verified": true
+    },
+    "chd": {
+      "game_tree_sha256": "c1f73e677d4edf93fea4f897a0d07ef78e510a8e712feba5ca926e587512d476",
+      "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+      "release_metadata_verified": true,
+      "output_format": "CHD",
+      "audio_content_verified": true
+    }
+  },
+  "limits": [
+    "Physical Dreamcast/GDEMU test pending.",
+    "Windows x64 tested; other engine RIDs not runtime-tested.",
+    "DCP rebuilds raw tracks; exact complete game file tree and boot code validated instead of raw xdelta track identity."
+  ]
+}

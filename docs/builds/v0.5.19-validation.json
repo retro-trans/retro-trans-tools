@@ -1,0 +1,76 @@
+{
+  "version": "0.5.19",
+  "date": "2026-11-02",
+  "scope": "Windows x64 local release preflight; published artifacts are built and checked separately in GitHub Actions",
+  "tests": {
+    "run": 293,
+    "skipped": 4,
+    "result": "pass"
+  },
+  "packaged_health": {
+    "ok": true,
+    "version": "0.5.19",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.19",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 246,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true
+  },
+  "next_launch_update": {
+    "result": "pass",
+    "verified_replacement": true,
+    "startup_validated": true,
+    "backup_preserved": true,
+    "settings_preserved": true
+  },
+  "package_checks": {
+    "zip_executable_matches": true,
+    "updater_size_and_sha256_match": true,
+    "dcp_license_and_corresponding_source_in_zip": true,
+    "dcp_bundle_hashes_verified": true,
+    "bundled_bridge_source_matches_checkout": true
+  },
+  "local_artifacts": {
+    "Retro-Trans.exe": {
+      "bytes": 64678912,
+      "sha256": "3ced71f81cdce6593f8e1f7dc50f917f046e992343c86b9d1913f21c75d1cb68"
+    },
+    "Retro-Trans-Windows.zip": {
+      "bytes": 74543010,
+      "sha256": "f38c8df7910c1f24d706fba9c71163a76bfa71f4cd751631c9e4b76880464952"
+    },
+    "UPDATE.json": {
+      "bytes": 212,
+      "sha256": "e37efbe5e1fcb8a9d5a0a64f83986802436b7f89ea6e9213152af4ab6b5eef22"
+    }
+  },
+  "earlier_real_disc_validation": "docs/dcp-validation.json",
+  "limits": [
+    "Windows x64 DCP release only; Mac 0.5.18 and Android 0.1.0-test1 are unchanged.",
+    "Physical Dreamcast/GDEMU and gameplay progression remain unverified.",
+    "Generic DCPs without Retro Trans metadata do not have publisher whole-output verification."
+  ]
+}

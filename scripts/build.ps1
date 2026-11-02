@@ -11,6 +11,10 @@ $env:PYINSTALLER_CONFIG_DIR = Join-Path (Get-Location) "build\pyinstaller-cache"
 if ($LASTEXITCODE -ne 0) { throw "Could not install PyInstaller." }
 & $BuildPython -m pip install --disable-pip-version-check --no-cache-dir -e .
 if ($LASTEXITCODE -ne 0) { throw "Could not install application dependencies." }
+if (-not (Test-Path -LiteralPath 'retro_trans/resources/native/dcp/win-x64/engine.json')) {
+    & $BuildPython scripts/bundle_dcp.py --write
+    if ($LASTEXITCODE -ne 0) { throw "Could not bundle the pinned DCP engine." }
+}
 & $BuildPython -m unittest discover -s tests -v
 if ($LASTEXITCODE -ne 0) { throw "Tests failed; executable was not built." }
 & $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' --distpath $OutputDirectory launch.py
@@ -18,6 +22,9 @@ if ($LASTEXITCODE -ne 0) { throw "Packaging failed." }
 $RuntimeHome = & $BuildPython -c "import sys; print(sys.base_prefix)"
 $LicensesDirectory = Join-Path $OutputDirectory 'licenses'
 New-Item -ItemType Directory -Force $LicensesDirectory | Out-Null
+$DcpNotices = Join-Path $LicensesDirectory 'dcp'
+New-Item -ItemType Directory -Force $DcpNotices | Out-Null
+Copy-Item -LiteralPath 'retro_trans/resources/native/dcp/win-x64/UDP-GPL-3.0.txt','retro_trans/resources/native/dcp/win-x64/CORRESPONDING-SOURCE.zip' -Destination $DcpNotices
 Copy-Item -LiteralPath (Join-Path $RuntimeHome 'LICENSE.txt') -Destination (Join-Path $LicensesDirectory 'Python-LICENSE.txt')
 $TkLicense = Join-Path $RuntimeHome 'tcl\tk8.6\license.terms'
 if (Test-Path -LiteralPath $TkLicense) {

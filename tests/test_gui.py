@@ -76,12 +76,12 @@ class GuiTests(unittest.TestCase):
     def test_tabs_layout_and_long_diagnostics(self):
         app = self.app
         self.assertEqual(app.title(), 'Retro Trans ' + __version__)
-        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita"])
+        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP"])
         app.geometry("{}x{}".format(*app.minsize()))
         detail = "Hash mismatch: " + "a" * 64 + "\nCheck the binary.\n" * 12
         app.detail.set(detail)
         app.status.set("Downloading SRWZ-English-Best-v0.9.79-to-v0.9.83.xdelta")
-        for tab in range(4):
+        for tab in range(5):
             app.notebook.select(tab)
             app.update()
             self.assertEqual(app.detail_text.get("1.0", "end-1c"), detail)
@@ -91,6 +91,34 @@ class GuiTests(unittest.TestCase):
                 self.assertGreater(widget.winfo_height(), 1)
                 self.assertLessEqual(widget.winfo_rootx() + widget.winfo_width(), app.winfo_rootx() + app.winfo_width())
                 self.assertLessEqual(widget.winfo_rooty() + widget.winfo_height(), app.winfo_rooty() + app.winfo_height())
+
+    def test_dcp_requires_inputs_and_runs_matching_worker(self):
+        app = self.app
+        app.notebook.select(4); app.update()
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.dcp_source.set('source.gdi'); app.dcp_patch.set('upgrade.dcp'); app.dcp_output.set('new-folder')
+        self.assertEqual(str(app.apply_button['state']), 'normal')
+        with patch('retro_trans.gui.dcp.apply', return_value={'release_metadata_verified': True}) as apply:
+            app.apply(); self.finish_worker()
+        self.assertEqual(apply.call_args.args, ('source.gdi', 'upgrade.dcp', 'new-folder'))
+        self.assertEqual(apply.call_args.kwargs['format'], 'GDI')
+        self.assertIn('All game files match', app.detail.get())
+
+    def test_dcp_chd_permission_and_extraction_then_wait(self):
+        app = self.app
+        app.notebook.select(4); app.dcp_source.set('source.chd')
+        app.dcp_patch.set('full.dcp'); app.dcp_output.set('new-folder')
+        with patch('retro_trans.gui.messagebox.askyesno', return_value=False), \
+                patch('retro_trans.gui.dcp.unpack_chd') as unpack:
+            app.apply(); unpack.assert_not_called()
+        with patch('retro_trans.gui.messagebox.askyesno', return_value=True), \
+                patch('retro_trans.gui.dcp.unpack_chd', return_value=Path('kept/disc.gdi')) as unpack, \
+                patch('retro_trans.gui.dcp.apply', return_value={'release_metadata_verified': False}) as apply:
+            app.apply(); self.finish_worker()
+            apply.assert_not_called(); unpack.assert_called_once()
+            self.assertEqual(app.dcp_source.get(), str(Path('kept/disc.gdi')))
+            app.apply(); self.finish_worker()
+            apply.assert_called_once(); unpack.assert_called_once()
 
     def test_open_logs_native_folder_and_worker_error_record(self):
         app = self.app

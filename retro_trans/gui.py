@@ -16,7 +16,7 @@ from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_p
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves, mx_converter, vita_repatch, vita_translation
+from . import z3_saves, mx_converter, vita_repatch, vita_translation, dcp
 from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
@@ -58,6 +58,8 @@ class Application(tk.Tk):
         self.unpack_chd = tk.BooleanVar(value=True)
         self.route = tk.StringVar(value="Select a recognized binary to see its patch route.")
         self.apply_source, self.apply_delta, self.apply_output = (tk.StringVar() for _ in range(3))
+        self.dcp_source, self.dcp_patch, self.dcp_output = (tk.StringVar() for _ in range(3))
+        self.dcp_format = tk.StringVar(value='GDI')
         self.save_ps3, self.save_vita = tk.StringVar(), tk.StringVar()
         self.save_output = tk.StringVar(value=str(self.next_save_output(Path.home() / 'Documents' / 'Retro Trans')))
         self.save_directions = {'PS3 → Vita': 'rpcs3-to-vita3k', 'Vita → PS3': 'vita3k-to-rpcs3', 'Both directions': 'both'}
@@ -152,7 +154,7 @@ class Application(tk.Tk):
         self.notebook = ttk.Notebook(outer)
         self.notebook.pack(fill="x")
         self.tabs = []
-        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita"):
+        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP"):
             page = ttk.Frame(self.notebook, padding=10)
             page.columnconfigure(1, weight=1)
             self.notebook.add(page, text=title)
@@ -255,6 +257,19 @@ class Application(tk.Tk):
         ttk.Label(vita,textvariable=self.vita_summary,style='Muted.TLabel').grid(
             row=6,column=0,columnspan=2,sticky='w')
         self.button(vita,'Instructions',self.vita_instructions).grid(row=6,column=2,sticky='ew')
+        dreamcast = self.tabs[4]
+        self.path_row(dreamcast, 0, 'Source disc:', self.dcp_source)
+        self.path_row(dreamcast, 1, 'DCP patch:', self.dcp_patch, extension='.dcp')
+        self.path_row(dreamcast, 2, 'New folder:', self.dcp_output, save=True)
+        ttk.Label(dreamcast, text='Output format:').grid(row=3, column=0, sticky='w', pady=3)
+        box = ttk.Combobox(dreamcast, textvariable=self.dcp_format, values=['GDI', 'CUE/BIN', 'CHD'], state='readonly', width=1)
+        box.grid(row=3, column=1, sticky='ew'); self.controls.append(box); self.readonly_controls.append(box)
+        ttk.Label(dreamcast, text='Select a GDI, CUE or CHD and one .dcp file.\n'
+                  'Full and upgrade patches require their matching source version.\n'
+                  'Rebuilds into a new folder; originals stay unchanged. Needs 12 GB free.',
+                  style='Muted.TLabel').grid(row=4, column=0, columnspan=3, sticky='w', pady=6)
+        for value in (self.dcp_source, self.dcp_patch, self.dcp_output):
+            value.trace_add('write', lambda *args: self.update_action())
         self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
@@ -332,6 +347,12 @@ class Application(tk.Tk):
             variable.set(str(Path(variable.get()).with_suffix('.chd' if mode.get() == 'CHD' else extension)))
 
     def pick_path(self, variable, save=False, extension=""):
+        if variable is self.dcp_output:
+            parent = filedialog.askdirectory(title='Choose where to create the patched disc folder', mustexist=True)
+            if parent:
+                stem = Path(self.dcp_patch.get()).stem or 'Dreamcast-patched'
+                variable.set(str(Path(parent) / stem))
+            return parent
         if save and variable is self.output and isinstance(self.plan, SolutionPlan):
             parent = filedialog.askdirectory(title='Choose where to create the patched folder', mustexist=True)
             if parent:
@@ -348,6 +369,10 @@ class Application(tk.Tk):
             options['filetypes'].insert(0, ('Original Vita package', '*.pkg'))
         elif variable in (self.vita_license,self.auto_vita_license):
             options['filetypes'].insert(0, ('Vita license', '*.bin *.rif'))
+        elif variable is self.dcp_patch:
+            options['filetypes'].insert(0, ('Dreamcast patches', '*.dcp'))
+        elif variable is self.dcp_source:
+            options['filetypes'].insert(0, ('Dreamcast disc images', '*.gdi *.cue *.chd'))
         elif extension:
             options["filetypes"].insert(0, ("xdelta patches", "*.xdelta *.vcdiff"))
         if save:
@@ -785,8 +810,10 @@ class Application(tk.Tk):
         if tab == 3:
             enabled = enabled and all(v.get().strip() for v in
                 (self.vita_source, self.vita_output, self.vita_license))
+        if tab == 4:
+            enabled = enabled and all(v.get().strip() for v in (self.dcp_source, self.dcp_patch, self.dcp_output))
         self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves',
-            'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch')[tab],
+            'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch', 'Apply DCP')[tab],
             state="normal" if enabled else "disabled")
 
     def pick_vita_folder(self, variable, output=False):
@@ -919,6 +946,26 @@ class Application(tk.Tk):
         if self.busy:
             return
         tab = self.notebook.index(self.notebook.select())
+        if tab == 4:
+            source, delta, output = [v.get().strip() for v in (self.dcp_source, self.dcp_patch, self.dcp_output)]
+            if not all((source, delta, output)):
+                return
+            chd = Path(source).suffix.lower() == '.chd'
+            if chd and not messagebox.askyesno('Extract Dreamcast CHD',
+                    'Extract this CHD before patching? The completed extracted disc will be kept in a new folder beside it. '
+                    'The original CHD stays unchanged. Allow at least 12 GB free.', parent=self):
+                return
+            if chd:
+                self.start(lambda cancel, progress: dcp.unpack_chd(source, cancel, progress), 'dcp_unpack')
+                return
+            format = self.dcp_format.get()
+            def dcp_work(cancel, progress):
+                result = dcp.apply(source, delta, output, format=format, allow_chd=chd, cancel=cancel, progress=progress)
+                note = ('All game files match the DCP release metadata.' if result['release_metadata_verified'] else
+                        'DCP applied and rebuilt disc re-extracted successfully; no release output hashes were supplied.')
+                return (Path(output), note + '\nOpen the new disc descriptor in your emulator.')
+            self.start(dcp_work, 'patch')
+            return
         if tab == 3:
             self.create_vita_repatch()
             return
@@ -1039,6 +1086,11 @@ class Application(tk.Tk):
                         if not self.found and Path(self.apply_source.get()).resolve() in self.extracted_inputs:
                             self.detail.set('No catalog match. The extracted disc is kept at:\n' +
                                             self.apply_source.get() + '\nUse Apply xdelta if you have a local patch.')
+                        self.update_action()
+                    elif value[0] == 'dcp_unpack':
+                        self.dcp_source.set(str(value[1]))
+                        self.status.set('CHD extracted. Click Apply DCP when ready.')
+                        self.detail.set('Kept: ' + str(value[1]) + '\nThe original CHD is unchanged.')
                         self.update_action()
                     elif value[0] in ('unpack_auto', 'unpack_manual'):
                         source, binary = value[1]

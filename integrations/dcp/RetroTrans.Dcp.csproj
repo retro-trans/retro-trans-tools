@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RootNamespace>UniversalDreamcastPatcher.Core</RootNamespace>
+    <AssemblyName>RetroTrans.Dcp</AssemblyName>
+    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8619;CS8625;CS8714;CS8765;CS8766;CS8767;CS8669;CS0169;CS0219;CS0414;CS0649;SYSLIB0051</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="$(UdpSource)/src/UniversalDreamcastPatcher.Core/**/*.cs" Exclude="$(UdpSource)/src/UniversalDreamcastPatcher.Core/obj/**;$(UdpSource)/src/UniversalDreamcastPatcher.Core/bin/**" />
+    <EmbeddedResource Include="$(UdpSource)/src/UniversalDreamcastPatcher.Core/Resources/*.bin.gz" LogicalName="UniversalDreamcastPatcher.Core.Resources.%(Filename)%(Extension)" WithCulture="false" />
+    <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
+    <Content Include="$(UdpSource)/src/UniversalDreamcastPatcher.Core/runtimes/$(RuntimeIdentifier)/native/*" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

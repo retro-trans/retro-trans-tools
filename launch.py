@@ -29,12 +29,19 @@ def diagnose(path):
         if mx_crypto.cmac(bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'), b'').hex() != 'bb1d6929e95937287fa37d129b756746':
             raise RuntimeError('Savedata cryptography self-check failed.')
         from retro_trans import vita_pfs
+        from retro_trans import dcp
+        dcp_engine = dcp.engine()
         vita_pfs.constants()
         if vita_pfs.cbc_tail(bytes.fromhex('6bc1bee22e409f96e93d7e117393172a'),
                 bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'),bytes.fromhex('000102030405060708090a0b0c0d0e0f')).hex() != '7649abac8119b246cee98e9b12e9197d':
             raise RuntimeError('Vita package cryptography self-check failed.')
         import tempfile
         import subprocess
+        import json
+        result = subprocess.run([str(dcp_engine)], capture_output=True, timeout=15,
+            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+        if result.returncode != 1 or json.loads(result.stdout).get('error') != 'Expected a command and JSON request.':
+            raise RuntimeError('Bundled DCP engine did not start correctly.')
         with tempfile.TemporaryDirectory() as cache:
             with engine_context(cache=cache) as engine:
                 result = subprocess.run([str(engine), "-V"], capture_output=True,
@@ -51,7 +58,8 @@ def diagnose(path):
             chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
             mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
-            whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=True,license_required_for_pkg_patching=True)
+            whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True,
+            dreamcast_dcp=True,dcp_engine_bundled=dcp_engine.is_file(),dcp_engine_started=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:

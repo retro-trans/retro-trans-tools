@@ -51,7 +51,7 @@ def diagnose(path):
             chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
             mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
-            whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=True,license_required_for_pkg_patching=True)
+            whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True)
     except Exception as exc:
         report["error"] = str(exc)
     finally:

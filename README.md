@@ -42,7 +42,9 @@ complete patch solution and checks every required component.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
 - **Automatic — Dreamcast DCP:** browse to a recognized original CUE/GDI with
-  all companion tracks, select the version and GDI/CUE-BIN/CHD output, then Patch.
+  all companion tracks. After upgrading, click **Refresh catalog** first to
+  update any older cached catalog. Then select the version and output format,
+  choose a new folder and click Patch (GDI, CUE/BIN or CHD output).
   DCP is downloaded automatically; it is not treated as a raw-track xdelta.
   Initial Black/Matrix AD recognition uses the published original raw-track
   fingerprints. CHD inputs and alternate GDI layouts can use the separate DCP tab.

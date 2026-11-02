@@ -1,0 +1,37 @@
+{
+  "version": "0.5.20",
+  "date": "2026-11-02",
+  "release_url": "https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.20",
+  "source_commit": "cb01c121331c0ae0f06c221fc364280c56faef72",
+  "github_release_run": 41458521886,
+  "github_release_workflow_passed": true,
+  "published_executable": {
+    "name": "Retro-Trans.exe",
+    "bytes": 64320120,
+    "sha256": "22c04c3bbd5a848a081124505f11b51cd4ae61dafdff5d89fd26668fffeb0275",
+    "download_verified": true,
+    "isolated_health_check_passed": true,
+    "automatic_dcp": true,
+    "bundled_dcp_profiles": 2,
+    "existing_binary_patch_routes": 246
+  },
+  "published_zip_executable_matches": true,
+  "published_zip_dcp_runtime_notices_and_source_present": true,
+  "published_updater_metadata_matches_executable": true,
+  "unit_tests": 303,
+  "unit_test_skips": 4,
+  "unit_tests_passed": true,
+  "local_packaged_next_launch_update_passed": true,
+  "published_0_5_19_accepts_updated_catalog": true,
+  "game": "Black/Matrix AD",
+  "game_version": "0.9.0",
+  "unchanged_dcp_assets": true,
+  "public_catalog_dcp_profiles": 2,
+  "published_exe_routes": [
+    {"disc": 1, "input": "original CUE/BIN", "output": "GDI", "automatic_detection": true, "automatic_public_download": true, "all_game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true, "originals_unchanged": true},
+    {"disc": 2, "input": "original CUE/BIN", "output": "GDI", "automatic_detection": true, "automatic_public_download": true, "all_game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true, "originals_unchanged": true}
+  ],
+  "published_exe_test_used_bundled_catalog_without_cache_override": true,
+  "additional_prepublication_checks": "Both discs to GDI through the source Automatic path and both to CUE/BIN through the local packaged EXE; all four output game trees, boot invariants and CD audio verified.",
+  "limits": "Initial Automatic source recognition uses published original raw-track fingerprints. CHD and alternate-layout inputs use the separate DCP tab. No gameplay or physical Dreamcast/GDEMU verification claim. Game inputs and emulator data remain local and unchanged."
+}

@@ -31,7 +31,8 @@ def main():
     catalog=Catalog(data);assert_immutable(old,catalog)
     (work/'candidate-catalog.json').write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
     profile=work/'isolated-profile';(profile/'cache').mkdir(parents=True,exist_ok=True)
-    (profile/'cache/catalog.json').write_text(json.dumps(data),encoding='utf-8')
+    if not args.executable:
+        (profile/'cache/catalog.json').write_text(json.dumps(data),encoding='utf-8')
     temporary=work/'temp';temporary.mkdir(exist_ok=True)
     previous=0
     def progress(message,fraction=None):

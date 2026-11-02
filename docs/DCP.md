@@ -1,6 +1,21 @@
 # Dreamcast DCP patches
 
 Windows **0.5.19** adds a **DCP** tab and command-line application.
+Windows **0.5.20** adds **Automatic DCP** discovery and download, including both
+Black/Matrix AD discs. Browse to the original Japanese CUE/BIN set (keep all
+tracks together), select the version, choose a new folder and click Patch.
+Every source track is hash-checked again on Patch, and the downloaded package's
+embedded metadata must match the catalog before the existing verified DCP
+apply/rebuild path runs. Experimental releases are clearly labelled and require
+an explicit publisher opt-in; binary/xdelta prereleases are not imported.
+
+Automatic discovery uses `DCP-AUTOMATIC.json` and exact original raw-track
+fingerprints, not a fictitious binary patch. Renamed descriptor/track files are
+accepted when the descriptor remains valid. Initial Black/Matrix checks cover
+original CUE input; alternate layouts and CHD inputs remain available through the
+local DCP tab. Scanning never extracts a CHD. Existing binary/solution catalog
+records are unchanged; older clients ignore the separate DCP catalog records.
+
 It uses Universal Dreamcast Patcher **2.1.8**, pinned to commit
 `8b352f959bcc56ab39174c9e311b7ab7f0d522a2`, through a separate GPL process.
 Existing Automatic/xdelta routes remain available.

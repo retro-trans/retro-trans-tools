@@ -1,5 +1,37 @@
 # Game release standard
 
+## Automatic Dreamcast DCP releases (Windows 0.5.20+)
+
+DCP packages are filesystem deltas plus a disc rebuild, not binary xdelta
+edges. Publish `DCP-AUTOMATIC.json` separately; never invent `BUILD-MANIFEST`
+source/target raw-track hashes for a rebuilt DCP. Its schema version is 1 and
+`format` is `DCP`. Declare game ID/name, Dreamcast platform, language, numeric
+version, full sanitized source commit, and minimum app version `0.5.20`.
+
+Each patch declares its unique `.dcp` asset name, byte size, SHA-256, edition
+slug, ordered `source_tracks` byte sizes/SHA-256, and the exact embedded
+Retro Trans ZIP-comment metadata: disc, source/target versions, source and
+target game-file-tree SHA-256, and boot-code invariant SHA-256. Declare every
+companion track; no originals, game binaries or private file paths are uploaded.
+`scripts/prepare_black_matrix_automatic.py` stages the reviewed Black/Matrix
+metadata from local originals and the unchanged issued DCPs.
+
+The catalog builder verifies publisher checksums, downloads every DCP, validates
+its archive paths and compares its embedded metadata. Records live in the
+separate `dcp_releases` catalog field, ignored by older clients. Existing DCP
+release records and known source/target identities cannot be replaced. A numeric
+experimental release additionally requires `allow_prerelease: true`; the app
+labels it experimental. This does not import binary/xdelta prereleases.
+
+Automatic recognizes exact original CUE/GDI track fingerprints (renamed files
+are allowed when the descriptor refers to them). All tracks are rehashed before
+download/apply, and the existing DCP engine verifies rebuilt files, boot code and
+audio before publishing a new output folder. Scanning does not extract CHDs;
+CHD inputs and alternate layouts can use the separate DCP tab. A successful
+binary round trip is not a gameplay or physical-hardware test.
+
+The binary release contract below remains unchanged.
+
 Each game release publishes exactly one `BUILD-MANIFEST.json`, the xdelta assets
 it lists, `SHA256SUMS.txt`, and `VALIDATION.json`. Optional texture packs, source
 archives, screenshots and documentation are separate assets. Do not include any

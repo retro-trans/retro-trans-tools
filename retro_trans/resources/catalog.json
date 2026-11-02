@@ -6433,6 +6433,96 @@
       }
     }
   ],
+  "dcp_releases": [
+    {
+      "repo": "retro-trans/Black-Matrix-AD",
+      "tag": "v0.9.0",
+      "manifest": {
+        "schema_version": 1,
+        "format": "DCP",
+        "platform": "Dreamcast",
+        "game_id": "black-matrix-ad-dreamcast",
+        "game_name": "Black/Matrix AD",
+        "language": "en",
+        "version": "0.9.0",
+        "minimum_app_version": "0.5.20",
+        "allow_prerelease": true,
+        "source_commit": "9ef9fa17922d3d8c646715cb49d35fb601ebd267",
+        "patches": [
+          {
+            "patch": "Black-Matrix-AD-Disc1-English-v0.9.0.dcp",
+            "bytes": 106581456,
+            "sha256": "f9f950184a3bec4a619f95472cbe9487ec02e99d635000999590fc4fea08676f",
+            "edition": "jp-disc1-native",
+            "metadata": {
+              "retro_trans_dcp": 1,
+              "game_id": "black-matrix-ad-dreamcast",
+              "game_name": "Black/Matrix AD",
+              "version": "0.9.0",
+              "disc": 1,
+              "source_version": "original",
+              "target_version": "0.9.0",
+              "source_tree_sha256": "edfd8604fe60e2c73d88abca606fe64c519c3510e3f8e30b8f48bde74120e673",
+              "target_tree_sha256": "26a335145d4d8995b1dcc98c3e43faba632ba2b9821953fa6820a3fc5ffe9a9e",
+              "bootsector_invariant_sha256": "843ad80571bbaf620684b6c8495e8f09bedad342bc118b45cfe8e5802f7583b7"
+            },
+            "source_tracks": [
+              {
+                "bytes": 705600,
+                "sha256": "0dfb00a7482c1cf3cd06dd072fe35b328ce151e334b4b88d00874a9402c2cf9f"
+              },
+              {
+                "bytes": 2088576,
+                "sha256": "e6c6f921666e7d50c4f943f6ab0f0545732d0534903fc6e5c4b0181ed352dc85"
+              },
+              {
+                "bytes": 1185760800,
+                "sha256": "7bb9a6d316b9627c01d5b24cd56b83a53352ca6fb08d0787b36b31b419683cd8"
+              }
+            ]
+          },
+          {
+            "patch": "Black-Matrix-AD-Disc2-English-v0.9.0.dcp",
+            "bytes": 96519171,
+            "sha256": "0ebe51ca6322c6267453c120ba33e34fb7fb9423305e6c3b513d89e838ce5c2d",
+            "edition": "jp-disc2-native",
+            "metadata": {
+              "retro_trans_dcp": 1,
+              "game_id": "black-matrix-ad-dreamcast",
+              "game_name": "Black/Matrix AD",
+              "version": "0.9.0",
+              "disc": 2,
+              "source_version": "original",
+              "target_version": "0.9.0",
+              "source_tree_sha256": "6a3d04623c957f3892934792978d6c47a434b8b4fb156b4febe2b8226403309d",
+              "target_tree_sha256": "18ab41d9a8d53651ae65cbac2cb53ccd1800a6630f01eef1fc56ab0c66f5737e",
+              "bootsector_invariant_sha256": "63f0d1f3f66403e92d5ec0a48b4d18529d8b80c9766b2de5cb96ea9363a0bdca"
+            },
+            "source_tracks": [
+              {
+                "bytes": 705600,
+                "sha256": "b88520987ee5787102c16040d730321ac1f3b19ecd0bdde5cf7605a8412fb5d7"
+              },
+              {
+                "bytes": 2088576,
+                "sha256": "e6c6f921666e7d50c4f943f6ab0f0545732d0534903fc6e5c4b0181ed352dc85"
+              },
+              {
+                "bytes": 1185760800,
+                "sha256": "24d687f82d8cf09543397eb321052a2a13f92c3d24216325532fa9059934ba1b"
+              }
+            ]
+          }
+        ]
+      },
+      "prerelease": true,
+      "manifest_sha256": "37bc457948559849c35cfcb640b0d078696316579a4680d706532768f1e2101b",
+      "assets": {
+        "Black-Matrix-AD-Disc1-English-v0.9.0.dcp": "https://github.com/retro-trans/Black-Matrix-AD/releases/download/v0.9.0/Black-Matrix-AD-Disc1-English-v0.9.0.dcp",
+        "Black-Matrix-AD-Disc2-English-v0.9.0.dcp": "https://github.com/retro-trans/Black-Matrix-AD/releases/download/v0.9.0/Black-Matrix-AD-Disc2-English-v0.9.0.dcp"
+      }
+    }
+  ],
   "withdrawn_releases": [
     {
       "repo": "retro-trans/ACE-3",

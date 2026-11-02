@@ -21,6 +21,7 @@ from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_f
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
 from .vita_automatic import VitaPackage, VitaAutomaticPlan, detect as detect_vita, append_packages
+from .dcp_automatic import DcpSource, DcpPlan, apply as apply_automatic_dcp
 
 TEXT, MUTED, ACCENT, ERROR = "#202020", "#606060", "#166534", "#a4262c"
 
@@ -327,6 +328,8 @@ class Application(tk.Tk):
         self.change_output_format(manual=True)
 
     def change_output_format(self, manual=False):
+        if not manual and isinstance(self.plan, DcpPlan):
+            return
         if not manual and isinstance(self.plan, (SolutionPlan,VitaAutomaticPlan)):
             self.output_format.set('Original format')
             return
@@ -353,7 +356,7 @@ class Application(tk.Tk):
                 stem = Path(self.dcp_patch.get()).stem or 'Dreamcast-patched'
                 variable.set(str(Path(parent) / stem))
             return parent
-        if save and variable is self.output and isinstance(self.plan, SolutionPlan):
+        if save and variable is self.output and isinstance(self.plan, (SolutionPlan,DcpPlan)):
             parent = filedialog.askdirectory(title='Choose where to create the patched folder', mustexist=True)
             if parent:
                 variable.set(str(Path(parent) / Path(variable.get()).name))
@@ -743,6 +746,24 @@ class Application(tk.Tk):
         if self.selection:
             try:
                 self.plan = self.catalog.plan(self.selection[1], self.target.get())
+                if isinstance(self.plan,DcpPlan):
+                    self.route.set(self.plan.summary)
+                    self.detail.set('The matching DCP downloads when you click Patch. All original tracks, '
+                                    'rebuilt game files, boot code and CD audio are verified. Allow 12 GB free.')
+                    self.auto_output_label.configure(text='New folder:')
+                    self.auto_output_button.configure(text='Folder…')
+                    self.output_format_box.configure(values=['GDI','CUE/BIN','CHD'])
+                    if self.output_format.get() not in ('GDI','CUE/BIN','CHD'):
+                        self.output_format.set('GDI')
+                    p = self.plan.profile
+                    output = self.selection[0].parent/(p['game_id']+'-'+p['row']['edition']+'-v'+p['version'])
+                    index = 2
+                    candidate = output
+                    while candidate.exists():
+                        candidate = output.with_name(output.name+'-'+str(index));index += 1
+                    self.output.set(str(candidate))
+                    self.update_action()
+                    return
                 self.route.set(self.plan.summary if self.plan.edges else "Already at the selected version. " + self.plan.summary)
                 path = self.selection[0]
                 if isinstance(self.plan, SolutionPlan):
@@ -772,8 +793,8 @@ class Application(tk.Tk):
 
     def route_details(self):
         if self.plan:
-            if isinstance(self.plan, VitaAutomaticPlan):
-                messagebox.showinfo('Vita package translation',self.plan.details,parent=self)
+            if isinstance(self.plan, (VitaAutomaticPlan,DcpPlan)):
+                messagebox.showinfo('DCP translation' if isinstance(self.plan,DcpPlan) else 'Vita package translation',self.plan.details,parent=self)
             elif isinstance(self.plan, SolutionPlan):
                 dialog = tk.Toplevel(self)
                 dialog.title('Patch solution')
@@ -804,6 +825,8 @@ class Application(tk.Tk):
         enabled = not self.busy and (tab != 0 or auto_vita or (self.plan and self.plan.edges))
         if tab == 0 and auto_vita:
             enabled = enabled and bool(self.auto_vita_license.get().strip()) and bool(self.output.get().strip())
+        if tab == 0 and isinstance(self.plan,DcpPlan):
+            enabled = enabled and bool(self.output.get().strip())
         if tab == 2:
             enabled = enabled and self.save_closed.get() and all(v.get().strip() for v in
                 (self.save_ps3, self.save_vita, self.save_output))
@@ -973,6 +996,15 @@ class Application(tk.Tk):
             self.convert_saves()
             return
         if tab == 0:
+            if isinstance(self.plan,DcpPlan):
+                if not self.selection or not self.output.get().strip():
+                    return
+                plan, output, format = self.plan,self.output.get(),self.output_format.get()
+                def dcp_auto_work(cancel,progress):
+                    result = apply_automatic_dcp(plan,output,format=format,client=self.client,cancel=cancel,progress=progress)
+                    return Path(result['output']), 'Downloaded DCP and rebuilt disc verified: all game files, boot code and CD audio match.'
+                self.start(dcp_auto_work,'patch')
+                return
             if isinstance(self.plan,VitaAutomaticPlan):
                 if not self.selection or not self.auto_vita_license.get().strip() or not self.output.get().strip():
                     return
@@ -1081,7 +1113,7 @@ class Application(tk.Tk):
                             self.detected.set("Choose a file to identify or patch" if self.found else "No recognized binary")
                             self.route.set("Select a file set above." if self.found else "Browse to another file or folder, or use Apply xdelta for a local patch.")
                         self.status.set("{} file/version entries found.".format(len(self.found)))
-                        if not isinstance(self.plan,VitaAutomaticPlan):
+                        if not isinstance(self.plan,(VitaAutomaticPlan,DcpPlan)):
                             self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
                         if not self.found and Path(self.apply_source.get()).resolve() in self.extracted_inputs:
                             self.detail.set('No catalog match. The extracted disc is kept at:\n' +

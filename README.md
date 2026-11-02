@@ -1,7 +1,9 @@
 # Retro Trans
 
-**Windows 0.5.19:** adds single-file Dreamcast **DCP** patch application,
-including version upgrades and GDI/CUE/CHD output. See [DCP instructions](docs/DCP.md).
+**Windows 0.5.20:** **Automatic** recognizes the published original Black/Matrix AD
+Disc 1 and Disc 2 CUE/BIN sets and downloads their matching DCP packages. Choose a
+new output folder; game-file, boot-code and CD-audio verification remain enabled.
+The separate DCP tab still accepts local packages. See [DCP instructions](docs/DCP.md).
 
 Automatic supports larger complete Vita profiles, including
 SRW Z3's Vita3K package. It downloads small Vita translation patches and
@@ -39,6 +41,11 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
+- **Automatic — Dreamcast DCP:** browse to a recognized original CUE/GDI with
+  all companion tracks, select the version and GDI/CUE-BIN/CHD output, then Patch.
+  DCP is downloaded automatically; it is not treated as a raw-track xdelta.
+  Initial Black/Matrix AD recognition uses the published original raw-track
+  fingerprints. CHD inputs and alternate GDI layouts can use the separate DCP tab.
 - **DCP:** choose a Dreamcast GDI/CUE/CHD, one local `.dcp` patch and a new output
   folder. Apply full or compatible version-upgrade patches and save GDI, CUE/BIN
   or CHD. The bundled engine works offline. See [DCP instructions](docs/DCP.md).

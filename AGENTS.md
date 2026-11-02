@@ -1,5 +1,7 @@
 # Project preferences
 
+- The user explicitly approved implementing, testing and publishing Retro Trans 0.5.20 with Automatic DCP support for both Black/Matrix AD discs on 2026-11-02. This authorizes the relevant source/catalog push, game discovery metadata, and Windows app release. Preserve existing DCP bytes, older releases, unrelated Android/Mac work, game originals and emulator data.
+
 - Keep the app compact and native. Include `retro_trans.__version__` in the main window title, including test builds.
 - Warn users patching PS3 games to remove the related old installation data before playing. Clearly distinguish installation data from saved games; never remove it automatically.
 - Ask before unpacking a CHD. Keep the completed ISO/BIN in a new child folder beside the CHD and select that extracted file, so patching does not unpack the source again. Scanning must not silently unpack CHDs.

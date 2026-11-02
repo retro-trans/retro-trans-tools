@@ -59,7 +59,8 @@ def diagnose(path):
             mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
             whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True,
-            dreamcast_dcp=True,dcp_engine_bundled=dcp_engine.is_file(),dcp_engine_started=True)
+            dreamcast_dcp=True,dcp_engine_bundled=dcp_engine.is_file(),dcp_engine_started=True,
+            automatic_dcp=True,automatic_dcp_profiles=len(catalog.dcp_profiles))
     except Exception as exc:
         report["error"] = str(exc)
     finally:
@@ -80,6 +81,25 @@ if __name__ == "__main__":
         previous_excepthook(exc_type, exc, tb)
     sys.excepthook = log_uncaught
     args = sys.argv[1:]
+    if args and args[0] == '--automatic':
+        import argparse
+        from retro_trans.catalog import recognize
+        from retro_trans.dcp_automatic import DcpSource, apply
+        parser=argparse.ArgumentParser(description='Apply the matching catalog DCP to a verified original Dreamcast disc set.')
+        parser.add_argument('source');parser.add_argument('--output',required=True)
+        parser.add_argument('--format',choices=('GDI','CUE/BIN','CHD'),default='GDI')
+        parser.add_argument('--target',default='Latest')
+        options=parser.parse_args(args[1:])
+        try:
+            catalog=load_catalog()
+            sources=[n for n in recognize(options.source,catalog) if isinstance(n,DcpSource)]
+            if len(sources)!=1:raise RuntimeError('Select one recognized original Dreamcast CUE/GDI with all companion tracks.')
+            with diagnostics.operation('automatic_dcp'):
+                apply(catalog.plan(sources[0],options.target),options.output,format=options.format,
+                      progress=lambda message,fraction:diagnostics.progress(message))
+        except Exception as exc:
+            diagnostics.exception(exc);sys.exit(1)
+        sys.exit(0)
     if args and args[0] in ('--vita-pkg','--vita-repatch'):
         hardware = args[0] == '--vita-repatch'
         import argparse

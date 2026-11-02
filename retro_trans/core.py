@@ -221,17 +221,21 @@ class GitHubClient:
                 break
         return sorted(names)
 
-    def releases(self, repo, cancel=None):
+    def releases(self, repo, cancel=None, *, include_prereleases=False):
         validate_repo(repo)
         result = []
         for page in range(1, 101):
             items = self.json("https://api.github.com/repos/{}/releases?per_page=100&page={}".format(repo, page), cancel)
             if not isinstance(items, list):
                 raise PatchError("Invalid GitHub release list.")
-            result.extend(r for r in items if not r.get("draft") and not r.get("prerelease"))
+            result.extend(r for r in items if not r.get("draft") and (include_prereleases or not r.get("prerelease")))
             if len(items) < 100:
                 return result
         raise PatchError("Too many releases; catalog refresh stopped without truncating history.")
+
+    def catalog_releases(self, repo):
+        # Only the DCP catalog builder may opt into explicitly marked prereleases.
+        return self.releases(repo, include_prereleases=True)
 
     def latest(self, repo, cancel=None):
         validate_repo(repo)

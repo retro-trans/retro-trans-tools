@@ -104,6 +104,31 @@ class GuiTests(unittest.TestCase):
         self.assertEqual(apply.call_args.kwargs['format'], 'GDI')
         self.assertIn('All game files match', app.detail.get())
 
+    def test_automatic_dcp_selection_folder_format_and_worker(self):
+        from test_dcp_automatic import Client
+        from retro_trans.catalog_builder import build_catalog
+        from retro_trans.catalog import recognize
+        from retro_trans.dcp_automatic import DcpPlan
+        root=Path(self.storage.name);client=Client()
+        cue=root/'original.cue'
+        cue.write_text(''.join(f'FILE "track{i}.bin" BINARY\n' for i in range(3)))
+        for i,raw in enumerate(client.tracks):(root/f'track{i}.bin').write_bytes(raw)
+        app=self.app
+        app.catalog=Catalog(build_catalog(dict(schema_version=1,releases=[]),client))
+        app.found=[(cue,recognize(cue,app.catalog)[0])]
+        app.file_box.configure(values=['Disc 1']);app.file_box.current(0)
+        app.select_found();app.update()
+        self.assertIsInstance(app.plan,DcpPlan)
+        self.assertEqual(app.output_format.get(),'GDI')
+        self.assertEqual(app.auto_output_label['text'],'New folder:')
+        self.assertEqual(str(app.apply_button['state']),'normal')
+        output=app.output.get();app.output_format.set('CUE/BIN');app.change_output_format()
+        self.assertEqual(app.output.get(),output)
+        with patch('retro_trans.gui.apply_automatic_dcp',return_value={'output':output}) as apply:
+            app.apply();self.finish_worker()
+        self.assertEqual(apply.call_args.kwargs['format'],'CUE/BIN')
+        self.assertIn('Downloaded DCP',app.detail.get())
+
     def test_dcp_chd_permission_and_extraction_then_wait(self):
         app = self.app
         app.notebook.select(4); app.dcp_source.set('source.chd')

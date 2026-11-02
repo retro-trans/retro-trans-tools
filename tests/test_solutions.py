@@ -328,7 +328,7 @@ class SolutionRoundTrips(unittest.TestCase):
         files = {p.name: p.read_bytes() for p in directory.iterdir()}
         prefix = 'https://github.com/retro-trans/multi-game/releases/download/v1.1/'
         class Client(GitHubClient):
-            def releases(self, repo):
+            def releases(self, repo, **kwargs):
                 return [dict(tag_name='v1.1', assets=[dict(name=k, size=len(v), browser_download_url=prefix+k,
                     digest='sha256:' + hashlib.sha256(v).hexdigest()) for k, v in files.items()])]
             def open(self, url):

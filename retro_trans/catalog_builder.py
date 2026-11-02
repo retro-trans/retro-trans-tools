@@ -179,15 +179,19 @@ def build_catalog(previous, client=None, repositories=None, rejections=None):
     client = client or GitHubClient()
     old = Catalog(previous)
     records = {(r["repo"], r["tag"]): copy.deepcopy(r) for r in previous["releases"]}
+    dcp_records = {(r['repo'],r['tag']):copy.deepcopy(r) for r in previous.get('dcp_releases',[])}
     selected = client.repositories() if repositories is None else [validate_repo(r) for r in repositories]
     def rejected(repo, tag, error):
         if rejections is None:
             raise error
-        known = (repo, tag) in records if tag is not None else any(key[0] == repo for key in records)
+        known = ((repo, tag) in records or (repo,tag) in dcp_records) if tag is not None else any(key[0] == repo for key in list(records)+list(dcp_records))
         rejections.append(dict(repo=repo, tag=tag, error=str(error), action='retained' if known else 'skipped'))
 
-    def catalog_data(items):
+    def catalog_data(items, dcp_items=None):
         data = dict(schema_version=1, releases=[items[k] for k in sorted(items)])
+        selected_dcp = dcp_records if dcp_items is None else dcp_items
+        if selected_dcp:
+            data['dcp_releases'] = [selected_dcp[k] for k in sorted(selected_dcp)]
         if previous.get('withdrawn_releases'):
             data['withdrawn_releases'] = copy.deepcopy(previous['withdrawn_releases'])
         return data
@@ -196,7 +200,7 @@ def build_catalog(previous, client=None, repositories=None, rejections=None):
         if repo == "retro-trans/retro-trans-tools":
             continue
         try:
-            releases = client.releases(repo)
+            releases = getattr(client,'catalog_releases',client.releases)(repo)
         except Cancelled:
             raise
         except (PatchError, OSError, ValueError, KeyError, TypeError) as error:
@@ -211,6 +215,17 @@ def build_catalog(previous, client=None, repositories=None, rejections=None):
                 key = (repo, tag)
                 existing = records.get(key)
                 assets = {a["name"]: a for a in release["assets"]}
+                from .dcp_automatic import MANIFEST as DCP_MANIFEST, release_record as dcp_record
+                if DCP_MANIFEST in assets or key in dcp_records:
+                    record = dcp_record(repo,release,client,reviewed=dcp_records.get(key))
+                    candidate_dcp = dict(dcp_records)
+                    candidate_dcp[key] = record
+                    assert_immutable(old,Catalog(catalog_data(records,candidate_dcp)))
+                    dcp_records = candidate_dcp
+                # Numeric, explicitly opted-in DCP prereleases are independent
+                # of binary releases. Never import experimental xdelta edges.
+                if release.get('prerelease') or release.get('draft'):
+                    continue
                 # Legacy metadata has been reviewed/imported once. Still check
                 # that remote patch bytes have not been replaced or removed.
                 if existing and existing.get("legacy"):

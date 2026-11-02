@@ -1,0 +1,30 @@
+{
+  "version": "0.5.20",
+  "platform": "Windows",
+  "date": "2026-11-02",
+  "unit_tests": 303,
+  "unit_test_skips": 4,
+  "unit_tests_passed": true,
+  "automatic_dcp_profiles": 2,
+  "existing_binary_patch_routes_unchanged": 246,
+  "public_0_5_19_accepts_updated_catalog": true,
+  "local_packaged_executable_sha256": "7ac577b229501662e43573ff0589c4283ee6b138d6f7e6739fde89225ae1c8c3",
+  "local_packaged_next_launch_update_passed": true,
+  "original_game_inputs_unchanged": true,
+  "public_dcp_package_bytes_unchanged": true,
+  "routes": [
+    {"disc": 1, "input": "original CUE/BIN", "output": "GDI", "runner": "Automatic source path", "download_verified": true, "game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true},
+    {"disc": 2, "input": "original CUE/BIN", "output": "GDI", "runner": "Automatic source path", "download_verified": true, "game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true},
+    {"disc": 1, "input": "original CUE/BIN", "output": "CUE/BIN", "runner": "local packaged EXE Automatic path", "download_verified": true, "game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true},
+    {"disc": 2, "input": "original CUE/BIN", "output": "CUE/BIN", "runner": "local packaged EXE Automatic path", "download_verified": true, "game_files_verified": true, "boot_invariant_verified": true, "audio_verified": true}
+  ],
+  "game_file_tree_sha256": {
+    "disc1": "26a335145d4d8995b1dcc98c3e43faba632ba2b9821953fa6820a3fc5ffe9a9e",
+    "disc2": "18ab41d9a8d53651ae65cbac2cb53ccd1800a6630f01eef1fc56ab0c66f5737e"
+  },
+  "automatic_chd_input_verified": false,
+  "automatic_alternate_gdi_input_verified": false,
+  "gameplay_verified": false,
+  "physical_hardware_verified": false,
+  "scope": "Local pre-publication validation. GitHub Actions builds its own immutable public EXE; that artifact is checked separately after download. No game inputs, saves or licenses are uploaded."
+}

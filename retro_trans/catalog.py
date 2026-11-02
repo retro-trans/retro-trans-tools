@@ -199,6 +199,8 @@ class Catalog:
         self.available_ids = {node for edge in self.edges for node in (edge.source, edge.target)}
         from .solutions import load_solutions
         load_solutions(self)
+        from .dcp_automatic import load_records
+        self.dcp_profiles = load_records(data.get('dcp_releases', []))
 
     def add_binary(self, manifest, patch, side, version):
         key = (manifest["game_id"], patch["edition"], patch["language"], version)
@@ -225,6 +227,9 @@ class Catalog:
         return node
 
     def versions(self, source):
+        from .dcp_automatic import DcpSource, DcpVersion, versions
+        if isinstance(source, DcpSource):
+            return [DcpVersion(v) for v in versions(source)]
         from .solutions import SolutionSource, solution_versions
         if isinstance(source, SolutionSource):
             return solution_versions(self, source)
@@ -233,6 +238,9 @@ class Catalog:
                       key=lambda n: version_key(n.version), reverse=True)
 
     def plan(self, source, target="Latest"):
+        from .dcp_automatic import DcpSource, plan
+        if isinstance(source, DcpSource):
+            return plan(source, target)
         from .solutions import SolutionSource, plan_solution
         if isinstance(source, SolutionSource):
             return plan_solution(self, source, target)
@@ -337,6 +345,12 @@ def _recognize_binary(path, catalog, cancel=None, progress=None, *, defer_chd=Fa
 
 
 def recognize(path, catalog, cancel=None, progress=None, *, defer_chd=False):
+    from .dcp_automatic import recognize as recognize_dcp
+    found = recognize_dcp(path, catalog.dcp_profiles, cancel, progress)
+    if found:
+        return found
+    if catalog.dcp_profiles and Path(path).suffix.lower() in ('.cue','.gdi') and not catalog.active_solutions:
+        return []
     from .solutions import recognize_selection
     if catalog.solutions or Path(path).suffix.lower() in ('.cue', '.gdi'):
         return recognize_selection(path, catalog, cancel, progress, defer_chd=defer_chd)
@@ -344,6 +358,20 @@ def recognize(path, catalog, cancel=None, progress=None, *, defer_chd=False):
 
 
 def scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
+    result = _scan_root(root, catalog, cancel, progress, defer_chd=defer_chd)
+    if catalog.dcp_profiles:
+        from .dcp_automatic import recognize as recognize_dcp
+        for path in sorted(Path(root).iterdir()):
+            check_cancel(cancel)
+            if path.suffix.lower() in ('.cue', '.gdi'):
+                try:
+                    result.extend((path,n) for n in recognize_dcp(path,catalog.dcp_profiles,cancel,progress))
+                except (PatchError,OSError) as exc:
+                    report(progress,'Skipped '+path.name+': '+str(exc),None)
+    return result
+
+
+def _scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
     from .solutions import scan_folder
     if catalog.solutions:
         return scan_folder(root, catalog, cancel, progress, defer_chd=defer_chd)
@@ -373,6 +401,10 @@ def application_root():
 
 
 def assert_immutable(previous, current):
+    old_dcp = {(r['repo'],r['tag']):r for r in previous.data.get('dcp_releases',[])}
+    new_dcp = {(r['repo'],r['tag']):r for r in current.data.get('dcp_releases',[])}
+    if any(new_dcp.get(k) != value for k,value in old_dcp.items()):
+        raise PatchError('Catalog removed or changed an Automatic DCP release identity.')
     old = {e.asset.url: e for e in previous.edges + previous.withdrawn_edges}
     new = {e.asset.url: e for e in current.edges + current.withdrawn_edges}
     if not {e.asset.url for e in previous.withdrawn_edges} <= {e.asset.url for e in current.withdrawn_edges}:
@@ -409,6 +441,12 @@ def refresh_catalog(client=None, cache=None, cancel=None):
 
 
 def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False):
+    from .dcp_automatic import DcpPlan, apply as apply_dcp
+    if isinstance(plan,DcpPlan):
+        if Path(source).resolve() != plan.source.descriptor.resolve():
+            raise PatchError('Automatic DCP source changed since selection.')
+        return apply_dcp(plan,output,format='CHD' if chd_output else 'GDI',
+                         client=client,cache=cache,cancel=cancel,progress=progress)
     from .solutions import SolutionPlan, apply_solution
     if isinstance(plan, SolutionPlan):
         if chd_output:

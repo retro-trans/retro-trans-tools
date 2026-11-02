@@ -27,7 +27,7 @@ class ReleaseClient(GitHubClient):
     def repositories(self):
         return [self.record['repo']]
 
-    def releases(self, repo):
+    def releases(self, repo, **kwargs):
         return [{"tag_name": self.record['tag'], "assets": self.assets}]
 
     def open(self, url):

@@ -31,7 +31,7 @@ class BatchClient(GitHubClient):
     def repositories(self):
         return list(dict.fromkeys(c.record['repo'] for c in self.clients))
 
-    def releases(self, repo):
+    def releases(self, repo, **kwargs):
         return [r for c in self.clients if c.record['repo'] == repo for r in c.releases(repo)]
 
     def open(self, url):
@@ -181,7 +181,7 @@ class RefreshIsolationTests(unittest.TestCase):
         previous = build_catalog(EMPTY, bad)
         batch = BatchClient(bad, good)
         original = batch.releases
-        def releases(repo):
+        def releases(repo, **kwargs):
             if repo == 'retro-trans/bad':
                 raise PatchError('Repository download failed')
             return original(repo)

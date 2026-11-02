@@ -17,7 +17,14 @@ if (-not (Test-Path -LiteralPath 'retro_trans/resources/native/dcp/win-x64/engin
 }
 & $BuildPython -m unittest discover -s tests -v
 if ($LASTEXITCODE -ne 0) { throw "Tests failed; executable was not built." }
-& $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' --distpath $OutputDirectory launch.py
+$TlsRuntimeData = & $BuildPython -c "from pathlib import Path; import ssl; p=Path(ssl.__file__).with_name('codex-rejected-cas.pem'); print(p if p.is_file() else '')"
+$TlsRuntimeArguments = @()
+if ($TlsRuntimeData) {
+    # Some build runtimes load an adjacent CA-policy file from ssl.py. Preserve
+    # that runtime's policy; never disable TLS verification to make it work.
+    $TlsRuntimeArguments = @('--add-data', "$TlsRuntimeData;.")
+}
+& $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' @TlsRuntimeArguments --distpath $OutputDirectory launch.py
 if ($LASTEXITCODE -ne 0) { throw "Packaging failed." }
 $RuntimeHome = & $BuildPython -c "import sys; print(sys.base_prefix)"
 $LicensesDirectory = Join-Path $OutputDirectory 'licenses'

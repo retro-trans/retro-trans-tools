@@ -5928,6 +5928,39 @@
       }
     },
     {
+      "repo": "retro-trans/Sunrise-Eiyuutan-R",
+      "tag": "v0.8.0",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "sunrise-eiyuutan-r",
+        "game_name": "Sunrise Eiyuutan R",
+        "platform": "PS2",
+        "version": "0.8.0",
+        "source_commit": "efe2ba1ac5a01013ed7bd1cc4dac5f6b08e592f2",
+        "patches": [
+          {
+            "patch": "Sunrise-Eiyuutan-R-English-v0.8.0.xdelta",
+            "edition": "japan-slps-25011",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "patch_sha256": "6fb835915e16b860e670b0cec433f451064d38c21526e08521a22ee21076582a",
+            "patch_bytes": 321408385,
+            "source_bytes": 4133093376,
+            "source_sha256": "911f3b1933b8c351cfdff79e65d6be627b5d6dbd029cdad8270a5284a31b1f20",
+            "source_sha1": "505655fd5b7915761e5d2a8f5eb5f2aa6d6b8623",
+            "target_bytes": 4476207104,
+            "target_sha256": "ec8c57b4f389bab75fc9b5c790bb7e8bc4392cce76dfb47fa516692ce7633940",
+            "target_sha1": "3a5438b8b151c7d38eb664770d67c16b895bdcf7"
+          }
+        ]
+      },
+      "assets": {
+        "Sunrise-Eiyuutan-R-English-v0.8.0.xdelta": "https://github.com/retro-trans/Sunrise-Eiyuutan-R/releases/download/v0.8.0/Sunrise-Eiyuutan-R-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.18",
       "manifest": {

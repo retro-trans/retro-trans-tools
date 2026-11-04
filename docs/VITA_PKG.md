@@ -35,6 +35,28 @@ Cross Ange is public; downloads do not require GitHub sign-in. Other private rel
 
 Download the Windows build from [Retro Trans Tools releases](https://github.com/retro-trans/retro-trans-tools/releases/latest). The rebuilt PKG is intended for Vita3K; it is not Sony-signed or verified for hardware installation. Full gameplay and proofreading remain outstanding. Hardware uses the separate rePatch bundle.
 
+## GitHub request limits (local fix after 0.5.20)
+
+Vita discovery now uses the central [game library](GAME_LIBRARY.md). It fetches
+one raw JSON file, cached for one hour, then only the matching profile and ZIP.
+It no longer lists every repository or searches their releases. The official Vita3K
+lookup also uses an existing GitHub CLI sign-in, including when a local patch
+ZIP is selected. Credentials stay in memory and are removed from cross-host
+redirects. Private discovery uses an optional local `game-library.private.json`
+and is never added to the public catalog. A local ZIP override remains available.
+
+A downloaded Vita3K archive with cached publisher metadata is hash-checked and
+reused for 24 hours without an API lookup. After that, a rate-limited check can
+use the same verified copy; a missing or corrupted archive still requires a
+verified download. No checksum or TLS verification is bypassed.
+
+If there is no verified cached runtime and GitHub limits requests, wait until
+the retry time shown by the app. A local patch ZIP avoids translation discovery,
+but first-time Vita3K acquisition still needs GitHub. Public users do not need
+an account; an existing GitHub CLI sign-in can provide a higher request limit.
+
+These changes are not included in the published 0.5.20 EXE yet.
+
 ## Generic release profiles
 
 Use retro-trans-vita-pkg-v1 in VITA-PKG.json. Declare exact original PKG and decrypted inventory identities, component deltas and bounded generated extras. Publish the identical profile separately and inside a flat *-Vita-PKG-patches.zip. The engine rejects undeclared paths, license assets, incorrect content/license identities, wrong inventories and mismatched complete output files. Only Windows PFS-v5/key-type-2 conversion is currently verified. Download/check data remain local; no original/derived license keys or raw native diagnostics are logged. Manual CPK patching and hardware rePatch remain separate routes.

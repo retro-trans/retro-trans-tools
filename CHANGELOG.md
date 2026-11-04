@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — Fewer GitHub requests during Vita conversion
+
+- Add a cross-platform game library and require registered package/product IDs for every new console or PC release. Import existing project IDs without rewriting historical manifests; new builds and catalog imports validate registration.
+- Resolve Vita PKG/rePatch through content IDs, exact original hashes and direct verified asset records. Fetch one cached JSON instead of scanning repositories/releases. Keep private libraries local, local ZIP overrides and legacy Z3 hardware support.
+- Extend hourly/manual refresh to update the public library, reject private exports or conflicting identities, and retain the last valid library on failure.
+
+- Reuse existing GitHub CLI sign-in for the exact official Vita3K release lookup as well as retro-trans discovery. Keep credentials in memory and remove them on cross-host redirects.
+- Cache Vita discovery metadata for one hour, separately for each sign-in, and reuse a hash-verified Vita3K runtime for 24 hours. If GitHub limits requests after that, a previously verified cached runtime can still be used; missing or corrupted archives cannot.
+- Report GitHub's retry time, distinguish access-denied responses, and avoid automatic retry loops. These are local changes; no new release has been published.
+
 ## 0.5.19 — Dreamcast DCP support (Windows, 2026-11-02)
 
 - Add a DCP tab and command line for single-file full and version-upgrade packages. The pinned Universal Dreamcast Patcher 2.1.8 core runs in a separate self-contained process; no user .NET installation is required. Keep existing Automatic/xdelta routes.

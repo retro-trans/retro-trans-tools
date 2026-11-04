@@ -23,7 +23,8 @@ import zipfile
 import zlib
 from . import diagnostics
 
-from .core import Asset, GitHubClient, cache_directory, check_cancel, report, valid_hash, valid_size
+from .core import (Asset, GitHubClient, GitHubRateLimit, PatchError, cache_directory,
+                   check_cancel, report, sha256_file, valid_hash, valid_size)
 from .vita_repatch import require, no_links, independent, output_name, verify
 from .vita_io import temporary_workspace
 
@@ -86,13 +87,50 @@ def read_lock(path):
         close(handle)
 
 
-def runtime_asset(client, cancel):
+def runtime_asset(client, cancel, cache=None, progress=None):
+    check_cancel(cancel)
     name = 'windows-latest.zip'
     if sys.platform == 'darwin':
         from .macos import architecture
         name = 'macos-arm64-latest.dmg' if architecture() == 'arm64' else 'macos-latest.dmg'
     expected_url = API.replace('api.github.com/repos/', 'github.com/').replace('/releases/tags/', '/releases/download/') + '/' + name
-    data = client.json(API, cancel)
+    cached, record = None, None
+    metadata_path = Path(cache) / ('vita3k-' + name + '.json') if cache is not None else None
+    if metadata_path is not None:
+        try:
+            with metadata_path.open('rb') as stream:
+                raw = stream.read(16385)
+            record = json.loads(raw) if len(raw) <= 16384 else {}
+            require(record.get('schema_version') == 1 and record.get('name') == name and
+                    record.get('url') == expected_url, 'Invalid cached Vita3K identity.')
+            size, digest = valid_size(record.get('bytes')), valid_hash(record.get('sha256'))
+            require(0 < size <= 150 * 1024**2, 'Invalid cached Vita3K size.')
+            cached = Asset(name, expected_url, size, digest)
+        except (OSError, ValueError, PatchError, AttributeError):
+            cached = None
+        if cached is not None:
+            archive = Path(cache) / (cached.sha256 + '.download')
+            try:
+                if archive.stat().st_size != cached.size or sha256_file(archive, cancel) != cached.sha256:
+                    cached = None
+            except OSError:
+                cached = None
+            if (cached is not None and type(record.get('fetched_at')) in (int, float)
+                    and 0 <= time.time() - record['fetched_at'] < 86400):
+                report(progress, 'Using cached, verified Vita3K runtime', None)
+                return cached
+    # Local-ZIP operations may supply the general client. The public official
+    # runtime lookup should also reuse an existing sign-in, with safe redirects.
+    if client is None or type(client) is GitHubClient:
+        from .vita_downloads import VitaReleaseClient
+        client = VitaReleaseClient(cache=cache)
+    try:
+        data = client.json(API, cancel)
+    except GitHubRateLimit:
+        if cached is None:
+            raise
+        report(progress, 'GitHub is busy; using cached, verified Vita3K runtime', None)
+        return cached
     require(isinstance(data, dict) and data.get('tag_name') == 'continuous' and not data.get('draft'),
             'Official Vita3K download metadata is unavailable.')
     candidates = [a for a in data.get('assets', []) if isinstance(a, dict) and a.get('name') == name]
@@ -103,7 +141,16 @@ def runtime_asset(client, cancel):
             'Official Vita3K download lacks a verifiable checksum.')
     size = valid_size(item.get('size'))
     require(0 < size <= 150 * 1024**2, 'Unexpected Vita3K download size.')
-    return Asset(name, expected_url, size, valid_hash(digest[7:]))
+    asset = Asset(name, expected_url, size, valid_hash(digest[7:]))
+    check_cancel(cancel)
+    if metadata_path is not None:
+        from .catalog import atomic_json
+        try:
+            atomic_json(metadata_path, dict(schema_version=1, name=name, url=expected_url,
+                        bytes=asset.size, sha256=asset.sha256, fetched_at=time.time()))
+        except OSError:
+            pass
+    return asset
 
 
 def extract_mac_runtime(archive, root, cancel=None):
@@ -261,7 +308,7 @@ def decrypted_source(pkg, license_path, output, client=None, cache=None, cancel=
         verify(pkg, package_identity, cancel, progress)
         require(shutil.disk_usage(output.parent).free >= 6 * 1024**3,
                 'At least 6 GB of free temporary space is required on the output drive.')
-        asset = runtime_asset(client, cancel)
+        asset = runtime_asset(client, cancel, cache, progress)
         archive = client.download(asset, cache, cancel, progress)
         verify(archive, dict(bytes=asset.size, sha256=asset.sha256), cancel)
         with temporary_workspace(output.parent, progress) as root:

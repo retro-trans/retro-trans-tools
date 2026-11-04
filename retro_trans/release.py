@@ -17,15 +17,18 @@ from .core import PatchError, safe_name, sha256_file, engine_context, encode, de
 from .catalog import validate_manifest, atomic_json
 
 
-def build_release(config_path, output, cancel=None, progress=None, cache=None):
+def build_release(config_path, output, cancel=None, progress=None, cache=None, library=None):
     config_path = Path(config_path).resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
     output = Path(output).absolute()
     if output.exists():
         raise PatchError("Release directory already exists. Use a new directory; published versions are immutable.")
+    from .game_library import validate_registration
+    validate_registration(config, library=library)
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = {k: config[k] for k in ("game_id", "game_name", "platform", "version", "source_commit")}
     manifest.update(schema_version=2 if 'solutions' in config else 1, patches=[])
+    manifest['package_ids'] = copy.deepcopy(config['package_ids'])
     inputs = []
     digests = {}
     names = set()
@@ -149,15 +152,23 @@ def main():
     build = sub.add_parser("build")
     build.add_argument("config")
     build.add_argument("--out", required=True)
+    build.add_argument('--library', help='Reviewed game-library.json containing this game and every platform ID.')
     validate = sub.add_parser("validate")
     validate.add_argument("directory")
+    validate.add_argument('--for-publication', action='store_true', help='Require central package-ID registration for a new release.')
+    validate.add_argument('--library')
+    validate.add_argument('--repo')
     args = parser.parse_args()
     try:
         if args.command == "build":
-            build_release(args.config, args.out)
+            from .game_library import read
+            build_release(args.config, args.out, library=read(args.library) if args.library else None)
             print("Verified release built:", args.out)
         else:
-            validate_directory(args.directory)
+            manifest = validate_directory(args.directory)
+            if args.for_publication:
+                from .game_library import read, validate_registration
+                validate_registration(manifest, args.repo, read(args.library) if args.library else None)
             print("Release manifest, checksums, and validation report agree.")
     except (PatchError, OSError, ValueError, KeyError) as exc:
         parser.exit(1, str(exc) + "\n")

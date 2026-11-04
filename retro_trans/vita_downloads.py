@@ -1,20 +1,24 @@
-"""Discover hash-verified Vita release profiles without a game registry.
+"""Resolve hash-verified Vita profiles through the central game library.
 
 Original packages and licenses never leave the computer. Optional GitHub CLI
 credentials are held in memory and sent only to api.github.com.
 """
 from contextlib import contextmanager
+import hashlib
+import json
 import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
 from . import __version__, diagnostics
-from .core import (Asset, GitHubClient, PatchError, cache_directory, check_cancel,
-                   report, sha256_file, valid_hash, valid_size, validate_repo)
+from .core import (Asset, GitHubClient, PatchError, MAX_METADATA, cache_directory, check_cancel,
+                   github_http_error, report, sha256_file, valid_hash, valid_size, validate_repo)
 from .solutions import output_name
 from .vita_repatch import no_links, require
 
@@ -33,8 +37,9 @@ class ApiRedirect(urllib.request.HTTPRedirectHandler):
 
 
 class VitaReleaseClient(GitHubClient):
-    """Use the existing local gh sign-in for private releases, when available."""
-    def __init__(self):
+    """Reuse local sign-in and cache discovery; never persist credentials."""
+    def __init__(self, cache=None):
+        self.metadata_cache = (Path(cache) if cache else cache_directory()) / 'github-vita'
         self._token = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN') or ''
         if not self._token and shutil.which('gh'):
             try:
@@ -46,10 +51,48 @@ class VitaReleaseClient(GitHubClient):
             except (OSError, subprocess.TimeoutExpired, UnicodeError):
                 pass
 
+    @staticmethod
+    def api_allowed(parsed):
+        return (parsed.hostname == 'api.github.com' and
+                (parsed.path.startswith(('/repos/retro-trans/', '/orgs/retro-trans/')) or
+                 parsed.path == '/repos/Vita3K/Vita3K/releases/tags/continuous'))
+
+    def json(self, url, cancel=None):
+        parsed = urllib.parse.urlsplit(url)
+        if not self.api_allowed(parsed) or '/releases/assets/' in parsed.path:
+            return super().json(url, cancel)
+        require(parsed.scheme == 'https' and parsed.port in (None, 443) and not parsed.username and not parsed.password,
+                'Unexpected Vita release API address.')
+        check_cancel(cancel)
+        # Separate sign-ins (and signed-out use) without writing the token itself.
+        key = hashlib.sha256((url + '\0' + self._token).encode()).hexdigest()
+        path = self.metadata_cache / (key + '.json')
+        try:
+            with path.open('rb') as stream:
+                raw = stream.read(MAX_METADATA + 1025)
+            cached = json.loads(raw) if len(raw) <= MAX_METADATA + 1024 else {}
+            if (type(cached.get('fetched_at')) in (int, float) and
+                    0 <= time.time() - cached['fetched_at'] < 3600 and
+                    isinstance(cached.get('data'), (dict, list))):
+                check_cancel(cancel)
+                return cached['data']
+        except (OSError, ValueError, AttributeError):
+            pass
+        data = super().json(url, cancel)
+        check_cancel(cancel)
+        if isinstance(data, (dict, list)):
+            from .catalog import atomic_json
+            try:
+                cached = {'fetched_at': time.time(), 'data': data}
+                if len(json.dumps(cached, indent=2, ensure_ascii=False).encode('utf-8')) + 1 <= MAX_METADATA + 1024:
+                    atomic_json(path, cached)
+            except OSError:
+                pass  # A read-only cache must not prevent a verified download.
+        return data
+
     def open(self, url):
         parsed = urllib.parse.urlsplit(url)
-        if parsed.hostname != 'api.github.com' or not parsed.path.startswith(
-                ('/repos/retro-trans/', '/orgs/retro-trans/')):
+        if not self.api_allowed(parsed):
             return super().open(url)
         require(parsed.scheme == 'https' and parsed.port in (None, 443) and not parsed.username and not parsed.password
                 and (not parsed.query or '/releases/assets/' not in parsed.path),
@@ -69,6 +112,9 @@ class VitaReleaseClient(GitHubClient):
             response = urllib.request.build_opener(*handlers).open(request, timeout=30)
             diagnostics.event('network_ok', host='api.github.com', http_status=response.status)
             return response
+        except urllib.error.HTTPError as exc:
+            diagnostics.exception(exc)
+            raise github_http_error(exc) from exc
         except OSError as exc:
             diagnostics.exception(exc)
             raise PatchError('Could not download the Vita release from GitHub. Check your connection, '
@@ -113,57 +159,40 @@ def asset(item, repo, tag, maximum):
 
 @contextmanager
 def automatic_description(pkg, client=None, cache=None, cancel=None, progress=None, profile=None):
+    from . import game_library
     if profile is None:
         from . import vita_translation as profile
     vita = profile
     content = package_content(pkg)
-    client = client or VitaReleaseClient()
+    client = client or VitaReleaseClient(cache=cache)
     cache = Path(cache) if cache else cache_directory()
     report(progress, 'Finding translation for ' + content[7:16] + '…', None)
-    candidates = {}
-    for repo in client.repositories(cancel):
-        check_cancel(cancel)
-        repo = validate_repo(repo)
-        if repo == 'retro-trans/retro-trans-tools':
-            continue
-        releases = client.json('https://api.github.com/repos/' + repo + '/releases?per_page=10', cancel)
-        require(isinstance(releases, list) and len(releases) <= 10, 'Invalid Vita release list.')
-        for release in releases:
-            require(isinstance(release, dict), 'Invalid Vita release metadata.')
-            tag = release.get('tag_name', '')
-            if release.get('draft') or release.get('prerelease') or not isinstance(tag,str) or not re.fullmatch(r'v0\.\d+\.\d+', tag):
-                continue
-            items = release.get('assets', [])
-            require(isinstance(items, list) and all(isinstance(item, dict) for item in items),
-                    'Invalid Vita release inventory.')
-            profiles = [item for item in items if item.get('name') == vita.MANIFEST]
-            if not profiles:
-                continue
-            require(len(profiles) == 1, 'Ambiguous Vita release profile.')
-            metadata = asset(profiles[0], repo, tag, vita.MAX_METADATA)
-            path = client.download(metadata, cache, cancel, progress)
-            data = vita.read_description(path.read_bytes())
-            package = data.get('package',{})
-            if data.get('content_id',package.get('content_id')) != content or package.get('bytes') != Path(pkg).stat().st_size:
-                continue
-            require(data['build'] == tag[1:], 'Vita profile version differs from release.')
-            zips = [item for item in items if isinstance(item.get('name'), str)
-                    and item['name'].endswith(getattr(vita, 'ZIP_SUFFIX', '-Vita-PKG-patches.zip'))]
-            require(len(zips) == 1, 'This Vita release needs exactly one patch ZIP.')
-            archive = asset(zips[0], repo, tag, vita.MAX_ZIP)
-            candidates.setdefault(repo, []).append((data, archive))
+    library = game_library.load(client, cache, cancel, progress)
+    mode = 'pkg' if vita.MANIFEST == 'VITA-PKG.json' else 'repatch'
+    candidates = [row for row in library['vita_releases'] if row['mode'] == mode and row['content_id'] == content
+                  and row['package']['bytes'] == Path(pkg).stat().st_size]
     require(candidates, 'No automatic Vita translation was found for ' + content[7:16] + '. '
-            'Private releases need an existing GitHub CLI sign-in with access. '
+            'The game needs a registered package ID and release in the game library. '
+            'Private releases need a local private library and GitHub CLI access. '
             'You can also select a downloaded local translation ZIP.')
     checksum = sha256_file(pkg, cancel, progress, 'Checking original Vita package')
     matches = {}
-    for repo, options in candidates.items():
-        exact = [(data, archive) for data, archive in options if data['package']['sha256'] == checksum]
-        if exact:
-            matches[repo] = max(exact, key=lambda pair: tuple(map(int, pair[0]['build'].split('.'))))
+    for row in candidates:
+        if row['package']['sha256'] == checksum:
+            current = matches.get(row['repo'])
+            if current is None or game_library.version_key(row['version']) > game_library.version_key(current['version']):
+                matches[row['repo']] = row
     require(matches, 'A translation exists, but this PKG revision does not match its verified original.')
     require(len(matches) == 1, 'Several projects translate this game. Choose the desired project\'s local patch ZIP.')
-    data, archive = next(iter(matches.values()))
+    entry = next(iter(matches.values()))
+    metadata = game_library.asset(entry['profile'], entry['repo'], mode)
+    data = vita.read_description(client.download(metadata, cache, cancel, progress).read_bytes())
+    package = data.get('package', {})
+    require(data.get('content_id', package.get('content_id')) == content and
+            data['build'] == entry['version'] and
+            {k: package.get(k) for k in ('bytes', 'sha256')} == entry['package'],
+            'Downloaded Vita profile differs from the game library.')
+    archive = game_library.asset(entry['archive'], entry['repo'], mode, archive=True)
     report(progress, 'Downloading ' + data['name'] + '…', None)
     path = client.download(archive, cache, cancel, progress)
     with vita.archive_description(path, cancel=cancel, progress=progress) as resolved:

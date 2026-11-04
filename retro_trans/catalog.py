@@ -51,6 +51,9 @@ def validate_manifest(data, legacy=False):
         raise PatchError("Unsupported manifest schema version.")
     for name in ("game_id", "game_name", "platform"):
         text_field(data[name], name)
+    if 'package_ids' in data:
+        from .game_library import package_ids
+        package_ids(data['package_ids'])
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", data["game_id"]):
         raise PatchError("game_id must be a stable lowercase slug.")
     clean_version(data["version"])

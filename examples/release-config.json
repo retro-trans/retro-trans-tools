@@ -1,4 +1,5 @@
 {
+  "package_ids": [{"platform": "PS2", "kind": "project", "id": "example-game"}],
   "game_id": "example-game",
   "game_name": "Example Game",
   "platform": "PS2",

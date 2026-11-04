@@ -9,6 +9,8 @@ dist/
 .integration/
 *.egg-info/
 release-local.json
+game-library.private.json
+private-game-library.json
 retro_trans/resources/native/
 integrations/dcp/bin/
 integrations/dcp/obj/

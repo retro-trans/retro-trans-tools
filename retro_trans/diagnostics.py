@@ -173,9 +173,10 @@ def _exception(exc):
         reason = getattr(current, 'reason', None)
         current = current.__cause__ or (reason if isinstance(reason, BaseException) else None) or current.__context__
     # Classify only fixed known prefixes; never store the text itself.
-    message = str(exc) if type(exc).__name__ in ('PatchError', 'Cancelled') else ''
-    category = 'validation' if type(exc).__name__ == 'PatchError' else 'unexpected'
+    message = str(exc) if type(exc).__name__ in ('PatchError', 'Cancelled', 'GitHubRateLimit') else ''
+    category = 'validation' if type(exc).__name__ in ('PatchError', 'GitHubRateLimit') else 'unexpected'
     for prefix, label in [('File mismatch:', 'file_mismatch'), ('Could not reach GitHub', 'network'),
+                          ('GitHub has limited requests', 'rate_limit'),
                           ('Could not verify GitHub', 'certificate'), ('Cancelled', 'cancelled'),
                           ('Download verification failed', 'download_verification'),
                           ('Not enough', 'disk_space'), ('PKG conversion', 'pkg_conversion')]:

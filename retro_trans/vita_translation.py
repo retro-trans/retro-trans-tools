@@ -220,7 +220,7 @@ def apply(pkg,license_path,output,description=None,client=None,cache=None,cancel
     check_cancel(cancel)
     if not description:
         from .vita_downloads import VitaReleaseClient
-        client = client or VitaReleaseClient()
+        client = client or VitaReleaseClient(cache=cache)
     client,cache = client or GitHubClient(),Path(cache) if cache else cache_directory()
     with description_context(description,client,cache,cancel,progress,pkg=pkg) as (data,patches):
         title = data['title_id']

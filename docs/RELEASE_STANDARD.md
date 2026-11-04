@@ -1,5 +1,16 @@
 # Game release standard
 
+## Required central game registration (all platforms)
+
+Every new console or PC release must register its package/product IDs in
+`retro_trans/resources/game-library.json` before publication. Include applicable
+`package_ids` in build configurations and binary/DCP manifests; Vita profiles
+must have their exact content IDs registered. Reuse unchanged IDs and add new
+editions/discs/platforms explicitly. See [Game library](GAME_LIBRARY.md) for the
+publication gate, private libraries and historical migration. The shared builder
+and hosted catalog/library refresh enforce this for new releases; existing
+published manifests remain readable unchanged.
+
 ## Automatic Dreamcast DCP releases (Windows 0.5.20+)
 
 DCP packages are filesystem deltas plus a disc rebuild, not binary xdelta
@@ -47,9 +58,9 @@ sizes and hashes, round-trip reports, and immutable binary identities.
 Install Python 3.12+ and this package:
 
 ```powershell
-python -m pip install git+https://github.com/retro-trans/retro-trans-tools.git@v0.2.0
+python -m pip install git+https://github.com/retro-trans/retro-trans-tools.git@main
 python -m retro_trans.release build release-local.json --out release-v1.2.0
-python -m retro_trans.release validate release-v1.2.0
+python -m retro_trans.release validate release-v1.2.0 --for-publication
 ```
 
 Copy `examples/release-config.json` and supply the actual source commit and local

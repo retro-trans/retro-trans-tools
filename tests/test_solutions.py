@@ -247,13 +247,16 @@ class SolutionRoundTrips(unittest.TestCase):
         records, self.deltas = [], {}
         for source, target in (('original', '1.1'), ('1.1', '1.2')):
             config = grouped_record(source, target)['manifest']
+            config['package_ids'] = [dict(platform='Dreamcast', kind='project', id='multi-game')]
+            library = dict(schema_version=1, games=[dict(game_id='multi-game', name='Multi Game',
+                repo='retro-trans/multi-game', package_ids=config['package_ids'])], vita_releases=[])
             for p, track in zip(config['patches'], (3, 17)):
                 p['source'], p['target'] = '{}-{}.bin'.format(track, source), '{}-{}.bin'.format(track, target)
             config['solutions'][0]['copy_files'] = [dict(name=name, source='inputs/' + name) for name in ('audio.bin', 'disc.cue')]
             config_file = self.root / (target + '.json')
             config_file.write_text(json.dumps(config), encoding='utf-8')
             directory = self.root / ('release-' + target)
-            manifest = build_release(config_file, directory, cache=self.root / 'cache')
+            manifest = build_release(config_file, directory, cache=self.root / 'cache', library=library)
             self.assertEqual(validate_directory(directory), manifest)
             self.assertEqual(manifest['schema_version'], 2)
             self.assertNotIn(str(self.root), json.dumps(manifest))

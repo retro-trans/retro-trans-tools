@@ -338,7 +338,7 @@ def independent(a, b):
 @contextmanager
 def pkg_description(source,client=None,cache=None,cancel=None,progress=None):
     from .vita_downloads import automatic_description, package_content, VitaReleaseClient
-    client = client or VitaReleaseClient()
+    client = client or VitaReleaseClient(cache=cache)
     with ExitStack() as stack:
         try:
             resolved = stack.enter_context(automatic_description(source,client,cache,cancel,progress,

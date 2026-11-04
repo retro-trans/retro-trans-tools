@@ -6,12 +6,14 @@ from pathlib import Path
 import tempfile
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+import urllib.error
 import urllib.request
 import zipfile
 
 from retro_trans import vita_downloads as d, vita_translation as v
-from retro_trans.core import GitHubClient, PatchError, Cancelled
+from retro_trans import game_library as lib
+from retro_trans.core import GitHubClient, GitHubRateLimit, PatchError, Cancelled
 from test_vita_translation import fixture, identity
 
 
@@ -21,6 +23,7 @@ class Releases(GitHubClient):
         self.calls = []
         self.blobs = {}
         self.records = {}
+        self.library = dict(schema_version=1, games=[], vita_releases=[])
         self.add('retro-trans/fixture', data, assets, pkg)
 
     def add(self, repo, data, assets, pkg):
@@ -43,14 +46,24 @@ class Releases(GitHubClient):
             rows.append(dict(id=index, name=name, size=len(raw), digest='sha256:' + hashlib.sha256(raw).hexdigest(),
                              browser_download_url='https://github.com/' + repo + '/releases/download/v' + data['build'] + '/' + name))
         self.records.setdefault(repo, []).append(dict(tag_name='v' + data['build'], draft=False, prerelease=False, assets=rows))
+        if data.get('package'):
+            content = data.get('content_id', data['package'].get('content_id'))
+            game = dict(game_id='fixture', name='Fixture', repo=repo,
+                        package_ids=[dict(platform='PS Vita', kind='vita-content-id', id=content)])
+            if game not in self.library['games']: self.library['games'].append(game)
+            def indexed(row):
+                return dict(id=row['id'], name=row['name'], bytes=row['size'], sha256=row['digest'][7:])
+            self.library['vita_releases'].append(dict(game_id='fixture', repo=repo, version=data['build'],
+                mode='pkg' if v.MANIFEST == 'VITA-PKG.json' else 'repatch', content_id=content,
+                package={k:data['package'][k] for k in ('bytes','sha256')}, profile=indexed(rows[0]), archive=indexed(rows[1])))
 
     def repositories(self, cancel=None):
-        return list(self.records)
+        raise AssertionError('Application must not enumerate repositories.')
 
     def json(self, url, cancel=None):
         self.calls.append(url)
-        repo = url.split('/repos/', 1)[1].split('/releases', 1)[0]
-        return self.records[repo]
+        if url == lib.URL: return copy.deepcopy(self.library)
+        raise AssertionError('Application must not search releases: ' + url)
 
     def open(self, url):
         self.calls.append(url)
@@ -72,6 +85,9 @@ class DownloadTests(unittest.TestCase):
         self.pkg = self.root / 'arbitrary-filename.pkg'
         self.pkg.write_bytes(pkg_bytes(self.data['content_id']))
         self.client = Releases(self.data, self.assets, self.pkg.read_bytes())
+        # Resolver tests use the supplied current index; loader caching is tested separately.
+        mock = patch.object(lib, 'load', side_effect=lambda client,*args: lib.validate(client.library))
+        mock.start(); self.addCleanup(mock.stop)
 
     def run_download(self, cancel=None):
         return d.automatic_description(self.pkg, self.client, self.root/'cache', cancel)
@@ -137,7 +153,7 @@ class DownloadTests(unittest.TestCase):
         self.pkg.write_bytes(self.pkg.read_bytes()[:-1] + b'X')
         with self.assertRaisesRegex(PatchError, 'revision'):
             with self.run_download(): pass
-        self.assertEqual(len([url for url in self.client.calls if '/releases/assets/' in url]), 1)
+        self.assertEqual(len([url for url in self.client.calls if '/releases/assets/' in url]), 0)
 
     def test_ps3_rejected_before_network(self):
         self.pkg.write_bytes(pkg_bytes('JP0700-NPJB00689_00-SRWZ3RENDLGPKG00'))
@@ -146,7 +162,7 @@ class DownloadTests(unittest.TestCase):
         self.assertEqual(self.client.calls, [])
 
     def test_missing_release_and_ambiguous_projects(self):
-        self.client.records.clear()
+        self.client.library['vita_releases'].clear()
         with self.assertRaisesRegex(PatchError, 'No automatic'):
             with self.run_download(): pass
         self.client = Releases(self.data, self.assets, self.pkg.read_bytes())
@@ -155,13 +171,13 @@ class DownloadTests(unittest.TestCase):
             with self.run_download(): pass
 
     def test_checksums_urls_and_zip_profile_must_agree(self):
-        row = self.client.records['retro-trans/fixture'][0]['assets'][0]
-        row['browser_download_url'] = 'https://example.org/profile'
+        row = self.client.library['vita_releases'][0]['profile']
+        row['name'] = '../profile'
         with self.assertRaises(PatchError):
             with self.run_download(): pass
         self.client = Releases(self.data, self.assets, self.pkg.read_bytes())
-        row = self.client.records['retro-trans/fixture'][0]['assets'][1]
-        row['digest'] = 'sha256:' + '0'*64
+        row = self.client.library['vita_releases'][0]['archive']
+        row['sha256'] = '0'*64
         with self.assertRaises(PatchError):
             with self.run_download(): pass
 
@@ -182,9 +198,61 @@ class DownloadTests(unittest.TestCase):
 
     def test_optional_signin_not_required_and_credentials_not_sent_to_other_repos(self):
         with patch.dict('os.environ', {}, clear=True), patch.object(d.shutil, 'which', return_value=None):
-            client = d.VitaReleaseClient()
+            client = d.VitaReleaseClient(cache=self.root/'cache')
         self.assertEqual(client._token, '')
         client._token = 'test-only-token'
         with patch.object(GitHubClient,'open',return_value=io.BytesIO(b'{}')) as original:
-            client.open('https://api.github.com/repos/Vita3K/Vita3K/releases/tags/continuous')
+            client.open('https://api.github.com/repos/unrelated/project/releases/latest')
         original.assert_called_once()
+
+    def test_existing_signin_used_for_exact_official_runtime_only(self):
+        with patch.dict('os.environ', {}, clear=True), patch.object(d.shutil, 'which', return_value=None):
+            client = d.VitaReleaseClient(cache=self.root/'cache')
+        client._token = 'test-only-token'
+        opener = Mock(); opener.open.return_value.status = 200
+        with patch.object(d.urllib.request, 'build_opener', return_value=opener):
+            client.open('https://api.github.com/repos/Vita3K/Vita3K/releases/tags/continuous')
+        request = opener.open.call_args.args[0]
+        self.assertEqual(request.get_header('Authorization'), 'Bearer test-only-token')
+        redirected = d.ApiRedirect().redirect_request(request, None, 302, '', {},
+            'https://release-assets.githubusercontent.com/runtime')
+        self.assertIsNone(redirected.get_header('Authorization'))
+        error = urllib.error.HTTPError(request.full_url, 429, 'limited', {'Retry-After':'60'}, None)
+        opener.open.side_effect = error
+        with patch.object(d.urllib.request, 'build_opener', return_value=opener), self.assertRaises(GitHubRateLimit):
+            client.open(request.full_url)
+
+    def test_discovery_cache_reuses_metadata_expires_and_separates_signins(self):
+        url = 'https://api.github.com/repos/retro-trans/fixture/releases?per_page=10'
+        rows = [{'tag_name':'v0.1.13','assets':[]}]
+        def response(*args):return io.BytesIO(json.dumps(rows).encode())
+        with patch.dict('os.environ', {}, clear=True), patch.object(d.shutil, 'which', return_value=None), \
+                patch.object(d.VitaReleaseClient, 'open', side_effect=response) as network, \
+                patch.object(d.time, 'time', return_value=1000) as now:
+            first = d.VitaReleaseClient(cache=self.root/'cache')
+            self.assertEqual(first.json(url), rows)
+            second = d.VitaReleaseClient(cache=self.root/'cache')
+            self.assertEqual(second.json(url), rows)
+            self.assertEqual(network.call_count, 1)
+            now.return_value = 4601
+            self.assertEqual(second.json(url), rows)
+            self.assertEqual(network.call_count, 2)
+            second._token = 'test-only-token'
+            self.assertEqual(second.json(url), rows)
+            self.assertEqual(network.call_count, 3)
+            cancel = threading.Event(); cancel.set()
+            with self.assertRaises(Cancelled):second.json(url, cancel)
+            self.assertEqual(network.call_count, 3)
+            for path in second.metadata_cache.glob('*.json'):
+                self.assertNotIn('test-only-token', path.read_text(encoding='utf-8'))
+                path.write_text('not json', encoding='utf-8')
+            self.assertEqual(second.json(url), rows)
+            self.assertEqual(network.call_count, 4)
+
+    def test_discovery_errors_are_not_cached_or_retried(self):
+        with patch.dict('os.environ', {}, clear=True), patch.object(d.shutil, 'which', return_value=None):
+            client = d.VitaReleaseClient(cache=self.root/'cache')
+        with patch.object(client, 'open', side_effect=GitHubRateLimit()) as network, self.assertRaises(GitHubRateLimit):
+            client.json('https://api.github.com/orgs/retro-trans/repos?per_page=100')
+        network.assert_called_once()
+        self.assertFalse(list(client.metadata_cache.glob('*.json')))

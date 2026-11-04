@@ -1,4 +1,5 @@
 {
+  "package_ids": [{"platform": "Dreamcast", "kind": "project", "id": "example-disc"}],
   "game_id": "example-disc",
   "game_name": "Example Multi-track Game",
   "platform": "Dreamcast",

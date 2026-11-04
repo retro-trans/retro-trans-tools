@@ -209,11 +209,18 @@ class RefreshIsolationTests(unittest.TestCase):
 
     def test_cli_writes_partial_report_and_verified_catalog(self):
         bad, good = named_client('bad'), named_client('good')
+        ids = [dict(platform='Test', kind='project', id='test')]
+        registered = copy.deepcopy(good.record)
+        registered['manifest']['package_ids'] = ids
+        good = ReleaseClient(registered)
         bad.files['VALIDATION.json'] = b'{}'
         with tempfile.TemporaryDirectory() as temporary:
             output, report = Path(temporary)/'catalog.json', Path(temporary)/'report.json'
             output.write_text(json.dumps(EMPTY))
-            args = ['catalog_builder', '--output', str(output), '--continue-on-error', '--report', str(report)]
+            library = Path(temporary)/'library.json'
+            library.write_text(json.dumps(dict(schema_version=1, games=[dict(game_id='test', name='Test',
+                repo='retro-trans/good', package_ids=ids)], vita_releases=[])))
+            args = ['catalog_builder', '--output', str(output), '--continue-on-error', '--report', str(report), '--library', str(library)]
             with patch('sys.argv', args), patch('retro_trans.catalog_builder.GitHubClient',
                     return_value=BatchClient(bad, good)), patch('sys.stdout', io.StringIO()), patch('sys.stderr', io.StringIO()):
                 main()

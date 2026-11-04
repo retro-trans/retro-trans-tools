@@ -1,5 +1,7 @@
 # Project preferences
 
+- Every new game release, for any console or PC, must register its package/product IDs in `retro_trans/resources/game-library.json` before publication. Reuse existing IDs and add new platforms, editions or discs explicitly. New binary/DCP manifests must declare registered `package_ids`; Vita profiles must have their exact content IDs registered. Run the publication gate in `docs/GAME_LIBRARY.md`. Preserve historical manifests and never publish private library records or licenses. App release permission is still required separately.
+
 - The user explicitly approved implementing, testing and publishing Retro Trans 0.5.20 with Automatic DCP support for both Black/Matrix AD discs on 2026-11-02. This authorizes the relevant source/catalog push, game discovery metadata, and Windows app release. Preserve existing DCP bytes, older releases, unrelated Android/Mac work, game originals and emulator data.
 
 - Keep the app compact and native. Include `retro_trans.__version__` in the main window title, including test builds.

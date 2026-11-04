@@ -1,5 +1,10 @@
 # Retro Trans
 
+Release authors: every new console/PC game release must register its package or
+product IDs in the [central game library](docs/GAME_LIBRARY.md). The local next
+build uses this library for direct Vita discovery; these changes are not yet
+included in the published 0.5.20 EXE.
+
 **Windows 0.5.20:** **Automatic** recognizes the published original Black/Matrix AD
 Disc 1 and Disc 2 CUE/BIN sets and downloads their matching DCP packages. Choose a
 new output folder; game-file, boot-code and CD-audio verification remain enabled.

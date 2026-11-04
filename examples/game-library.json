@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "games": [
+    {
+      "game_id": "example-game",
+      "name": "Example Game",
+      "repo": "retro-trans/example-game",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "example-game"
+        }
+      ]
+    },
+    {
+      "game_id": "example-disc",
+      "name": "Example Multi-track Game",
+      "repo": "retro-trans/example-disc",
+      "package_ids": [
+        {
+          "platform": "Dreamcast",
+          "kind": "project",
+          "id": "example-disc"
+        }
+      ]
+    }
+  ],
+  "vita_releases": []
+}

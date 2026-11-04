@@ -174,7 +174,7 @@ def release_record(repo, release, client, reviewed=None):
     return record
 
 
-def build_catalog(previous, client=None, repositories=None, rejections=None):
+def build_catalog(previous, client=None, repositories=None, rejections=None, library=None):
     """Strict by default; a supplied rejection list isolates failed releases."""
     client = client or GitHubClient()
     old = Catalog(previous)
@@ -218,6 +218,9 @@ def build_catalog(previous, client=None, repositories=None, rejections=None):
                 from .dcp_automatic import MANIFEST as DCP_MANIFEST, release_record as dcp_record
                 if DCP_MANIFEST in assets or key in dcp_records:
                     record = dcp_record(repo,release,client,reviewed=dcp_records.get(key))
+                    if library is not None and key not in dcp_records:
+                        from .game_library import validate_registration
+                        validate_registration(record['manifest'], repo, library)
                     candidate_dcp = dict(dcp_records)
                     candidate_dcp[key] = record
                     assert_immutable(old,Catalog(catalog_data(records,candidate_dcp)))
@@ -236,6 +239,9 @@ def build_catalog(previous, client=None, repositories=None, rejections=None):
                     continue
                 record = release_record(repo, release, client, reviewed=existing)
                 if record:
+                    if library is not None and existing is None:
+                        from .game_library import validate_registration
+                        validate_registration(record['manifest'], repo, library)
                     candidate = dict(records)
                     candidate[key] = record
                     # Catch cross-release identity/solution conflicts at the
@@ -258,6 +264,8 @@ def main():
     parser.add_argument('--continue-on-error', action='store_true',
                         help='Report rejected releases and preserve their cached records; continue validating others.')
     parser.add_argument('--report', help='Write a JSON refresh report alongside the catalog.')
+    parser.add_argument('--library', default=str(RESOURCE_DIR / 'game-library.json'),
+                        help='Require new releases to register their package IDs in this library.')
     args = parser.parse_args()
     path = Path(args.output)
     if args.report and Path(args.report).resolve() == path.resolve():
@@ -265,7 +273,8 @@ def main():
     try:
         previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"schema_version": 1, "releases": []}
         rejections = [] if args.continue_on_error else None
-        result = build_catalog(previous, repositories=args.repo, rejections=rejections)
+        from .game_library import read
+        result = build_catalog(previous, repositories=args.repo, rejections=rejections, library=read(args.library))
         if args.report:
             atomic_json(args.report, dict(schema_version=1, status='partial' if rejections else 'complete',
                 releases=len(result['releases']), rejections=rejections or []))

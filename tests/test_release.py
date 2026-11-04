@@ -22,13 +22,19 @@ class ReleaseTests(unittest.TestCase):
         (self.root / "original.vpk").write_bytes(self.base)
         (self.root / "1.1.vpk").write_bytes(self.base[:500] + b"English 1.1" + self.base[511:])
         (self.root / "1.2.vpk").write_bytes(self.base[:800] + b"English 1.2" + self.base[811:])
+        from retro_trans import game_library
+        self.ids = [dict(platform=p, kind='project', id='fixture') for p in ('Vita','PSP','PS2','Test')]
+        library = dict(schema_version=1, games=[dict(game_id='fixture', name='Fixture', repo='retro-trans/fixture',
+            package_ids=self.ids)], vita_releases=[])
+        mocked = patch.object(game_library, 'read', return_value=library)
+        mocked.start(); self.addCleanup(mocked.stop)
 
     def tearDown(self):
         self.temp.cleanup()
 
     def build(self, source, target, edition="original"):
         config = {"game_id": "fixture", "game_name": "Fixture", "platform": "Vita", "version": target,
-            "source_commit": "a" * 40, "patches": [{"patch": source + "-to-" + target + ".xdelta",
+            "package_ids": self.ids, "source_commit": "a" * 40, "patches": [{"patch": source + "-to-" + target + ".xdelta",
             "edition": edition, "language": "en", "source_version": source, "source_format": "vpk", "target_format": "vpk",
             "source": source + ".vpk", "target": target + ".vpk"}]}
         config_path = self.root / (target + ".json")
@@ -64,7 +70,7 @@ class ReleaseTests(unittest.TestCase):
 
     def test_builder_preserves_platform_editions(self):
         config = {'game_id':'fixture', 'game_name':'Fixture PSP', 'platform':'PSP',
-                  'version':'1.1', 'source_commit':'a'*40, 'patches':[]}
+                  'version':'1.1', 'source_commit':'a'*40, 'patches':[], 'package_ids':self.ids}
         for edition in ('psp', 'ps2'):
             row = dict(patch=edition+'.xdelta', edition=edition, language='en',
                        source_version='original', source_format='vpk', target_format='vpk',
@@ -127,7 +133,7 @@ class ReleaseTests(unittest.TestCase):
                     "language": "en", "source_version": source, "source_format": "bin", "target_format": "bin",
                     "source": source + ".vpk", "target": "1.2.vpk"})
         config = {"game_id": "fixture", "game_name": "Fixture", "platform": "Test", "version": "1.2",
-            "source_commit": "a" * 40, "patches": rows}
+            "source_commit": "a" * 40, "patches": rows, "package_ids": self.ids}
         path = self.root / "multiple.json"
         path.write_text(json.dumps(config), encoding="utf-8")
         output = self.root / "multiple-release"

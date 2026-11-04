@@ -1,6 +1,6 @@
 """Publish a verified SRW-Z release, retaining the pinned source and optional art.
 
-Install the shared tool once: python -m pip install git+https://github.com/retro-trans/retro-trans-tools.git@v0.2.0
+Install the shared tool: python -m pip install git+https://github.com/retro-trans/retro-trans-tools.git@main
 Usage: python tools/release.py 0.9.84 --config /path/to/release-local.json
 Use --dry to inspect the intended release without building or publishing.
 """
@@ -31,6 +31,7 @@ def main():
     parser.add_argument("--repo", default="retro-trans/SRW-Z")
     parser.add_argument("--config", type=Path, default=WORK / "release-local.json")
     parser.add_argument("--dry", action="store_true")
+    parser.add_argument('--library', type=Path, help='Reviewed central game library with this release\'s package IDs.')
     args = parser.parse_args()
     version, tag = args.version.lstrip("v"), "v" + args.version.lstrip("v")
     if args.dry:
@@ -49,6 +50,9 @@ def main():
     if configured_commit and configured_commit != commit:
         raise RuntimeError("source_commit does not match the checked-out release source.")
     config["source_commit"] = commit
+    from retro_trans.game_library import read, validate_registration
+    library = read(args.library) if args.library else None
+    validate_registration(config, args.repo, library)
     for entry in config["patches"]:
         for side in ("source", "target"):
             entry[side] = str((args.config.resolve().parent / entry[side]).resolve())
@@ -71,7 +75,7 @@ def main():
         local_config = scratch / "private-config.json"
         local_config.write_text(json.dumps(config), encoding="utf-8")
         directory = scratch / "publish"
-        build_release(local_config, directory)
+        build_release(local_config, directory, library=library)
         source_archive = directory / ("SRWZ-source-" + tag + ".zip")
         run(["git", "archive", "--format=zip", "--prefix=SRWZ-" + tag + "/", "-o", str(source_archive), commit])
         with zipfile.ZipFile(source_archive) as archive:

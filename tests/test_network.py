@@ -10,7 +10,7 @@ import unittest
 import urllib.error
 from unittest.mock import patch
 
-from retro_trans.core import GitHubClient, PatchError
+from retro_trans.core import GitHubClient, GitHubRateLimit, PatchError
 
 
 class NetworkTests(unittest.TestCase):
@@ -69,12 +69,27 @@ class NetworkTests(unittest.TestCase):
                     self.assertNotIn('secret', str(raised.exception))
 
     def test_http_errors_remain_distinct(self):
-        for code, message in [(404, 'No published release'), (403, 'limited'), (500, 'HTTP 500')]:
+        for code, message in [(404, 'No published release'), (403, 'denied access'), (429, 'limited'), (500, 'HTTP 500')]:
             with self.subTest(code=code), patch.object(GitHubClient, 'tls_context', return_value=None), \
                     patch('urllib.request.urlopen', side_effect=urllib.error.HTTPError(
                         'https://github.com/', code, 'secret URL', None, None)):
                 with self.assertRaisesRegex(PatchError, message):
                     GitHubClient().open('https://github.com/retro-trans/retro-trans-tools')
+
+    def test_rate_limit_reset_retry_after_and_secondary_body(self):
+        for code, headers, body, deadline in [
+                (403, {'X-RateLimit-Remaining':'0','X-RateLimit-Reset':'1120'}, b'', 1120),
+                (429, {'Retry-After':'90'}, b'', 1090),
+                (403, {}, b'{"message":"secondary rate limit"}', 1060),
+                (429, {'Retry-After':'invalid'}, b'', 1060)]:
+            error = urllib.error.HTTPError('https://api.github.com/secret', code, 'secret', headers, io.BytesIO(body))
+            with self.subTest(headers=headers), patch('retro_trans.core.time.time', return_value=1000), \
+                    patch('urllib.request.urlopen', side_effect=error):
+                with self.assertRaises(GitHubRateLimit) as raised:
+                    GitHubClient().open('https://api.github.com/repos/retro-trans/test')
+                self.assertEqual(raised.exception.retry_at, deadline)
+                self.assertIn('Try again after', str(raised.exception))
+                self.assertNotIn('secret', str(raised.exception))
 
     @unittest.skipUnless(sys.platform == 'darwin', 'Mac certificate bundle test')
     def test_real_mac_context_has_roots_without_host_certificate_paths(self):

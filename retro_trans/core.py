@@ -23,6 +23,7 @@ import urllib.request
 import zipfile
 import sys
 from contextlib import contextmanager
+from email.utils import parsedate_to_datetime
 from . import __version__
 from . import diagnostics
 
@@ -41,6 +42,50 @@ class PatchError(Exception):
 
 class Cancelled(PatchError):
     pass
+
+
+class GitHubRateLimit(PatchError):
+    def __init__(self, headers=None):
+        headers = headers or {}
+        now, deadlines = time.time(), []
+        retry = headers.get('Retry-After')
+        if retry:
+            try:
+                deadlines.append(now + max(0, int(retry)))
+            except (ValueError, TypeError):
+                try:
+                    deadlines.append(parsedate_to_datetime(retry).timestamp())
+                except (ValueError, TypeError, OverflowError):
+                    pass
+        if headers.get('X-RateLimit-Remaining') == '0':
+            try:
+                deadlines.append(int(headers.get('X-RateLimit-Reset', '')))
+            except (ValueError, TypeError):
+                pass
+        self.retry_at = max([now + 60] if not deadlines else [now + 1] + deadlines)
+        try:
+            when = 'Try again after ' + time.strftime('%H:%M:%S %Z', time.localtime(self.retry_at)) + '.'
+        except (ValueError, OverflowError, OSError):
+            when = 'Please try again later.'
+        super().__init__('GitHub has limited requests. ' + when +
+                         ' Other apps or users on the same internet connection can share this limit.')
+
+
+def github_http_error(exc):
+    headers = exc.headers or {}
+    if exc.code in (403, 429):
+        limited = exc.code == 429 or headers.get('X-RateLimit-Remaining') == '0' or headers.get('Retry-After')
+        if not limited:
+            try:
+                limited = b'rate limit' in exc.read(4096).lower()
+            except (OSError, AttributeError):
+                pass
+        if limited:
+            return GitHubRateLimit(headers)
+        return PatchError('GitHub denied access (HTTP 403). Check your GitHub sign-in and repository access.')
+    if exc.code == 404:
+        return PatchError('No published release was found for this repository.')
+    return PatchError('GitHub returned HTTP {}. Please try again.'.format(exc.code))
 
 
 def check_cancel(cancel):
@@ -172,11 +217,7 @@ class GitHubClient:
             return response
         except urllib.error.HTTPError as exc:
             diagnostics.exception(exc)
-            if exc.code == 404:
-                raise PatchError("No published release was found for this repository.") from exc
-            if exc.code in (403, 429):
-                raise PatchError("GitHub has limited requests. Please try again later.") from exc
-            raise PatchError("GitHub returned HTTP {}. Please try again.".format(exc.code)) from exc
+            raise github_http_error(exc) from exc
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             diagnostics.exception(exc)
             reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc

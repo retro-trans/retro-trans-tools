@@ -22,6 +22,8 @@ def diagnose(path):
             raise RuntimeError('Local PKG rebuilding requires a matching-license input.')
         app.vita_game.set('Hardware rePatch')
         catalog = load_catalog()
+        from retro_trans.game_library import read, PATH as LIBRARY_PATH
+        library = read(LIBRARY_PATH)
         if not GUIDE.read_text(encoding="utf-8").strip():
             raise RuntimeError("Bundled Z3 save instructions are missing.")
         if not mx_converter.GUIDE.read_text(encoding="utf-8").strip():
@@ -60,7 +62,8 @@ def diagnose(path):
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
             whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True,
             dreamcast_dcp=True,dcp_engine_bundled=dcp_engine.is_file(),dcp_engine_started=True,
-            automatic_dcp=True,automatic_dcp_profiles=len(catalog.dcp_profiles))
+            automatic_dcp=True,automatic_dcp_profiles=len(catalog.dcp_profiles),
+            game_library_games=len(library['games']),vita_library_routes=len(library['vita_releases']))
     except Exception as exc:
         report["error"] = str(exc)
     finally:

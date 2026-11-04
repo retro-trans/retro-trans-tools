@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "games": [
+    {
+      "game_id": "ace",
+      "name": "Another Century's Episode",
+      "repo": "retro-trans/ACE",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "ace"
+        }
+      ]
+    },
+    {
+      "game_id": "ace-3",
+      "name": "Another Century's Episode 3: The Final",
+      "repo": "retro-trans/ACE-3",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "ace-3"
+        }
+      ]
+    },
+    {
+      "game_id": "black-matrix-ad-dreamcast",
+      "name": "Black/Matrix AD",
+      "repo": "retro-trans/Black-Matrix-AD",
+      "package_ids": [
+        {
+          "platform": "Dreamcast",
+          "kind": "project",
+          "id": "black-matrix-ad-dreamcast"
+        }
+      ]
+    },
+    {
+      "game_id": "cross-ange",
+      "name": "CROSS ANGE Rondo of Angel and Dragon tr.",
+      "repo": "retro-trans/Cross-Ange",
+      "package_ids": [
+        {
+          "platform": "PS Vita",
+          "kind": "project",
+          "id": "cross-ange"
+        },
+        {
+          "platform": "PS Vita",
+          "kind": "vita-content-id",
+          "id": "JP0700-PCSG00597_00-CROSSANGEGAME000"
+        }
+      ]
+    },
+    {
+      "game_id": "heroes-phantasia",
+      "name": "Heroes Phantasia",
+      "repo": "retro-trans/Heroes-Phantasia",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "heroes-phantasia"
+        }
+      ]
+    },
+    {
+      "game_id": "lost-heroes",
+      "name": "Lost Heroes",
+      "repo": "retro-trans/Lost-Heroes",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "lost-heroes"
+        }
+      ]
+    },
+    {
+      "game_id": "macross-ace-frontier",
+      "name": "Macross Ace Frontier",
+      "repo": "retro-trans/Macross-Ace-Frontier",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "macross-ace-frontier"
+        }
+      ]
+    },
+    {
+      "game_id": "macross-triangle-frontier",
+      "name": "Macross Triangle Frontier",
+      "repo": "retro-trans/Macross-Triangle-Frontier",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "macross-triangle-frontier"
+        }
+      ]
+    },
+    {
+      "game_id": "macross-ultimate-frontier",
+      "name": "Macross Ultimate Frontier",
+      "repo": "retro-trans/Macross-Ultimate-Frontier",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "macross-ultimate-frontier"
+        }
+      ]
+    },
+    {
+      "game_id": "marionette-handler-2",
+      "name": "Marionette Handler 2 — English",
+      "repo": "retro-trans/Marionnete-Handler-2",
+      "package_ids": [
+        {
+          "platform": "Dreamcast",
+          "kind": "project",
+          "id": "marionette-handler-2"
+        }
+      ]
+    },
+    {
+      "game_id": "ore-no-shikabane-o-koete-yuke",
+      "name": "Ore no Shikabane o Koete Yuke",
+      "repo": "retro-trans/Ore-no-Shikabane-o-Koete-Yuke",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "ore-no-shikabane-o-koete-yuke"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-mx-portable",
+      "name": "Super Robot Taisen MX Portable",
+      "repo": "retro-trans/SRW-MX-Portable",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "srw-mx-portable"
+        },
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "srw-mx-portable"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z",
+      "name": "Super Robot Wars Z",
+      "repo": "retro-trans/SRW-Z",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "srw-z"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z-special-disc",
+      "name": "Super Robot Taisen Z Special Disc",
+      "repo": "retro-trans/SRW-Z-Special-Disc",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "project",
+          "id": "srw-z-special-disc"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "name": "Super Robot Taisen Z3: Jigoku-hen (PS3)",
+      "repo": "retro-trans/SRW-Z3",
+      "package_ids": [
+        {
+          "platform": "PS3",
+          "kind": "project",
+          "id": "srw-z3-jigoku-ps3"
+        },
+        {
+          "platform": "PS Vita",
+          "kind": "vita-content-id",
+          "id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z3-tengoku-ps3",
+      "name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
+      "repo": "retro-trans/SRW-Z3-2",
+      "package_ids": [
+        {
+          "platform": "PS3",
+          "kind": "project",
+          "id": "srw-z3-tengoku-ps3"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z3-rengoku-ps3",
+      "name": "Super Robot Taisen Z3: Rengoku-hen",
+      "repo": "retro-trans/SRW-Z3-R",
+      "package_ids": [
+        {
+          "platform": "PS3",
+          "kind": "project",
+          "id": "srw-z3-rengoku-ps3"
+        }
+      ]
+    },
+    {
+      "game_id": "seireiki-rayblade",
+      "name": "Seireiki Rayblade",
+      "repo": "retro-trans/Seireiki-Rayblade",
+      "package_ids": [
+        {
+          "platform": "Dreamcast",
+          "kind": "project",
+          "id": "seireiki-rayblade"
+        }
+      ]
+    },
+    {
+      "game_id": "summon-night-3",
+      "name": "Summon Night 3",
+      "repo": "retro-trans/Summon-Night-3",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "project",
+          "id": "summon-night-3"
+        }
+      ]
+    },
+    {
+      "game_id": "sunrise-eiyuutan-r",
+      "name": "Sunrise Eiyuutan R",
+      "repo": "retro-trans/Sunrise-Eiyuutan-R",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPS-25011"
+        }
+      ]
+    },
+    {
+      "game_id": "super-tokusatsu-taisen-2001",
+      "name": "Super Tokusatsu Taisen 2001",
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "project",
+          "id": "super-tokusatsu-taisen-2001"
+        }
+      ]
+    },
+    {
+      "game_id": "vampir-kyuuketsuki-densetsu",
+      "name": "Vampir: Kyuuketsuki Densetsu",
+      "repo": "retro-trans/Vampir",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "project",
+          "id": "vampir-kyuuketsuki-densetsu"
+        }
+      ]
+    },
+    {
+      "game_id": "wizardry-perfect-pack",
+      "name": "Wizardry Perfect Pack: Prisoners of the Lost City",
+      "repo": "retro-trans/Wizardry-Perfect-Pack",
+      "package_ids": [
+        {
+          "platform": "PS3",
+          "kind": "project",
+          "id": "wizardry-perfect-pack"
+        }
+      ]
+    }
+  ],
+  "vita_releases": [
+    {
+      "game_id": "cross-ange",
+      "repo": "retro-trans/Cross-Ange",
+      "version": "0.1.13",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00597_00-CROSSANGEGAME000",
+      "package": {
+        "bytes": 925548400,
+        "sha256": "962498429645bf92d0171280b075629ff6dc8100f365ce43805d2cd3e897ebcb"
+      },
+      "profile": {
+        "id": 633513089,
+        "name": "VITA-PKG.json",
+        "bytes": 9190,
+        "sha256": "bd9fb94d2b8a0f7af225bf8ffe037e0fa4df47dbdb8d281c713cc10c3ea736c3"
+      },
+      "archive": {
+        "id": 633513086,
+        "name": "Cross-Ange-English-0.1.13-Vita-PKG-patches.zip",
+        "bytes": 5399828,
+        "sha256": "ea1e320f603406445ae241d5850eb3c24ab61cfc4070f0b0816043dd9030ca9f"
+      }
+    },
+    {
+      "game_id": "cross-ange",
+      "repo": "retro-trans/Cross-Ange",
+      "version": "0.1.13",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00597_00-CROSSANGEGAME000",
+      "package": {
+        "bytes": 925548400,
+        "sha256": "962498429645bf92d0171280b075629ff6dc8100f365ce43805d2cd3e897ebcb"
+      },
+      "profile": {
+        "id": 633359900,
+        "name": "VITA-REPATCH.json",
+        "bytes": 1417,
+        "sha256": "2c9407c9cdbe0764b0d8604fdf74e88f1bef36b2d578116cdfc59cf28abd724b"
+      },
+      "archive": {
+        "id": 633359765,
+        "name": "Cross-Ange-English-0.1.13-Vita-rePatch-patches.zip",
+        "bytes": 5397094,
+        "sha256": "ed5411aff296c03a27ffa7a1e4e19d172f26ffb1233e4231f964cbb497930b1a"
+      }
+    },
+    {
+      "game_id": "cross-ange",
+      "repo": "retro-trans/Cross-Ange",
+      "version": "0.1.16",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00597_00-CROSSANGEGAME000",
+      "package": {
+        "bytes": 925548400,
+        "sha256": "962498429645bf92d0171280b075629ff6dc8100f365ce43805d2cd3e897ebcb"
+      },
+      "profile": {
+        "id": 675547412,
+        "name": "VITA-PKG.json",
+        "bytes": 9484,
+        "sha256": "f1f7699634d81295d2dc87a7379e2fa38e37529116570583c09dd4ec4fa841b3"
+      },
+      "archive": {
+        "id": 675547258,
+        "name": "Cross-Ange-English-0.1.16-Vita-PKG-patches.zip",
+        "bytes": 5438144,
+        "sha256": "55e37d9c0727e31ea3af3e3dbeeb5a01280328ee592daff6fc828a0c8a2cb3a0"
+      }
+    },
+    {
+      "game_id": "cross-ange",
+      "repo": "retro-trans/Cross-Ange",
+      "version": "0.1.16",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00597_00-CROSSANGEGAME000",
+      "package": {
+        "bytes": 925548400,
+        "sha256": "962498429645bf92d0171280b075629ff6dc8100f365ce43805d2cd3e897ebcb"
+      },
+      "profile": {
+        "id": 675547449,
+        "name": "VITA-REPATCH.json",
+        "bytes": 1417,
+        "sha256": "606a332f3d86a910b0c237710e6f550cebe052a0968ebaee8168817c6e68e292"
+      },
+      "archive": {
+        "id": 675547257,
+        "name": "Cross-Ange-English-0.1.16-Vita-rePatch-patches.zip",
+        "bytes": 5435403,
+        "sha256": "4aaa4589ae0b3011d595c7efd25c2eb477f4c701b0066839ba28ddf6a7b1f38f"
+      }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.2",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 649445661,
+        "name": "VITA-PKG.json",
+        "bytes": 135578,
+        "sha256": "2aeb3a328216b150cfa58c72e654dad2ae9a0a91f6564d8c5463d6220ea33dd9"
+      },
+      "archive": {
+        "id": 649445659,
+        "name": "SRW-Z3-v0.9.2-Vita-PKG-patches.zip",
+        "bytes": 18206820,
+        "sha256": "412adb3eea41dfa633216cdca5d537ad4f6d3b122d4c1e6ef1ef8afd6c47f7ff"
+      }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.2",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 642824746,
+        "name": "VITA-REPATCH.json",
+        "bytes": 82542,
+        "sha256": "8df01c772663d2b0e46a6e4ff451d5b7506914fb6433747ee22c1dfe79d38fa7"
+      },
+      "archive": {
+        "id": 642824758,
+        "name": "SRW-Z3-v0.9.2-Vita-rePatch-patches.zip",
+        "bytes": 16284916,
+        "sha256": "351909f8326f1b6745711c97c2e4204c71a4758b8fc40aa2000130c7f0902610"
+      }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.3",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 659760669,
+        "name": "VITA-PKG.json",
+        "bytes": 135578,
+        "sha256": "9f8af79c77efe693949a594065077fc85ef9c24d9c830760ee65dc5bf0afcfe1"
+      },
+      "archive": {
+        "id": 659760731,
+        "name": "SRW-Z3-v0.9.3-Vita-PKG-patches.zip",
+        "bytes": 18206801,
+        "sha256": "477b7bbc2927a4a7c6a834fef683d7bf3f60c33d7d490c1276e53bd613151372"
+      }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.3",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 659760668,
+        "name": "VITA-REPATCH.json",
+        "bytes": 82542,
+        "sha256": "7345b099560f21befd108c85b67a564a579db8528b5468fe13a6dbeedfc11855"
+      },
+      "archive": {
+        "id": 659760671,
+        "name": "SRW-Z3-v0.9.3-Vita-rePatch-patches.zip",
+        "bytes": 16284928,
+        "sha256": "3edeeaa675641edfa0e364662991c81ce608ed027466f495efbfd8d68b91471b"
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import base64
+import hashlib
 from contextlib import contextmanager
 import json
 import os
@@ -13,7 +14,7 @@ import zipfile
 import zlib
 
 from retro_trans import vita_pkg as p, vita_repatch as v
-from retro_trans.core import Cancelled, PatchError, Asset
+from retro_trans.core import Cancelled, GitHubClient, GitHubRateLimit, PatchError, Asset
 
 
 class PkgTests(unittest.TestCase):
@@ -82,6 +83,40 @@ class PkgTests(unittest.TestCase):
         with zipfile.ZipFile(archive, 'w') as z:
             z.writestr(name, b'tool')
         return archive
+
+    def test_cached_runtime_avoids_api_and_stale_verified_copy_survives_rate_limit(self):
+        payload = b'Verified synthetic runtime archive'
+        digest = hashlib.sha256(payload).hexdigest()
+        client = Mock()
+        client.json.return_value = dict(tag_name='continuous', draft=False, assets=[dict(
+            name='windows-latest.zip', browser_download_url=p.URL, size=len(payload), digest='sha256:'+digest)])
+        with patch.object(p, 'sys', SimpleNamespace(platform='win32')), \
+                patch.object(p.time, 'time', return_value=1000) as now:
+            asset = p.runtime_asset(client, None, self.root)
+            cached = self.root/(digest+'.download'); cached.write_bytes(payload)
+            self.assertEqual(p.runtime_asset(client, None, self.root), asset)
+            client.json.assert_called_once()
+            now.return_value = 1000 + 86401
+            client.json.side_effect = GitHubRateLimit()
+            self.assertEqual(p.runtime_asset(client, None, self.root), asset)
+            self.assertEqual(client.json.call_count, 2)
+            cached.write_bytes(b'X'*len(payload))
+            with self.assertRaises(GitHubRateLimit):p.runtime_asset(client, None, self.root)
+            cached.write_bytes(payload)
+            cancel=threading.Event();cancel.set()
+            calls=client.json.call_count
+            with self.assertRaises(Cancelled):p.runtime_asset(client, cancel, self.root)
+            self.assertEqual(client.json.call_count,calls)
+
+    def test_general_client_uses_scoped_signin_for_runtime_lookup(self):
+        client=Mock()
+        client.json.return_value=dict(tag_name='continuous',draft=False,assets=[dict(
+            name='windows-latest.zip',browser_download_url=p.URL,size=100,digest='sha256:'+'a'*64)])
+        with patch.object(p, 'sys', SimpleNamespace(platform='win32')), \
+                patch('retro_trans.vita_downloads.VitaReleaseClient',return_value=client) as signed_in:
+            self.assertEqual(p.runtime_asset(GitHubClient(), None, self.root).sha256,'a'*64)
+        signed_in.assert_called_once_with(cache=self.root)
+        client.json.assert_called_once_with(p.API,None)
 
     def test_runtime_path_guards(self):
         for name in ('../Vita3K.exe', '/Vita3K.exe', 'C:/Vita3K.exe',

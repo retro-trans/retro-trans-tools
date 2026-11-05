@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "retro_trans_version": "0.5.20",
+  "source_recognized": "original",
+  "target_recognized": "0.8.0",
+  "route": "original \u2192 0.8.0",
+  "patch_operations": 1,
+  "catalog_sha256": "9f0661b1d58b1c4bd362d77ee294531abef7a70cdf8d787f3ef74aa522393139",
+  "patch_sha256": "4676e3558584621dd4d55227d7a7e245945cea757f1f0e686bc5853fbd082443",
+  "patch_bytes": 366335745,
+  "downloaded_from_published_release": true,
+  "cache_initially_empty": true,
+  "target_bytes": 2627004416,
+  "target_hashes": {
+    "sha256": "8fa9f17a838b4c22c591467ad343b7130d159efcd00b5cbb413c43175b8e2f7f",
+    "sha1": "2e74d9e7711abca1806aa5bb6d2400eea255550b"
+  },
+  "already_current_route_operations": 0,
+  "elapsed_seconds": 109.656,
+  "game_playthrough": false,
+  "chd_tested": false
+}

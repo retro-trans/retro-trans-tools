@@ -4,6 +4,7 @@
 
 - Register the Japanese PS2 disc SLPS-25070 and the verified original-to-v0.8.0 patch route. Preserve every earlier catalog release, withdrawn route and binary identity.
 - Import the corrected standard release manifest, validation and canonical checksums while retaining the existing published xdelta and source/output hashes. This is a catalog update; existing clients can use Refresh catalog without an app update.
+- Hosted refresh, 46 focused checks and the full real-ISO Automatic backend path pass. Empty-cache download/application produces the exact verified target and recognizes it as already-current; earlier catalog records remain equal. See docs/catalog-imports/sunrise-eiyuutan-2-v0.8.0.md/json.
 
 ## Unreleased — Fewer GitHub requests during Vita conversion
 

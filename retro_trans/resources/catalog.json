@@ -251,6 +251,63 @@
       }
     },
     {
+      "repo": "retro-trans/ACE",
+      "tag": "v0.9.0",
+      "manifest": {
+        "game_id": "ace",
+        "game_name": "Another Century's Episode",
+        "platform": "PS2",
+        "version": "0.9.0",
+        "source_commit": "8d8a117cb775923e41fcf395e30e061da9b4f55b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "ACE-English-0.9.0.xdelta",
+            "edition": "English",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "7ea891fddbbc3f560330e7c8ecc74e36d2f1137cd1907abf0af3158171b3e3e9",
+            "source_bytes": 3357147136,
+            "target_sha256": "4c2efa4f7c326e873b0c6fe63816bafe8b682390db9db396e46c1a71ec7bfc85",
+            "target_bytes": 3357147136,
+            "patch_sha256": "7de28ff9dd6db05f48c03b7aa1f4a16c6159132d9314fc58b0b94dc8aeda7bf1",
+            "patch_bytes": 320589388,
+            "source_sha1": "ad45ab6db4d1a391a5c391ce14bc40f2e2cdf524",
+            "target_sha1": "a4e98bec06c493388ad8312cb7762b9914c30f76"
+          },
+          {
+            "patch": "ACE-English-0.1.38-to-0.9.0.xdelta",
+            "edition": "English",
+            "language": "en",
+            "source_version": "0.1.38",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "43657b815725eb6007ef8e4fa3254dba385ff6eeaddaaad41b0dc68c68a46fa0",
+            "source_bytes": 3357147136,
+            "target_sha256": "4c2efa4f7c326e873b0c6fe63816bafe8b682390db9db396e46c1a71ec7bfc85",
+            "target_bytes": 3357147136,
+            "patch_sha256": "e7f6a2622d8e3359bd37fff6fc3106a78f62e0c14238e7e3a059b39b3b565677",
+            "patch_bytes": 2751262,
+            "source_sha1": "0b382b5ab2f844a2513188245842e68269aae7cd",
+            "target_sha1": "a4e98bec06c493388ad8312cb7762b9914c30f76"
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "project",
+            "id": "ace"
+          }
+        ]
+      },
+      "assets": {
+        "ACE-English-0.9.0.xdelta": "https://github.com/retro-trans/ACE/releases/download/v0.9.0/ACE-English-0.9.0.xdelta",
+        "ACE-English-0.1.38-to-0.9.0.xdelta": "https://github.com/retro-trans/ACE/releases/download/v0.9.0/ACE-English-0.1.38-to-0.9.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/ACE-3",
       "tag": "v0.1.42",
       "manifest": {

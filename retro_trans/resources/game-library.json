@@ -245,6 +245,18 @@
       ]
     },
     {
+      "game_id": "sunrise-eiyuutan-2",
+      "name": "Sunrise Eiyuutan 2",
+      "repo": "retro-trans/Sunrise-Eiyuutan-2",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPS-25070"
+        }
+      ]
+    },
+    {
       "game_id": "sunrise-eiyuutan-r",
       "name": "Sunrise Eiyuutan R",
       "repo": "retro-trans/Sunrise-Eiyuutan-R",

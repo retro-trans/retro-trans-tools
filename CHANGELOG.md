@@ -1,5 +1,10 @@
 # Changelog
 
+## Catalog — Sunrise Eiyuutan 2 v0.8.0 — 2026-11-05
+
+- Register the Japanese PS2 disc SLPS-25070 and the verified original-to-v0.8.0 patch route. Preserve every earlier catalog release, withdrawn route and binary identity.
+- Import the corrected standard release manifest, validation and canonical checksums while retaining the existing published xdelta and source/output hashes. This is a catalog update; existing clients can use Refresh catalog without an app update.
+
 ## Unreleased — Fewer GitHub requests during Vita conversion
 
 - Add a cross-platform game library and require registered package/product IDs for every new console or PC release. Import existing project IDs without rewriting historical manifests; new builds and catalog imports validate registration.

@@ -944,6 +944,59 @@
       }
     },
     {
+      "repo": "retro-trans/Heroes-Phantasia",
+      "tag": "v0.1.62",
+      "manifest": {
+        "game_id": "heroes-phantasia",
+        "game_name": "Heroes Phantasia",
+        "platform": "PSP",
+        "version": "0.1.62",
+        "source_commit": "5f8ddc87e2457a07057ee828b21aaac264823472",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Heroes-Phantasia-English-0.1.62.xdelta",
+            "edition": "English",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "2c3583f377cdaa9132d349a0039d7f6ffe21cac093476c7746705e8af2b03b40",
+            "source_bytes": 1415020544,
+            "target_sha256": "b5f8fc65732f4e419d3e1413f8638139ecfccb46eeba665e97d32a9ebc034f42",
+            "target_bytes": 2869413888,
+            "patch_sha256": "5e0685cfd3e86af4e4fd0906b2a752d8cc040ed410f085c0ec1c2b106a974d02",
+            "patch_bytes": 405660627
+          },
+          {
+            "patch": "Heroes-Phantasia-English-0.1.61-to-0.1.62.xdelta",
+            "edition": "English",
+            "language": "en",
+            "source_version": "0.1.61",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "154eba01e36a83d9dac00ae8f5d93d8473e7c5310a398b7942a83c68f2fc5674",
+            "source_bytes": 2868887552,
+            "target_sha256": "b5f8fc65732f4e419d3e1413f8638139ecfccb46eeba665e97d32a9ebc034f42",
+            "target_bytes": 2869413888,
+            "patch_sha256": "c97b2696f1b4c03b30edf4c17670cd586588704eac924d13bf8b9f2607812229",
+            "patch_bytes": 123742
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "project",
+            "id": "heroes-phantasia"
+          }
+        ]
+      },
+      "assets": {
+        "Heroes-Phantasia-English-0.1.62.xdelta": "https://github.com/retro-trans/Heroes-Phantasia/releases/download/v0.1.62/Heroes-Phantasia-English-0.1.62.xdelta",
+        "Heroes-Phantasia-English-0.1.61-to-0.1.62.xdelta": "https://github.com/retro-trans/Heroes-Phantasia/releases/download/v0.1.62/Heroes-Phantasia-English-0.1.61-to-0.1.62.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Lost-Heroes",
       "tag": "v0.1.12",
       "manifest": {

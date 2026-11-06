@@ -281,6 +281,18 @@
       ]
     },
     {
+      "game_id": "tengai-makyou-ii",
+      "name": "Tengai Makyou II: Manji Maru",
+      "repo": "retro-trans/Tengai-Makyou-II",
+      "package_ids": [
+        {
+          "platform": "GameCube",
+          "kind": "disc-id",
+          "id": "GT2J18"
+        }
+      ]
+    },
+    {
       "game_id": "vampir-kyuuketsuki-densetsu",
       "name": "Vampir: Kyuuketsuki Densetsu",
       "repo": "retro-trans/Vampir",

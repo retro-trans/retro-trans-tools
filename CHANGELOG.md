@@ -1,5 +1,9 @@
 # Changelog
 
+## Game registry — Tengai Makyou II — 2026-11-06
+
+- Register GameCube Japanese disc GT2J18 for retro-trans/Tengai-Makyou-II before public v0.8.0 publication. Preserve every existing game, package ID and Vita route. This is discovery metadata only; no application or game binary changes.
+
 ## Catalog — Sunrise Eiyuutan 2 v0.8.0 — 2026-11-05
 
 - Register the Japanese PS2 disc SLPS-25070 and the verified original-to-v0.8.0 patch route. Preserve every earlier catalog release, withdrawn route and binary identity.

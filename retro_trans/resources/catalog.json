@@ -6652,6 +6652,44 @@
         "Wizardry-Perfect-Pack-Prisoners-English-v0.1.14-to-v0.1.27.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.27/Wizardry-Perfect-Pack-Prisoners-English-v0.1.14-to-v0.1.27.xdelta",
         "Wizardry-Perfect-Pack-Prisoners-English-v0.1.11-to-v0.1.27.xdelta": "https://github.com/retro-trans/Wizardry-Perfect-Pack/releases/download/v0.1.27/Wizardry-Perfect-Pack-Prisoners-English-v0.1.11-to-v0.1.27.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/cross-hermit",
+      "tag": "v0.8.0",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "cross-hermit",
+        "game_name": "Cross Hermit: Guardian of the Far Reaches",
+        "platform": "Windows PC",
+        "version": "0.8.0",
+        "source_commit": "67178a4ab7df66cefd21173d55f2710c63888e03",
+        "package_ids": [
+          {
+            "platform": "Windows PC",
+            "kind": "project",
+            "id": "cross-hermit"
+          }
+        ],
+        "patches": [
+          {
+            "patch": "Cross-Hermit-English-0.8.0.xdelta",
+            "edition": "Japanese PC CD-ROM",
+            "language": "English",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "34a7a1da0e9bb9da44a7397d6873d91d72bced5229ca0cb46d1555f0f95a93f9",
+            "source_bytes": 659390464,
+            "target_sha256": "87ad84b9a0fb92657f19d5db2a91e361d8e7f7a2b57a6e31852fa7e3a25d54e2",
+            "target_bytes": 770318336,
+            "patch_sha256": "7fb38188c1f17a4ffdeea783083c9764b0c9128bc1c77bb1c125c987301e6c80",
+            "patch_bytes": 109768153
+          }
+        ]
+      },
+      "assets": {
+        "Cross-Hermit-English-0.8.0.xdelta": "https://github.com/retro-trans/cross-hermit/releases/download/v0.8.0/Cross-Hermit-English-0.8.0.xdelta"
+      }
     }
   ],
   "dcp_releases": [

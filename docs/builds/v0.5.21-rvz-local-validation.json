@@ -1,0 +1,102 @@
+{
+  "app_version": "0.5.21",
+  "kind": "local Windows RVZ test build",
+  "published": false,
+  "base_commit": "63d7cc0efb706b6e03ee9f3d62500c87ebb70781",
+  "source_files_sha256": {
+    "launch.py": "eabbcb2c203abcee71f052054e96b5f9a8a886ba5daf1d2065f076ece5858bb3",
+    "retro_trans/rvz.py": "a6ec265231a4860b6aed3b78c35e9242aa55703438fd57e200904b89bf6bfde0",
+    "retro_trans/chd.py": "9136f9e7cea755ad57db2276241756e345b9c81af8da2408a2e63bb54b551267",
+    "retro_trans/catalog.py": "63bef1071bd9270e0e645b2ffc6cf61cda557f3fcd5d006e8b1dad3550072d34",
+    "retro_trans/core.py": "93fab7beffe469adf3e528ddda995eafd21adeee8ed4ce5aa9ac96b1faac303a",
+    "retro_trans/gui.py": "057987a6c7cb7d66eaeaace49a241892604646d43cfb912bc3425d491499231c",
+    "retro_trans/solutions.py": "0b2dd30e4d190532e25926340599bcb8e10ba41c95dced280892246072a3c183",
+    "retro_trans/__init__.py": "2230c4fb9497514c224b9799ce288893f69cb1e597a8dd82c18fefed6c4987c7",
+    "retro_trans/resources/dolphin-tool-windows.zip": "9c75363877cc6202685d497c781c924661168b8f51fb2f641b8f5c901f76a08d",
+    "scripts/bundle_rvz.py": "ac6acecc4c32a467c52c79afebbac7824f6604730ab1f37f56f4ad4669bb33a8",
+    "scripts/check_rvz_release.py": "69b7b9117c77f0caf55793db4b2663581941e52b8c9b0adc6e1606fbbaceed8b",
+    "scripts/build.ps1": "d4644581d73932918ebdfadaaffb4575befee9f61f3f5df64e807d9ad73e31ce",
+    "tests/test_rvz.py": "d51a836d267fa6354bde4521b497b0b4bd5b41eb950b59028b14231b848625f0",
+    "tests/test_gui.py": "2f09f1820a102df282b06d949dc61eb6bfe99ca9adae6fdc27fb770407da2319"
+  },
+  "tests": {
+    "run": 341,
+    "passed": 337,
+    "platform_skips": 4,
+    "python": "3.12.16",
+    "pyinstaller": "6.22.3"
+  },
+  "packaged_health": {
+    "ok": true,
+    "version": "0.5.21",
+    "tk": "8.6.15",
+    "title": "Retro Trans 0.5.21",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 253,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "rvz_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true,
+    "automatic_dcp": true,
+    "automatic_dcp_profiles": 4,
+    "game_library_games": 25,
+    "vita_library_routes": 8
+  },
+  "real_rvz": {
+    "app_version": "0.5.21",
+    "game_id": "tengai-makyou-ii",
+    "target_version": "0.8.0",
+    "executable_sha256": "f01e62baed241b2ffea5110bf0727d4ff1a1e11d24c55a8173d1640b8935279c",
+    "source_rvz_sha256": "4b3fabd94be99acf9edc85a1740de3ee2076956c8844faf8b7659e3b765fb4f6",
+    "source_iso_bytes": 1459978240,
+    "target_iso_sha256": "39a881525956fbf977b25c691c7e94cef57573bb1f927d5628c37295f898891e",
+    "target_iso_bytes": 1459978240,
+    "target_rvz_sha256": "8c210e84cf6416a7abba6efd8ee2963a6620c429802195fb66573167bdb2cc74",
+    "target_rvz_bytes": 1248111100,
+    "packaged_automatic_real_rvz_input": true,
+    "live_patch_download": true,
+    "isolated_empty_app_cache": true,
+    "rvz_output_independent_full_roundtrip": true,
+    "recognized_as_current": true,
+    "source_preserved": true,
+    "existing_output_refused": true,
+    "temporary_discs_removed": true,
+    "game_emulator_launched": false,
+    "game_audio_used": false,
+    "hardware_tested": false,
+    "seconds": 278.73
+  },
+  "executable": {
+    "bytes": 70400763,
+    "sha256": "f01e62baed241b2ffea5110bf0727d4ff1a1e11d24c55a8173d1640b8935279c"
+  },
+  "portable_zip": {
+    "bytes": 80241640,
+    "sha256": "91ef7bea6f28c13e99c04373542c0aa4726d2582a128a8efa5767f4014b5b9ee"
+  },
+  "iso_catalog_and_library_unchanged": true,
+  "game_release_assets_unchanged": true,
+  "no_emulator_gameplay_or_audio": true,
+  "hardware_tested": false
+}

@@ -385,10 +385,11 @@ def parse_manifest(data, assets):
 
 def identify_source(source, release, cancel=None, progress=None):
     from .chd import is_chd, prepared_source
+    from .rvz import is_rvz
     source = Path(source)
     if not source.is_file():
         raise PatchError("Select an existing binary or disc image.")
-    if is_chd(source):
+    if is_chd(source) or is_rvz(source):
         with prepared_source(source, cancel=cancel, progress=progress) as (binary, disc):
             return identify_source(binary, release, cancel, progress)
     if source.suffix.lower() in (".zip", ".7z", ".gz", ".cue"):
@@ -490,6 +491,7 @@ def publish_output(temporary, output):
 
 def patch_binary(source, output, release, client=None, cache=None, cancel=None, progress=None):
     from .chd import is_chd, prepared_source
+    from .rvz import is_rvz
     source, output = Path(source).resolve(), Path(output).absolute()
     if source == output.resolve():
         raise PatchError("Choose a different output file to keep your original safe.")
@@ -497,7 +499,7 @@ def patch_binary(source, output, release, client=None, cache=None, cancel=None, 
         raise PatchError("The output file already exists. Choose a new filename.")
     if not output.parent.is_dir():
         raise PatchError("Choose an existing output folder.")
-    if is_chd(source):
+    if is_chd(source) or is_rvz(source):
         with prepared_source(source, output.parent, cancel, progress) as (binary, disc):
             return patch_binary(binary, output, release, client, cache, cancel, progress)
     client = client or GitHubClient()
@@ -577,23 +579,25 @@ def output_path(path, inputs=()):
 
 
 def manual_patch(source, second, output, create=False, cancel=None, progress=None, cache=None,
-                 unpack_chd=True, chd_output=False):
+                 unpack_chd=True, chd_output=False, rvz_output=False):
     from .chd import prepared_source, companion_cue
     source, second = Path(source).resolve(), Path(second).resolve()
     if not source.is_file() or not second.is_file():
         raise PatchError('Select both input files first.')
     output = output_path(output, (source, second))
+    if chd_output and rvz_output:
+        raise PatchError('Choose one output format.')
     if create or not unpack_chd:
-        if chd_output:
-            raise PatchError('CHD output requires patching disc bytes. Enable Unpack CHD input.')
+        if chd_output or rvz_output:
+            raise PatchError('Compressed output requires patching disc bytes. Enable Unpack CHD/RVZ input.')
         return _manual_patch_binary(source, second, output, create, cancel, progress, cache)
     with prepared_source(source, output.parent, cancel, progress) as (binary, disc):
-        if not chd_output:
+        if not chd_output and not rvz_output:
             companion_cue(output, disc)
-        return _manual_patch_binary(binary, second, output, create, cancel, progress, cache, chd_output, disc)
+        return _manual_patch_binary(binary, second, output, create, cancel, progress, cache, chd_output, disc, rvz_output)
 
 
-def _manual_patch_binary(source, second, output, create, cancel, progress, cache, chd_output=False, disc=None):
+def _manual_patch_binary(source, second, output, create, cancel, progress, cache, chd_output=False, disc=None, rvz_output=False):
     from .chd import output_disc, compress_verified, publish_disc
     source, second = Path(source).resolve(), Path(second).resolve()
     if not source.is_file() or not second.is_file():
@@ -616,7 +620,12 @@ def _manual_patch_binary(source, second, output, create, cancel, progress, cache
                 packed = Path(stage) / 'verified.chd'
                 compress_verified(temporary, packed, layout, cancel, progress)
                 temporary = packed
-            if chd_output:
+            if rvz_output:
+                from .rvz import compress_verified as compress_rvz
+                packed = Path(stage) / 'verified.rvz'
+                compress_rvz(temporary, packed, cancel, progress)
+                temporary = packed
+            if chd_output or rvz_output:
                 publish_output(temporary, output)
             else:
                 publish_disc(temporary, output, disc)

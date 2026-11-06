@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from retro_trans.gui import Application
 from retro_trans.catalog import Catalog
-from retro_trans import z3_saves, __version__, chd
+from retro_trans import z3_saves, __version__, chd, rvz
 from retro_trans import diagnostics
 from retro_trans.ps3 import INSTALLATION_WARNING
 from test_catalog import record, DATA
@@ -24,6 +24,83 @@ from test_vita_downloads import pkg_bytes
 
 @unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native desktop UI')
 class GuiTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    def test_rvz_consent_retained_iso_default_and_output_worker(self):
+        import hashlib
+        root=Path(self.storage.name);app=self.app
+        source=root/'original.rvz';source.write_bytes(b'RVZ\x01')
+        raw=bytearray(1024);raw[:6]=b'GTEST0';raw[0x1c:0x20]=bytes.fromhex('c2339f3d')
+        item=record();item['manifest']['platform']='GameCube'
+        p=item['manifest']['patches'][0]
+        p.update(source_format='iso',target_format='iso',source_bytes=len(raw),source_sha256=hashlib.sha256(raw).hexdigest())
+        app.catalog=make_catalog(item);app.found=[(source,rvz.RvzSource())]
+        app.file_box.configure(values=['original.rvz']);app.file_box.current(0)
+        def unpack(source,destination,*args):
+            destination.mkdir();binary=destination/'original.iso';binary.write_bytes(raw);return binary
+        with patch('retro_trans.gui.rvz.inspect_rvz',return_value=rvz.Disc(len(raw))), \
+                patch('retro_trans.gui.messagebox.askyesno',return_value=False) as ask, \
+                patch('retro_trans.gui.rvz.unpack_to_folder') as extract:
+            app.select_found();ask.assert_called_once();extract.assert_not_called()
+        with patch('retro_trans.gui.rvz.inspect_rvz',return_value=rvz.Disc(len(raw))), \
+                patch('retro_trans.gui.messagebox.askyesno',return_value=True) as ask, \
+                patch('retro_trans.gui.rvz.unpack_to_folder',side_effect=unpack) as extract:
+            app.file_box.current(0)  # User explicitly reselects the candidate after declining.
+            app.select_found();self.finish_worker()
+            ask.assert_called_once();extract.assert_called_once()
+        binary=root/'original-unpacked/original.iso'
+        self.assertEqual(app.selection[0],binary)
+        self.assertEqual(app.output_format.get(),'RVZ')
+        self.assertEqual(Path(app.output.get()).suffix,'.rvz')
+        self.assertIn('RVZ',app.output_format_box.cget('values'))
+        with patch.object(app,'start') as start,patch('retro_trans.gui.apply_plan') as apply, \
+                patch('retro_trans.gui.rvz.unpack_to_folder') as extract:
+            app.apply();start.call_args.args[0](None,None)
+            self.assertTrue(apply.call_args.kwargs['rvz_output'])
+            self.assertEqual(apply.call_args.args[0],binary)
+            extract.assert_not_called()
+        app.output_format.set('Original format');app.change_output_format()
+        self.assertEqual(Path(app.output.get()).suffix,'.iso')
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    def test_manual_rvz_consent_output_selection_and_raw_override(self):
+        app=self.app;root=Path(self.storage.name)
+        source=root/'disc.rvz';source.write_bytes(b'RVZ\x01')
+        app.notebook.select(1)
+        with patch('retro_trans.gui.filedialog.askopenfilename',return_value=str(source)), \
+                patch('retro_trans.gui.rvz.inspect_rvz',return_value=rvz.Disc(1024)), \
+                patch('retro_trans.gui.messagebox.askyesno',return_value=False), \
+                patch('retro_trans.gui.rvz.unpack_to_folder') as extract:
+            app.pick_path(app.apply_source);extract.assert_not_called()
+        self.assertEqual(app.manual_format.get(),'RVZ')
+        app.apply_delta.set('patch.xdelta');app.apply_output.set(str(root/'patched.rvz'))
+        with patch.object(app,'prepare_rvz') as prepare,patch.object(app,'start') as start:
+            app.apply();prepare.assert_called_once_with(str(source),manual=True);start.assert_not_called()
+        app.unpack_chd.set(False);app.manual_chd_mode()
+        self.assertEqual(app.manual_format.get(),'Original format')
+        with patch.object(app,'start') as start,patch('retro_trans.gui.manual_patch',return_value='hash') as apply:
+            app.apply();start.call_args.args[0](None,None)
+            self.assertFalse(apply.call_args.kwargs['unpack_chd'])
+            self.assertFalse(apply.call_args.kwargs['rvz_output'])
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    def test_manual_tab_offers_rvz_for_iso_selected_in_automatic(self):
+        app=self.app;source=Path(self.storage.name)/'game.iso'
+        raw=bytearray(1024);raw[0x1c:0x20]=bytes.fromhex('c2339f3d');source.write_bytes(raw)
+        app.apply_source.set(str(source));app.notebook.select(1);app.update()
+        self.assertIn('RVZ',app.manual_format_box.cget('values'))
+        app.manual_format.set('RVZ');app.apply_output.set(str(source.with_name('patched.iso')))
+        app.change_output_format(manual=True)
+        self.assertEqual(Path(app.apply_output.get()).suffix,'.rvz')
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    def test_rvz_multiple_scan_candidates_do_not_extract_or_prompt(self):
+        app=self.app;root=Path(self.storage.name)
+        source=root/'disc.rvz';source.write_bytes(b'RVZ\x01')
+        app.events.put(('done',app.job_id,('scan',[(source,rvz.RvzSource()),(root/'other.rvz',rvz.RvzSource())])))
+        with patch('retro_trans.gui.messagebox.askyesno') as ask,patch('retro_trans.gui.rvz.unpack_to_folder') as extract:
+            app.poll();ask.assert_not_called();extract.assert_not_called()
+        self.assertIsNone(app.selection)
+
     def setUp(self):
         self.storage = tempfile.TemporaryDirectory()
         self.environment = patch.dict(os.environ, {'LOCALAPPDATA': self.storage.name,

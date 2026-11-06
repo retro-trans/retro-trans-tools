@@ -1,5 +1,8 @@
 # Retro Trans
 
+**Local 0.5.21 test build:** adds GameCube/Wii **RVZ input and output** on Windows.
+This build has not been published as an application release. See [RVZ instructions](docs/RVZ.md).
+
 Release authors: every new console/PC game release must register its package or
 product IDs in the [central game library](docs/GAME_LIBRARY.md). The local next
 build uses this library for direct Vita discovery; these changes are not yet

@@ -203,6 +203,7 @@ def solution_versions(catalog, source):
 def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=None, *, defer_chd=False):
     from .catalog import _recognize_binary, version_key
     from .chd import ChdError, ChdSource, is_chd
+    from .rvz import RvzSource, RvzError, is_rvz
     root = Path(root).resolve()
     if not root.is_dir():
         raise PatchError("Choose a folder containing the original files.")
@@ -214,9 +215,9 @@ def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=
         try:
             nodes = known[path] if known is not None and path in known else _recognize_binary(
                 path, catalog, cancel, progress, defer_chd=defer_chd)
-            compressed = bool(nodes) and is_chd(path)
+            compressed = bool(nodes) and (is_chd(path) or is_rvz(path))
             for node in nodes:
-                if isinstance(node, ChdSource):
+                if isinstance(node, (ChdSource, RvzSource)):
                     singles.append((path, node))
                     continue
                 if node.id[:3] in catalog.grouped_families:
@@ -226,7 +227,7 @@ def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=
                     singles.append((path, node))
         except OSError:
             continue
-        except ChdError as exc:
+        except (ChdError, RvzError) as exc:
             report(progress, 'Skipped ' + path.name + ': ' + str(exc), None)
     groups, seen = [], set()
     for solution in sorted(catalog.solutions.values(), key=lambda s: version_key(s.version), reverse=True):
@@ -256,12 +257,13 @@ def scan_folder(root, catalog, cancel=None, progress=None, selected=None, known=
 def recognize_selection(path, catalog, cancel=None, progress=None, *, defer_chd=False):
     from .catalog import _recognize_binary
     from .chd import ChdSource
+    from .rvz import RvzSource
     path = Path(path).resolve()
     if path.is_dir():
         # File results need their own paths; folder selection is for groups only.
         return [n for _, n in scan_folder(path, catalog, cancel, progress, defer_chd=defer_chd) if isinstance(n, SolutionSource)]
     nodes = _recognize_binary(path, catalog, cancel, progress, defer_chd=defer_chd)
-    if any(isinstance(n, ChdSource) for n in nodes):
+    if any(isinstance(n, (ChdSource, RvzSource)) for n in nodes):
         return nodes
     if any(n.id[:3] in catalog.grouped_families for n in nodes):
         return [n for _, n in scan_folder(path.parent, catalog, cancel, progress, path, {path: nodes}, defer_chd=defer_chd)]

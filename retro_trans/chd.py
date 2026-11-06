@@ -228,6 +228,15 @@ def unpacked_layout(source):
 @contextmanager
 def prepared_source(source, folder=None, cancel=None, progress=None):
     source = Path(source)
+    from . import rvz
+    if rvz.is_rvz(source):
+        disc = rvz.inspect_rvz(source)
+        folder = Path(folder) if folder else cache_directory() / 'rvz'
+        folder.mkdir(parents=True, exist_ok=True)
+        rvz.require_space(folder, disc.size)
+        with tempfile.TemporaryDirectory(prefix='.retro-rvz-', dir=str(folder)) as temporary:
+            yield rvz.extract(source, Path(temporary), disc, cancel, progress), None
+        return
     if not is_chd(source):
         yield source, unpacked_layout(source)
         return

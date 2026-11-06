@@ -6,7 +6,7 @@ from retro_trans.core import engine_context
 from retro_trans.gui import Application, main
 from retro_trans.updater import helper_main, maybe_install_pending
 from retro_trans.z3_saves import GUIDE
-from retro_trans import chd
+from retro_trans import chd, rvz
 from retro_trans import mx_converter, mx_crypto
 
 
@@ -54,10 +54,16 @@ def diagnose(path):
             source = Path(cache) / 'health.iso'
             source.write_bytes(bytes(range(256)) * 64)
             chd.compress_verified(source, Path(cache) / 'health.chd', chd.Disc('dvd', source.stat().st_size))
+            if sys.platform == 'win32':
+                data = bytearray(1024*1024)
+                data[:6] = b'GTEST0'
+                data[0x1c:0x20] = bytes.fromhex('c2339f3d')
+                source.write_bytes(data)
+                rvz.compress_verified(source, Path(cache)/'health.rvz')
         report.update(ok=True, tk=app.tk.call("info", "patchlevel"), title=app.title(),
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
-            chd_round_trip=True, mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
+            chd_round_trip=True, rvz_round_trip=sys.platform == 'win32', mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
             mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
             whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True,
@@ -84,6 +90,34 @@ if __name__ == "__main__":
         previous_excepthook(exc_type, exc, tb)
     sys.excepthook = log_uncaught
     args = sys.argv[1:]
+    if args and args[0] == '--automatic-binary':
+        import argparse
+        from pathlib import Path
+        from retro_trans.catalog import recognize, apply_plan
+        from retro_trans.chd import prepared_source
+        from retro_trans.core import output_path, PatchError
+        parser=argparse.ArgumentParser(description='Apply a catalog binary patch to an ISO, RVZ or supported CHD.')
+        parser.add_argument('source');parser.add_argument('--output',required=True)
+        parser.add_argument('--format',choices=('original','rvz','chd'),default='original')
+        parser.add_argument('--target',default='Latest')
+        options=parser.parse_args(args[1:])
+        try:
+            output=output_path(options.output,(options.source,))
+            progress=lambda message,fraction:diagnostics.progress(message)
+            with diagnostics.operation('automatic_binary'):
+                catalog=load_catalog()
+                # One conversion for identification and patching; CLI arguments
+                # explicitly authorize this temporary extraction.
+                with prepared_source(options.source,output.parent,progress=progress) as (binary,disc):
+                    sources=recognize(binary,catalog)
+                    if len(sources)!=1:
+                        raise PatchError('Select one exact catalog-recognized original or translated disc.')
+                    plan=catalog.plan(sources[0],options.target)
+                    apply_plan(binary,output,plan,catalog,progress=progress,
+                               rvz_output=options.format=='rvz',chd_output=options.format=='chd')
+        except Exception as exc:
+            diagnostics.exception(exc);sys.exit(1)
+        sys.exit(0)
     if args and args[0] == '--automatic':
         import argparse
         from retro_trans.catalog import recognize

@@ -15,6 +15,10 @@ if (-not (Test-Path -LiteralPath 'retro_trans/resources/native/dcp/win-x64/engin
     & $BuildPython scripts/bundle_dcp.py --write
     if ($LASTEXITCODE -ne 0) { throw "Could not bundle the pinned DCP engine." }
 }
+if (-not (Test-Path -LiteralPath 'retro_trans/resources/dolphin-tool-windows.zip')) {
+    & $BuildPython scripts/bundle_rvz.py --write
+    if ($LASTEXITCODE -ne 0) { throw "Could not bundle the pinned RVZ converter." }
+}
 & $BuildPython -m unittest discover -s tests -v
 if ($LASTEXITCODE -ne 0) { throw "Tests failed; executable was not built." }
 $TlsRuntimeData = & $BuildPython -c "from pathlib import Path; import ssl; p=Path(ssl.__file__).with_name('codex-rejected-cas.pem'); print(p if p.is_file() else '')"
@@ -43,14 +47,18 @@ if (Test-Path -LiteralPath $TkLicense) {
     Copy-Item -LiteralPath $TkLicense -Destination (Join-Path $LicensesDirectory 'TclTk-LICENSE.txt')
 }
 Copy-Item -LiteralPath README.md,THIRD_PARTY_NOTICES.md -Destination $OutputDirectory
+New-Item -ItemType Directory -Force (Join-Path $OutputDirectory 'docs') | Out-Null
+Copy-Item -LiteralPath 'docs/RVZ.md' -Destination (Join-Path $OutputDirectory 'docs/RVZ.md')
 Copy-Item -LiteralPath 'retro_trans\resources\XDELTA-LICENSE.txt' -Destination $LicensesDirectory
 & $BuildPython -m retro_trans.dependency_notices $LicensesDirectory
 if ($LASTEXITCODE -ne 0) { throw "Could not package cryptography dependency notices." }
 & $BuildPython -c "from retro_trans.chd import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'chdman')
 if ($LASTEXITCODE -ne 0) { throw "Could not package CHD engine notices." }
+& $BuildPython -c "from retro_trans.rvz import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'dolphin-tool')
+if ($LASTEXITCODE -ne 0) { throw "Could not package RVZ converter notices." }
 & $BuildPython scripts\make_update_metadata.py $OutputDirectory
 if ($LASTEXITCODE -ne 0) { throw "Could not generate update metadata." }
-$PackageFiles = @('Retro-Trans.exe', 'README.md', 'THIRD_PARTY_NOTICES.md', 'licenses') | ForEach-Object { Join-Path $OutputDirectory $_ }
+$PackageFiles = @('Retro-Trans.exe', 'README.md', 'THIRD_PARTY_NOTICES.md', 'licenses', 'docs') | ForEach-Object { Join-Path $OutputDirectory $_ }
 $PackagePath = Join-Path $OutputDirectory 'Retro-Trans-Windows.zip'
 Compress-Archive -LiteralPath $PackageFiles -DestinationPath $PackagePath -Force
 Write-Output "Ready: $(Join-Path $OutputDirectory 'Retro-Trans.exe')"

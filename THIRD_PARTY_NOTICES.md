@@ -1,5 +1,21 @@
 # Third-party components
 
+## DolphinTool RVZ conversion (Windows)
+
+RVZ-enabled Windows builds include the unmodified official DolphinTool 2609a,
+copyright Dolphin Emulator Project and contributors, as a separate converter
+process. The pinned official distribution's `COPYING` and complete `Licenses/`
+directory are retained in `licenses/dolphin-tool` in the portable ZIP and inside
+the embedded converter bundle. Original source licensing is GPL-2.0-or-later
+and the per-file licenses described by upstream COPYING; no game assets or
+Dolphin GUI are distributed or launched.
+
+Exact corresponding source:
+https://github.com/dolphin-emu/dolphin/tree/409881c34357d0f105fd473167d15ab0bd9c1628
+([download archive](https://github.com/dolphin-emu/dolphin/archive/409881c34357d0f105fd473167d15ab0bd9c1628.zip)).
+The original binary archive and pinned hashes are recorded in `RVZ-NOTICE.txt`;
+`scripts/bundle_rvz.py` reproduces the converter bundle from that archive.
+
 ## Dreamcast DCP process engine
 
 DCP-enabled builds include a separate self-contained process compiled from

@@ -16,7 +16,7 @@ from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_p
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves, mx_converter, vita_repatch, vita_translation, dcp
+from . import z3_saves, mx_converter, vita_repatch, vita_translation, dcp, rvz
 from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
@@ -43,6 +43,7 @@ class Application(tk.Tk):
         self.selection, self.plan, self.saved_output = None, None, None
         self.plan_problem = ''
         self.extracted_inputs, self.declined_chds = set(), set()
+        self.rvz_extracted_inputs, self.declined_rvzs = set(), set()
         self.found, self.controls, self.readonly_controls, self.selection_buttons = [], [], [], []
         self.status = tk.StringVar(value="Ready.")
         self.detail = tk.StringVar(value="Select a binary, apply a local patch, or convert saves.")
@@ -200,7 +201,7 @@ class Application(tk.Tk):
         self.path_row(self.tabs[1], 1, "Patch file:", self.apply_delta, extension=".xdelta")
         self.path_row(self.tabs[1], 2, "Patched copy:", self.apply_output, save=True)
         self.manual_format_box = self.format_row(self.tabs[1], 3, self.manual_format, lambda: self.change_output_format(manual=True))
-        unpack = ttk.Checkbutton(self.tabs[1], text='Unpack CHD input before patching', variable=self.unpack_chd,
+        unpack = ttk.Checkbutton(self.tabs[1], text='Unpack CHD/RVZ input before patching', variable=self.unpack_chd,
                                  command=self.manual_chd_mode)
         unpack.grid(row=4, column=0, columnspan=3, sticky='w', pady=3)
         self.controls.append(unpack)
@@ -271,7 +272,7 @@ class Application(tk.Tk):
                   style='Muted.TLabel').grid(row=4, column=0, columnspan=3, sticky='w', pady=6)
         for value in (self.dcp_source, self.dcp_patch, self.dcp_output):
             value.trace_add('write', lambda *args: self.update_action())
-        self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
+        self.notebook.bind("<<NotebookTabChanged>>", self.tab_changed)
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
         self.progress = ttk.Progressbar(outer, maximum=100)
@@ -321,11 +322,26 @@ class Application(tk.Tk):
         self.readonly_controls.append(box)
         return box
 
+    def tab_changed(self, event=None):
+        if self.notebook.index(self.notebook.select()) == 1:
+            self.manual_chd_mode()
+        self.update_action()
+
     def manual_chd_mode(self):
         if not self.unpack_chd.get():
             self.manual_format.set('Original format')
-        self.manual_format_box.configure(values=['Original format', 'CHD'] if self.unpack_chd.get() else ['Original format'])
+        values = ['Original format', 'CHD'] if self.unpack_chd.get() else ['Original format']
+        if self.unpack_chd.get() and self.can_make_rvz(self.apply_source.get()):
+            values.append('RVZ')
+        self.manual_format_box.configure(values=values)
         self.change_output_format(manual=True)
+
+    @staticmethod
+    def can_make_rvz(source):
+        try:
+            return rvz.supported() and Path(source).is_file() and (rvz.is_rvz(source) or rvz.is_game_disc(source))
+        except (OSError, PatchError):
+            return False
 
     def change_output_format(self, manual=False):
         if not manual and isinstance(self.plan, DcpPlan):
@@ -342,12 +358,20 @@ class Application(tk.Tk):
                 if self.unpack_chd.get() and source.is_file() and is_chd(source):
                     disc = inspect_chd(source)
                     extension = '.iso' if disc.sector_size == 2048 else '.bin'
+                elif self.unpack_chd.get() and source.is_file() and rvz.is_rvz(source):
+                    extension = '.iso'
             except (OSError, PatchError):
                 extension = '.iso'
+            values = ['Original format', 'CHD'] if self.unpack_chd.get() else ['Original format']
+            if self.unpack_chd.get() and self.can_make_rvz(source):
+                values.append('RVZ')
+            self.manual_format_box.configure(values=values)
+            if mode.get() not in values:
+                mode.set('Original format')
         else:
             extension = '.' + self.plan.target.format if self.plan else '.iso'
         if variable.get():
-            variable.set(str(Path(variable.get()).with_suffix('.chd' if mode.get() == 'CHD' else extension)))
+            variable.set(str(Path(variable.get()).with_suffix('.rvz' if mode.get() == 'RVZ' else '.chd' if mode.get() == 'CHD' else extension)))
 
     def pick_path(self, variable, save=False, extension=""):
         if variable is self.dcp_output:
@@ -387,7 +411,8 @@ class Application(tk.Tk):
             variable.set(path)
             if variable is self.apply_source:
                 chd = is_chd(path)
-                self.manual_format.set('CHD' if chd and self.unpack_chd.get() else 'Original format')
+                compressed_rvz = rvz.is_rvz(path)
+                self.manual_format.set('RVZ' if compressed_rvz and self.unpack_chd.get() else 'CHD' if chd and self.unpack_chd.get() else 'Original format')
                 self.apply_output.set(str(Path(path).with_name(Path(path).stem + '-patched' + Path(path).suffix)))
                 self.change_output_format(manual=True)
             elif save and variable in (self.output, self.apply_output):
@@ -399,6 +424,8 @@ class Application(tk.Tk):
                 pass
             if variable is self.apply_source and chd and self.unpack_chd.get():
                 self.prepare_chd(path, manual=True)
+            elif variable is self.apply_source and compressed_rvz and self.unpack_chd.get():
+                self.prepare_rvz(path, manual=True)
         return path
 
     @staticmethod
@@ -635,6 +662,40 @@ class Application(tk.Tk):
                 recognize(path,catalog,cancel,progress,defer_chd=True)]
         self.start(identify,'identify')
 
+    def prepare_rvz(self, path, manual=False, automatic=False):
+        """Ask once, retain the ISO, then identify it through the normal catalog."""
+        path = Path(path).resolve()
+        if not manual:
+            self.selection, self.plan = None, None
+            self.apply_source.set(str(path))
+            self.file_label.set(str(path))
+            self.detected.set('RVZ — extraction required to identify the disc')
+            self.route.set('Select this RVZ to unpack it, or browse to an extracted ISO.')
+            self.update_action()
+        if automatic and path in self.declined_rvzs:
+            return
+        try:
+            if not rvz.supported():
+                raise PatchError('RVZ conversion in this build requires 64-bit Windows.')
+            disc, destination = rvz.inspect_rvz(path), extraction_folder(path)
+        except (OSError, PatchError) as exc:
+            self.status.set('Could not prepare this RVZ.')
+            self.detail.set(str(exc))
+            return
+        if not messagebox.askyesno('Unpack RVZ once?',
+                'Extract this RVZ into a new child folder?\n\n'+str(destination)+
+                '\n\nThe ISO needs {:.2f} GiB of space. The original RVZ and completed ISO are kept.\n'
+                'The ISO is verified against the patch catalog before patching. '
+                'RVZ output is also available and checked by converting it back to ISO.\n\n'
+                'Unpack now?'.format(disc.size/(1024**3)), parent=self):
+            self.declined_rvzs.add(path)
+            self.status.set('RVZ extraction not started.')
+            self.detail.set('Select the RVZ again to retry, or browse to an extracted ISO.')
+            return
+        self.declined_rvzs.discard(path)
+        self.start(lambda cancel, progress: (path, rvz.unpack_to_folder(path, destination, cancel, progress)),
+                   'unpack_rvz_manual' if manual else 'unpack_rvz_auto')
+
     def prepare_chd(self, path, manual=False, automatic=False):
         """Ask on the UI thread; extract once in the background and keep the result."""
         path = Path(path).resolve()
@@ -704,6 +765,10 @@ class Application(tk.Tk):
                 self.target.set('Latest')
                 self.plan_selection()
                 return
+            if isinstance(self.selection[1], rvz.RvzSource) or (self.selection[0].is_file() and rvz.is_rvz(self.selection[0])):
+                self.show_auto_vita_fields(False)
+                self.prepare_rvz(self.selection[0], automatic=automatic)
+                return True
             if isinstance(self.selection[1], ChdSource) or (self.selection[0].is_file() and is_chd(self.selection[0])):
                 self.show_auto_vita_fields(False)
                 self.prepare_chd(self.selection[0], automatic=automatic)
@@ -712,7 +777,7 @@ class Application(tk.Tk):
                 self.selection = (self.selection[1].root, self.selection[1])
             extracted = self.selection[0].resolve() in self.extracted_inputs
             self.detected.set(self.selection[1].label + (' • extracted disc' if extracted else ''))
-            self.output_format.set('CHD' if extracted else 'Original format')
+            self.output_format.set('RVZ' if self.selection[0].resolve() in self.rvz_extracted_inputs else 'CHD' if extracted else 'Original format')
             self.apply_source.set(str(self.selection[0]))
             self.target_box.configure(values=["Latest", "Next version only"] + [n.version for n in self.catalog.versions(self.selection[1])])
             self.target.set("Latest")
@@ -774,10 +839,13 @@ class Application(tk.Tk):
                     return
                 can_pack = self.plan.target.format == 'iso' or (self.plan.target.format == 'bin' and
                     path.is_file() and (is_chd(path) or unpacked_layout(path) is not None))
-                self.output_format_box.configure(values=['Original format', 'CHD'] if can_pack else ['Original format'])
-                if not can_pack:
+                formats = ['Original format', 'CHD'] if can_pack else ['Original format']
+                if self.plan.target.format == 'iso' and self.plan.target.platform.lower() in ('gamecube','gc','nintendo gamecube','wii','nintendo wii') and rvz.supported():
+                    formats.append('RVZ')
+                self.output_format_box.configure(values=formats)
+                if self.output_format.get() not in formats:
                     self.output_format.set('Original format')
-                extension = 'chd' if self.output_format.get() == 'CHD' else self.plan.target.format
+                extension = 'rvz' if self.output_format.get() == 'RVZ' else 'chd' if self.output_format.get() == 'CHD' else self.plan.target.format
                 self.output.set(str(path.with_name(path.stem + "-v" + self.plan.target.version + "." + extension)))
             except PatchError as exc:
                 self.plan_problem = str(exc)
@@ -1017,18 +1085,22 @@ class Application(tk.Tk):
             if not self.selection or not self.plan or not self.plan.edges or not self.output.get():
                 return
             source, plan, catalog, output = self.selection[0], self.plan, self.catalog, self.output.get()
+            if source.is_file() and rvz.is_rvz(source):
+                self.prepare_rvz(source)
+                return
             if source.is_file() and is_chd(source):
                 self.prepare_chd(source)
                 return
             nodes = [p.source for _, _, p in plan.parts] if isinstance(plan, SolutionPlan) else [plan.source]
             ps3 = any(is_ps3_platform(n.platform) for n in nodes)
             chd_output = self.output_format.get() == 'CHD'
+            rvz_output = self.output_format.get() == 'RVZ'
             def work(cancel, progress):
-                apply_plan(source, output, plan, catalog, self.client, cancel=cancel, progress=progress, chd_output=chd_output)
+                apply_plan(source, output, plan, catalog, self.client, cancel=cancel, progress=progress, chd_output=chd_output, rvz_output=rvz_output)
                 if isinstance(plan, SolutionPlan):
                     return (Path(output), 'Complete patch solution verified. Patched files and required unchanged files saved together.' + reminder)
                 return (Path(output), 'Every patch step was verified.' +
-                        (' New CHD output verified against the patched disc.' if chd_output else ' Final disc bytes verified.') + reminder)
+                        (' New RVZ output verified against the patched ISO.' if rvz_output else ' New CHD output verified against the patched disc.' if chd_output else ' Final disc bytes verified.') + reminder)
         else:
             values = (self.apply_source, self.apply_delta, self.apply_output)
             source, second, output = [v.get() for v in values]
@@ -1036,6 +1108,10 @@ class Application(tk.Tk):
                 self.status.set("Choose both inputs and an output filename.")
                 return
             unpack, chd_output = self.unpack_chd.get(), self.manual_format.get() == 'CHD'
+            rvz_output = self.manual_format.get() == 'RVZ'
+            if unpack and Path(source).is_file() and rvz.is_rvz(source):
+                self.prepare_rvz(source, manual=True)
+                return
             if unpack and Path(source).is_file() and is_chd(source):
                 self.prepare_chd(source, manual=True)
                 return
@@ -1046,9 +1122,9 @@ class Application(tk.Tk):
                 ps3 = ps3 or any(is_ps3_platform(n.platform) for n in nodes)
             def work(cancel, progress):
                 digest = manual_patch(source, second, output, cancel=cancel, progress=progress,
-                                      unpack_chd=unpack, chd_output=chd_output)
+                                      unpack_chd=unpack, chd_output=chd_output, rvz_output=rvz_output)
                 return (Path(output), 'Applied with xdelta checks; no catalog output hash was supplied.\n' +
-                        ('CHD round trip verified. Patched disc SHA-256: ' if chd_output else 'Output SHA-256: ') + digest + reminder)
+                        ('RVZ round trip verified. Patched ISO SHA-256: ' if rvz_output else 'CHD round trip verified. Patched disc SHA-256: ' if chd_output else 'Output SHA-256: ') + digest + reminder)
         reminder = '\n\n' + (INSTALLATION_WARNING if ps3 else MANUAL_REMINDER) if ps3 or tab == 1 else ''
         if ps3:
             messagebox.showwarning('PS3 installation data', INSTALLATION_WARNING, parent=self)
@@ -1124,20 +1200,24 @@ class Application(tk.Tk):
                         self.status.set('CHD extracted. Click Apply DCP when ready.')
                         self.detail.set('Kept: ' + str(value[1]) + '\nThe original CHD is unchanged.')
                         self.update_action()
-                    elif value[0] in ('unpack_auto', 'unpack_manual'):
+                    elif value[0] in ('unpack_auto', 'unpack_manual', 'unpack_rvz_auto', 'unpack_rvz_manual'):
                         source, binary = value[1]
+                        was_rvz = value[0].startswith('unpack_rvz')
+                        automatic_unpack = value[0] in ('unpack_auto', 'unpack_rvz_auto')
                         self.extracted_inputs.add(binary.resolve())
+                        if was_rvz:
+                            self.rvz_extracted_inputs.add(binary.resolve())
                         self.apply_source.set(str(binary))
-                        if value[0] == 'unpack_auto':
-                            self.manual_format.set('CHD' if self.unpack_chd.get() else 'Original format')
+                        if automatic_unpack or was_rvz:
+                            self.manual_format.set(('RVZ' if was_rvz else 'CHD') if self.unpack_chd.get() else 'Original format')
                         previous = Path(self.apply_output.get())
                         if not self.apply_output.get() or (previous.parent == source.parent and
                                 previous.stem == source.stem + '-patched'):
                             self.apply_output.set(str(binary.with_name(binary.stem + '-patched' + binary.suffix)))
                         self.change_output_format(manual=True)
-                        self.status.set('CHD unpacked. The extracted disc is now selected.')
-                        self.detail.set('Kept: ' + str(binary) + '\nThe original CHD is preserved. Click Patch when ready.')
-                        if value[0] == 'unpack_auto':
+                        self.status.set(('RVZ' if was_rvz else 'CHD')+' unpacked. The extracted disc is now selected.')
+                        self.detail.set('Kept: ' + str(binary) + '\nThe original compressed image is preserved. Click Patch when ready.')
+                        if automatic_unpack:
                             self.file_label.set(str(binary))
                             if not self.cancel.is_set() and not self.closing:
                                 self.identify_source(binary)

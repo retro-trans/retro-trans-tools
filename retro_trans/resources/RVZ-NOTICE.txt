@@ -1,0 +1,10 @@
+DolphinTool 2609a, unmodified official Windows x64 binary.
+Copyright Dolphin Emulator Project and contributors.
+COPYING and Licenses/ retain the original distribution notices.
+Exact corresponding source: https://github.com/dolphin-emu/dolphin/tree/409881c34357d0f105fd473167d15ab0bd9c1628
+Source archive: https://github.com/dolphin-emu/dolphin/archive/409881c34357d0f105fd473167d15ab0bd9c1628.zip
+Binary archive: https://dl.dolphin-emu.org/releases/2609a/dolphin-2609a-x64.7z
+Archive SHA-256: bbfd13bf9e6d2a4164a15c392b1f32a9b18150e5136746b388704608fbb60f76
+Tool SHA-256: 63dd9bad68996f4c75302fde1a2374ebecfa767df6780619d658f41684f97e8a
+Windows 10 1903+ x64; Microsoft Visual C++ v14 runtime required.
+Only disc conversion is used; Dolphin.exe and game assets are not bundled or launched.

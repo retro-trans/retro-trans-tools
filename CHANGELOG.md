@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.21 local test build — RVZ input/output — 2026-11-06
+
+- Add GameCube/Wii RVZ selection in Automatic and manual xdelta. Read bounded metadata during scans, ask before extraction, keep the completed ISO beside its source and reuse it for identification/patching. Catalog identity remains the complete extracted ISO hash.
+- Offer RVZ output for GameCube/Wii ISOs. Compress without scrubbing, extract again and verify the full ISO SHA-256 before publishing the new file. Preserve raw compressed-byte manual patching when automatic unpacking is disabled.
+- Bundle pinned unmodified official DolphinTool 2609a with original licenses and exact corresponding-source references. Use an isolated Null/Volume=0 profile and the converter only; never launch Dolphin.exe or touch an existing emulator profile. Windows conversion requires the Microsoft Visual C++ v14 x64 runtime. Mac conversion remains unavailable in this build.
+- Cover malformed headers, wrong input, cancellation, disk space, retained extraction, menu consent/format selection, overwrite refusal, converter integrity and round-trip mismatch. Add packaged RVZ startup diagnostics and an explicit `--automatic-binary` command. Existing patches/catalog identities are unchanged. This is a local test build; no source push or application release.
+- Full suite:341 run,337 passed,4 platform skips under Python3.12.16. Packaged health passes. Real Tengai Makyou II original RVZ -> packaged Automatic with empty-cache public0.8.0 download -> English RVZ -> independent full ISO comparison passes; source preservation/current recognition/overwrite refusal also pass. Generated full-disc test files removed. [Build evidence](docs/builds/v0.5.21-rvz-local-validation.md).
+- Disc conversion preserves verified ISO bytes; this does not validate gameplay or physical hardware. An initial Python3.11 run stopped at an existing Vita temporary-file cleanup test; the recommended3.12 runtime passes it without a Vita code change.
+
 ## Game registry — Tengai Makyou II — 2026-11-06
 
 - Register GameCube Japanese disc GT2J18 for retro-trans/Tengai-Makyou-II before public v0.8.0 publication. Preserve every existing game, package ID and Vita route. This is discovery metadata only; no application or game binary changes.

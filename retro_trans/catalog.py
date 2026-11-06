@@ -317,6 +317,16 @@ def _recognize_binary(path, catalog, cancel=None, progress=None, *, defer_chd=Fa
     if not path.is_file():
         raise PatchError("Select an existing binary.")
     from .chd import ChdSource, is_chd, inspect_chd, prepared_source
+    from . import rvz
+    if rvz.is_rvz(path):
+        disc = rvz.inspect_rvz(path)
+        if defer_chd:
+            return [rvz.RvzSource()]
+        if not any(n.id in catalog.available_ids and n.format == 'iso' and
+                   (n.size is None or n.size == disc.size) for n in catalog.nodes.values()):
+            return []
+        with prepared_source(path, cancel=cancel, progress=progress) as (binary, _):
+            return _recognize_binary(binary, catalog, cancel, progress)
     if is_chd(path):
         disc = inspect_chd(path)
         if defer_chd:
@@ -379,6 +389,7 @@ def _scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
     if catalog.solutions:
         return scan_folder(root, catalog, cancel, progress, defer_chd=defer_chd)
     from .chd import ChdError
+    from .rvz import RvzError
     result = []
     for path in sorted(Path(root).iterdir()):
         check_cancel(cancel)
@@ -389,7 +400,7 @@ def _scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
                 result.append((path, node))
         except (PermissionError, FileNotFoundError, OSError):
             continue
-        except ChdError as exc:
+        except (ChdError, RvzError) as exc:
             report(progress, 'Skipped ' + path.name + ': ' + str(exc), None)
     return result
 
@@ -443,17 +454,21 @@ def refresh_catalog(client=None, cache=None, cancel=None):
     return current
 
 
-def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False):
+def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False, rvz_output=False):
+    if chd_output and rvz_output:
+        raise PatchError('Choose one output format.')
     from .dcp_automatic import DcpPlan, apply as apply_dcp
     if isinstance(plan,DcpPlan):
+        if rvz_output:
+            raise PatchError('RVZ output is only for GameCube/Wii ISO patches.')
         if Path(source).resolve() != plan.source.descriptor.resolve():
             raise PatchError('Automatic DCP source changed since selection.')
         return apply_dcp(plan,output,format='CHD' if chd_output else 'GDI',
                          client=client,cache=cache,cancel=cancel,progress=progress)
     from .solutions import SolutionPlan, apply_solution
     if isinstance(plan, SolutionPlan):
-        if chd_output:
-            raise PatchError("Multi-file solutions save a folder of tracks; CHD conversion is not supported.")
+        if chd_output or rvz_output:
+            raise PatchError("Multi-file solutions save a folder of tracks; compressed output is not supported.")
         return apply_solution(source, output, plan, catalog, client, cache, cancel, progress)
     if plan.source.id[:3] in catalog.grouped_families:
         raise PatchError("This file belongs to a multi-file solution. Select its complete folder.")
@@ -461,15 +476,19 @@ def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=No
     source = Path(source).resolve()
     output = output_path(output, (source,))
     with prepared_source(source, output.parent, cancel, progress) as (binary, disc):
-        if not chd_output:
+        if not chd_output and not rvz_output:
             companion_cue(output, disc)
-        return _apply_plan_binary(binary, output, plan, catalog, client, cache, cancel, progress, chd_output, disc)
+        return _apply_plan_binary(binary, output, plan, catalog, client, cache, cancel, progress, chd_output, disc, rvz_output)
 
 
-def _apply_plan_binary(source, output, plan, catalog, client, cache, cancel, progress, chd_output, disc):
+def _apply_plan_binary(source, output, plan, catalog, client, cache, cancel, progress, chd_output, disc, rvz_output=False):
     from .chd import output_disc, compress_verified, publish_disc
     source = Path(source).resolve()
     output = output_path(output, (source,))
+    if rvz_output:
+        from .rvz import is_game_disc
+        if plan.target.format != 'iso' or plan.target.platform.lower() not in ('gamecube', 'gc', 'nintendo gamecube', 'wii', 'nintendo wii') or not is_game_disc(source):
+            raise PatchError('RVZ output is only for GameCube/Wii ISO patches.')
     if not plan.edges:
         raise PatchError("This binary is already at the selected version.")
     hashes = file_hashes(source, required_hashes([plan.source]), cancel, progress)
@@ -484,6 +503,8 @@ def _apply_plan_binary(source, output, plan, catalog, client, cache, cancel, pro
     peak = max(size + (sizes[i - 1] if i else 0) for i, size in enumerate(sizes))
     if chd_output:
         peak = max(peak, 3 * sizes[-1])  # patched disc, compressed CHD, round-trip disc
+    if rvz_output:
+        peak = max(peak, 3*sizes[-1]+16*1024**2)
     if shutil.disk_usage(output.parent).free < peak + 64 * 1024 * 1024:
         raise PatchError("Not enough free space for the patch sequence and intermediate files.")
     client, cache = client or GitHubClient(), Path(cache) if cache else cache_directory()
@@ -509,7 +530,12 @@ def _apply_plan_binary(source, output, plan, catalog, client, cache, cancel, pro
                 packed = Path(stage) / 'verified.chd'
                 compress_verified(previous, packed, layout, cancel, progress)
                 previous = packed
-            if chd_output:
+            if rvz_output:
+                from .rvz import compress_verified as compress_rvz
+                packed = Path(stage) / 'verified.rvz'
+                compress_rvz(previous, packed, cancel, progress)
+                previous = packed
+            if chd_output or rvz_output:
                 publish_output(previous, output)
             else:
                 publish_disc(previous, output, disc)

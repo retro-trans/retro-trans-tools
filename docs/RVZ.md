@@ -1,6 +1,7 @@
 # GameCube and Wii RVZ images
 
-The Windows 0.5.21 test build supports RVZ in **Automatic** and **Apply xdelta**.
+Windows [0.5.21](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.21)
+supports RVZ in **Automatic** and **Apply xdelta**.
 The bundled official DolphinTool converts discs; Dolphin itself is not launched
 and no separate Dolphin installation is needed. The official tool requires
 Windows 10 1903 or later, x64, and the current [Microsoft Visual C++ v14 x64

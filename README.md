@@ -1,12 +1,13 @@
 # Retro Trans
 
-**Local 0.5.21 test build:** adds GameCube/Wii **RVZ input and output** on Windows.
-This build has not been published as an application release. See [RVZ instructions](docs/RVZ.md).
+**Windows 0.5.21:** adds GameCube/Wii **RVZ input and output** in Automatic and
+Apply xdelta. Download the [Windows release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.21)
+and see [RVZ instructions](docs/RVZ.md). The converter is bundled; RVZ conversion
+requires Windows 10 1903 or later, x64, and the current Microsoft Visual C++ v14 x64 runtime.
 
 Release authors: every new console/PC game release must register its package or
-product IDs in the [central game library](docs/GAME_LIBRARY.md). The local next
-build uses this library for direct Vita discovery; these changes are not yet
-included in the published 0.5.20 EXE.
+product IDs in the [central game library](docs/GAME_LIBRARY.md). Windows 0.5.21
+also uses this library for direct Vita discovery, reducing repeated GitHub requests.
 
 **Windows 0.5.20:** **Automatic** recognizes the published original Black/Matrix AD
 Disc 1 and Disc 2 CUE/BIN sets and downloads their matching DCP packages. Choose a

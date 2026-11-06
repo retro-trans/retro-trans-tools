@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.21 Windows release — RVZ input/output — 2026-11-06
+
+- Publish the user-authorized Windows RVZ update, with Automatic/manual RVZ input, retained ISO extraction after consent, and verified lossless RVZ output. Include the pinned converter, runtime notices, corresponding-source references, and installation instructions.
+- Retain the existing game-library/direct Vita discovery and GitHub-request improvements from main, plus the earlier ISO/CHD, DCP, Vita and save workflows. Existing game patches and catalog identities are unchanged.
+- Build through the tagged Windows release workflow, including the full suite, packaged startup/engine checks and isolated next-launch update. Ensure branch checks also bundle the pinned RVZ converter before verification. Pre-publication evidence: 337 tests passed, four platform skips, packaged health and exact real Tengai Makyou II RVZ round trip; see [local validation](docs/builds/v0.5.21-rvz-local-validation.json).
+- This changes patch preparation/conversion, not game code. Exact ISO verification is not gameplay, physical-console or memory-card validation. Mac and Android downloads are unchanged; RVZ conversion is Windows-only.
+
 ## 0.5.21 local test build — RVZ input/output — 2026-11-06
 
 - Add GameCube/Wii RVZ selection in Automatic and manual xdelta. Read bounded metadata during scans, ask before extraction, keep the completed ISO beside its source and reuse it for identification/patching. Catalog identity remains the complete extracted ISO hash.

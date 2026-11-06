@@ -2,6 +2,8 @@
 
 ## 0.5.21 Windows release — RVZ input/output — 2026-11-06
 
+- Published stable v0.5.21 from 5f338178313bc4ce8cb6c90499ae6e3fc6f3cb1c after workflow 42184449707 passed all gates (337 passed, four skips). Downloaded public EXE/ZIP/update metadata passed exact identity checks; actual public RVZ round trip, original preservation/overwrite refusal and public updater staging passed. See [published verification](docs/releases/v0.5.21-validation.json).
+
 - Publish the user-authorized Windows RVZ update, with Automatic/manual RVZ input, retained ISO extraction after consent, and verified lossless RVZ output. Include the pinned converter, runtime notices, corresponding-source references, and installation instructions.
 - Retain the existing game-library/direct Vita discovery and GitHub-request improvements from main, plus the earlier ISO/CHD, DCP, Vita and save workflows. Existing game patches and catalog identities are unchanged.
 - Build through the tagged Windows release workflow, including the full suite, packaged startup/engine checks and isolated next-launch update. Ensure branch checks also bundle the pinned RVZ converter before verification. Pre-publication evidence: 337 tests passed, four platform skips, packaged health and exact real Tengai Makyou II RVZ round trip; see [local validation](docs/builds/v0.5.21-rvz-local-validation.json).

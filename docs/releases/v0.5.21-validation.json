@@ -1,0 +1,114 @@
+{
+  "recorded_on": "2026-11-06",
+  "published_windows": {
+    "version": "0.5.21",
+    "published": true,
+    "latest_stable": true,
+    "release": "https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.21",
+    "tag_commit": "5f338178313bc4ce8cb6c90499ae6e3fc6f3cb1c",
+    "assets": [
+      {
+        "id": 716384673,
+        "name": "Retro-Trans-Windows.zip",
+        "bytes": 80104951,
+        "sha256": "3bd13302955afcb8480fcece7f04cde280de8b29bdbabbeaa51febee4678f1c0"
+      },
+      {
+        "id": 716384676,
+        "name": "Retro-Trans.exe",
+        "bytes": 70182222,
+        "sha256": "ce2cdfb075bf7f6ecd5f43fe09f010080cb0d6f4297aca522afa083601479fab"
+      },
+      {
+        "id": 716384675,
+        "name": "UPDATE.json",
+        "bytes": 212,
+        "sha256": "5bdd8b890af690a7b8ab784e14c637fa480b20e5e7c973f4e4e25a15f42b1683"
+      }
+    ],
+    "zip_executable_matches_standalone": true,
+    "required_notices_and_rvz_instructions_present": true,
+    "update_metadata_matches_executable": true,
+    "actual_public_update_staged_from_0_5_20": true,
+    "update_message": "App 0.5.21 downloaded; installs on next launch.",
+    "packaged_health": {
+      "ok": true,
+      "version": "0.5.21",
+      "tk": "8.6.15",
+      "title": "Retro Trans 0.5.21",
+      "window": [
+        700,
+        440
+      ],
+      "patches": 253,
+      "tabs": [
+        "Automatic",
+        "Apply xdelta",
+        "Save conversion",
+        "Vita",
+        "DCP"
+      ],
+      "z3_save_converter": true,
+      "chd_round_trip": true,
+      "rvz_round_trip": true,
+      "mx_converter": "experimental early Hugo intermission",
+      "mx_cng_self_check": true,
+      "mx_crypto_provider": "Windows CNG",
+      "vita_pkg_profile_engine": true,
+      "vita_pkg_crypto_self_check": true,
+      "whole_pkg_xdelta": false,
+      "installed_cpk_patching": true,
+      "local_pkg_rebuilding": true,
+      "license_required_for_pkg_patching": true,
+      "dreamcast_dcp": true,
+      "dcp_engine_bundled": true,
+      "dcp_engine_started": true,
+      "automatic_dcp": true,
+      "automatic_dcp_profiles": 4,
+      "game_library_games": 25,
+      "vita_library_routes": 8
+    },
+    "older_tools_and_game_release_assets_unchanged": true,
+    "game_emulator_launched": false,
+    "hardware_tested": false
+  },
+  "release_workflow": {
+    "workflow": "https://github.com/retro-trans/retro-trans-tools/actions/runs/42184449707",
+    "conclusion": "success",
+    "commit": "5f338178313bc4ce8cb6c90499ae6e3fc6f3cb1c",
+    "tests": {
+      "run": 341,
+      "passed": 337,
+      "platform_skips": 4
+    },
+    "packaged_health_passed": true,
+    "packaged_next_launch_update_passed": true,
+    "tests_python": "3.12.10",
+    "first_attempt": "42184014230: GUI fixture short/long TEMP path comparison; stopped before packaging/publication; corrected file-identity assertions."
+  },
+  "published_real_rvz": {
+    "app_version": "0.5.21",
+    "game_id": "tengai-makyou-ii",
+    "target_version": "0.8.0",
+    "executable_sha256": "ce2cdfb075bf7f6ecd5f43fe09f010080cb0d6f4297aca522afa083601479fab",
+    "source_rvz_sha256": "4b3fabd94be99acf9edc85a1740de3ee2076956c8844faf8b7659e3b765fb4f6",
+    "source_iso_bytes": 1459978240,
+    "target_iso_sha256": "39a881525956fbf977b25c691c7e94cef57573bb1f927d5628c37295f898891e",
+    "target_iso_bytes": 1459978240,
+    "target_rvz_sha256": "8c210e84cf6416a7abba6efd8ee2963a6620c429802195fb66573167bdb2cc74",
+    "target_rvz_bytes": 1248111100,
+    "packaged_automatic_real_rvz_input": true,
+    "live_patch_download": true,
+    "isolated_empty_app_cache": true,
+    "rvz_output_independent_full_roundtrip": true,
+    "recognized_as_current": true,
+    "source_preserved": true,
+    "existing_output_refused": true,
+    "temporary_discs_removed": true,
+    "game_emulator_launched": false,
+    "game_audio_used": false,
+    "hardware_tested": false,
+    "seconds": 220.27
+  },
+  "limits": "No emulator gameplay, physical-console or actual memory-card write/restart/reload validation. No game code or patch identities changed."
+}

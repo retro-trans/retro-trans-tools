@@ -1,5 +1,11 @@
 # Changelog
 
+## Catalog — Cross Hermit v0.8.0 — 2026-11-06
+
+- Register the Windows PC project ID `cross-hermit` for `retro-trans/cross-hermit` and its exact original-to-English ISO route. Preserve existing catalog records and patch bytes; existing clients use Refresh catalog without an application update.
+- Allow checksummed supplemental ZIPs up to 256 MiB in the hosted catalog builder, retaining the 64 MiB metadata limit and complete download/size/hash verification. Cross Hermit's existing 110 MB ISO/update packages remain in the canonical checksum list. Cover successful large-ZIP verification, truncated downloads, oversized extras and unsupported formats.
+- Add the standard release manifest, round-trip validation and bare xdelta to the existing game release. No application release or game binary changes.
+
 ## 0.5.21 Windows release — RVZ input/output — 2026-11-06
 
 - Published stable v0.5.21 from 5f338178313bc4ce8cb6c90499ae6e3fc6f3cb1c after workflow 42184449707 passed all gates (337 passed, four skips). Downloaded public EXE/ZIP/update metadata passed exact identity checks; actual public RVZ round trip, original preservation/overwrite refusal and public updater staging passed. See [published verification](docs/releases/v0.5.21-validation.json).

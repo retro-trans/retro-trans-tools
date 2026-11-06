@@ -55,6 +55,18 @@
       ]
     },
     {
+      "game_id": "cross-hermit",
+      "name": "Cross Hermit: Guardian of the Far Reaches",
+      "repo": "retro-trans/cross-hermit",
+      "package_ids": [
+        {
+          "platform": "Windows PC",
+          "kind": "project",
+          "id": "cross-hermit"
+        }
+      ]
+    },
+    {
       "game_id": "heroes-phantasia",
       "name": "Heroes Phantasia",
       "repo": "retro-trans/Heroes-Phantasia",

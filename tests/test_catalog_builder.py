@@ -280,6 +280,41 @@ class CatalogBuilderTests(unittest.TestCase):
         self.assertEqual(result["releases"][0]["manifest"]["version"], "1.1")
         self.assertEqual(build_catalog(result, ReleaseClient()), result)
 
+    def test_large_checksummed_pc_zip_is_streamed_and_verified(self):
+        client = ReleaseClient()
+        name = 'PC-ISO-patch.zip'
+        raw = b'P' * (64 * 1024**2 + 1)
+        digest = hashlib.sha256(raw).hexdigest()
+        client.files[name] = raw
+        client.assets.append(dict(name=name, size=len(raw), digest='sha256:' + digest,
+                                  browser_download_url=client.prefix + name))
+        client.files['SHA256SUMS.txt'] += (digest + '  ' + name + '\n').encode()
+        sums = client.files['SHA256SUMS.txt']
+        next(a for a in client.assets if a['name'] == 'SHA256SUMS.txt').update(
+            size=len(sums), digest='sha256:' + hashlib.sha256(sums).hexdigest())
+        previous = dict(schema_version=1, releases=[])
+        result = build_catalog(previous, client)
+        self.assertEqual(result['releases'][0]['manifest'], client.record['manifest'])
+        # Do not trust an advertised size/checksum without reading the bytes.
+        client.files[name] = b'truncated'
+        with self.assertRaisesRegex(PatchError, 'Download verification failed'):
+            build_catalog(previous, client)
+
+    def test_checksummed_extras_keep_format_and_size_bounds(self):
+        for name, size in [('PC-patch.zip', 256 * 1024**2 + 1),
+                           ('report.json', 64 * 1024**2 + 1),
+                           ('installer.exe', 10)]:
+            client = ReleaseClient()
+            digest = '1' * 64
+            client.assets.append(dict(name=name, size=size, digest='sha256:' + digest,
+                                      browser_download_url=client.prefix + name))
+            client.files['SHA256SUMS.txt'] += (digest + '  ' + name + '\n').encode()
+            sums = client.files['SHA256SUMS.txt']
+            next(a for a in client.assets if a['name'] == 'SHA256SUMS.txt').update(
+                size=len(sums), digest='sha256:' + hashlib.sha256(sums).hexdigest())
+            with self.subTest(name=name), self.assertRaisesRegex(PatchError, 'Unsupported or oversized'):
+                build_catalog(dict(schema_version=1, releases=[]), client)
+
     def test_scoped_refresh_preserves_other_records_and_validates_selected_assets(self):
         client = ReleaseClient()
         other = record(edition="kept")

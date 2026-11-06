@@ -48,7 +48,8 @@ class GuiTests(unittest.TestCase):
             app.select_found();self.finish_worker()
             ask.assert_called_once();extract.assert_called_once()
         binary=root/'original-unpacked/original.iso'
-        self.assertEqual(app.selection[0],binary)
+        # Hosted Windows may spell TEMP with an 8.3 alias; compare file identity.
+        self.assertTrue(binary.samefile(app.selection[0]))
         self.assertEqual(app.output_format.get(),'RVZ')
         self.assertEqual(Path(app.output.get()).suffix,'.rvz')
         self.assertIn('RVZ',app.output_format_box.cget('values'))
@@ -56,7 +57,7 @@ class GuiTests(unittest.TestCase):
                 patch('retro_trans.gui.rvz.unpack_to_folder') as extract:
             app.apply();start.call_args.args[0](None,None)
             self.assertTrue(apply.call_args.kwargs['rvz_output'])
-            self.assertEqual(apply.call_args.args[0],binary)
+            self.assertTrue(binary.samefile(apply.call_args.args[0]))
             extract.assert_not_called()
         app.output_format.set('Original format');app.change_output_format()
         self.assertEqual(Path(app.output.get()).suffix,'.iso')

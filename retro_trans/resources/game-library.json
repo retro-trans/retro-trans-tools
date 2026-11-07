@@ -26,6 +26,18 @@
       ]
     },
     {
+      "game_id": "ace-r",
+      "name": "Another Century's Episode R",
+      "repo": "retro-trans/ACE-R",
+      "package_ids": [
+        {
+          "platform": "PS3",
+          "kind": "title-id",
+          "id": "BLJS10081"
+        }
+      ]
+    },
+    {
       "game_id": "black-matrix-ad-dreamcast",
       "name": "Black/Matrix AD",
       "repo": "retro-trans/Black-Matrix-AD",

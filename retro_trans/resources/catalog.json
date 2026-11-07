@@ -658,6 +658,44 @@
       }
     },
     {
+      "repo": "retro-trans/ACE-R",
+      "tag": "v0.4.12",
+      "manifest": {
+        "game_id": "ace-r",
+        "game_name": "Another Century's Episode R",
+        "platform": "PS3",
+        "version": "0.4.12",
+        "source_commit": "27248cf8369b83f15a3b1a0f59a09fce530228cd",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "ACE-R-BLJS10081-English-v0.4.12.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "60905f3591546f64a0c4e0b43517976b34002bc6382a1f3a4c9352c8211723cf",
+            "source_bytes": 20242235392,
+            "target_sha256": "917c8501f1f7498b68fbabd70f0a9a1ec2857918b036dd11dd5d1baec48260c8",
+            "target_bytes": 21698983936,
+            "patch_sha256": "879c1228a05ec0a380aa39c77b0019b58dadd625bd3d5d93786d496c49f812b2",
+            "patch_bytes": 1654696765
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS3",
+            "kind": "title-id",
+            "id": "BLJS10081"
+          }
+        ]
+      },
+      "assets": {
+        "ACE-R-BLJS10081-English-v0.4.12.xdelta": "https://github.com/retro-trans/ACE-R/releases/download/v0.4.12/ACE-R-BLJS10081-English-v0.4.12.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Cross-Ange",
       "tag": "v0.1.12",
       "manifest": {

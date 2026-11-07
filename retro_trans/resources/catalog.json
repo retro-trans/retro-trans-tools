@@ -6743,6 +6743,44 @@
       "assets": {
         "Cross-Hermit-English-0.8.0.xdelta": "https://github.com/retro-trans/cross-hermit/releases/download/v0.8.0/Cross-Hermit-English-0.8.0.xdelta"
       }
+    },
+    {
+      "repo": "retro-trans/cross-hermit",
+      "tag": "v0.8.7",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "cross-hermit",
+        "game_name": "Cross Hermit: Guardian of the Far Reaches",
+        "platform": "Windows PC",
+        "version": "0.8.7",
+        "package_ids": [
+          {
+            "platform": "Windows PC",
+            "kind": "project",
+            "id": "cross-hermit"
+          }
+        ],
+        "patches": [
+          {
+            "patch": "Cross-Hermit-English-0.8.7.xdelta",
+            "edition": "Japanese PC CD-ROM",
+            "language": "English",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "34a7a1da0e9bb9da44a7397d6873d91d72bced5229ca0cb46d1555f0f95a93f9",
+            "source_bytes": 659390464,
+            "target_sha256": "8a3ecfec28270ebe77fcb586d2c52f358ed8105a41a4782c3aecf71c849ce5ce",
+            "target_bytes": 770535424,
+            "patch_sha256": "70fe73c9257b27bc0482452fc3f5c14ab523cb088e55f5fa54ceb358a83b463e",
+            "patch_bytes": 109970381
+          }
+        ],
+        "source_commit": "92638074e7dd948f2ebfe40a7f30aeaa5fbbe716"
+      },
+      "assets": {
+        "Cross-Hermit-English-0.8.7.xdelta": "https://github.com/retro-trans/cross-hermit/releases/download/v0.8.7/Cross-Hermit-English-0.8.7.xdelta"
+      }
     }
   ],
   "dcp_releases": [

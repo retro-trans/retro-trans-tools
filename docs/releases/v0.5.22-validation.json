@@ -16,5 +16,18 @@
   "actual_public_updater_staging_from_0_5_21": true,
   "test_update_installed_to_user_app": false,
   "physical_ps3_dlc_gameplay_verified": false,
-  "game_release_0_9_5_validation": "pending separately"
+  "game_release_0_9_5_validation": {
+    "published": true,
+    "actual_public_exe_repatch_files_verified": 156,
+    "actual_public_exe_pkg_installed_files_verified": 589,
+    "source_pkg_and_license_unchanged": true,
+    "local_ps3_dlc_delivery_29_packs": true,
+    "public_api_assets_verified": 12,
+    "previous_game_releases_unchanged": true,
+    "catalog_workflow": 42464714818,
+    "catalog_attempts": 3,
+    "catalog_enrollment_verified": false,
+    "normal_public_discovery_verified": false,
+    "blocker": "GitHub release-download URLs return HTTP 504, also for historical v0.9.3; catalog left unchanged. API downloads verified separately."
+  }
 }

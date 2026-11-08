@@ -1,5 +1,12 @@
 # Retro Trans
 
+**Windows 0.5.22:** adds the **PS3 DLC** tab for verified translated copies of
+owned Z3 EDATs, matched to the exact English base ISO or game folder. Download
+the [latest Windows release](https://github.com/retro-trans/retro-trans-tools/releases/latest)
+and follow the [DLC instructions](docs/PS3_DLC.md). Originals remain untouched;
+no automatic installation, license downloads or missing DLC are supplied.
+Existing RVZ, DCP, Vita and other workflows are retained.
+
 **Windows 0.5.21:** adds GameCube/Wii **RVZ input and output** in Automatic and
 Apply xdelta. Download the [Windows release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.21)
 and see [RVZ instructions](docs/RVZ.md). The converter is bundled; RVZ conversion
@@ -50,6 +57,10 @@ complete patch solution and checks every required component.
   file's patch sequence. Missing or duplicate required files block the operation.
 - **Apply xdelta:** choose any source binary, local xdelta patch, and new output.
   This uses xdelta checks without requiring catalog recognition.
+- **PS3 DLC:** select your original installed DLC folder, matching English base
+  ISO/game folder, and a new output folder. Leave Local patch blank for public
+  Z3 discovery or choose the release's DLC ZIP. Follow the generated INSTALL.txt
+  after verification; the app never changes installed game data or licenses.
 - **Automatic — Dreamcast DCP:** browse to a recognized original CUE/GDI with
   all companion tracks. After upgrading, click **Refresh catalog** first to
   update any older cached catalog. Then select the version and output format,

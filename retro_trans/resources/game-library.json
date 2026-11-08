@@ -726,6 +726,52 @@
         "bytes": 16293257,
         "sha256": "a838b54f4b41df20c36703242bd1d6ee05b821d48b4b33f44980c4ac5fed36d7"
       }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.6",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 724399166,
+        "name": "VITA-PKG.json",
+        "bytes": 135578,
+        "sha256": "4db9af390eb5374a9e63f2e5b0c7323ddde8d9b04d168f416d59b41f6e5ec625"
+      },
+      "archive": {
+        "id": 724399167,
+        "name": "SRW-Z3-v0.9.6-Vita-PKG-patches.zip",
+        "bytes": 18222346,
+        "sha256": "9770a519ed43e072b27e40acfd9574ca7d86c5f967356628c7621adf34f8c7ab"
+      }
+    },
+    {
+      "game_id": "srw-z3-jigoku-ps3",
+      "repo": "retro-trans/SRW-Z3",
+      "version": "0.9.6",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00264_00-SRWZ3OF1DLGPKG00",
+      "package": {
+        "bytes": 2338423472,
+        "sha256": "3a13c11c0097ea8faa864c03add89cf7fb6e9c10bce352396ce105df884ac2fd"
+      },
+      "profile": {
+        "id": 724399097,
+        "name": "VITA-REPATCH.json",
+        "bytes": 82542,
+        "sha256": "bb4b8f7e38ec68cc200648dadaf08d256c9c35dd2f52a101bfc3eb7b0d0f6faa"
+      },
+      "archive": {
+        "id": 724399160,
+        "name": "SRW-Z3-v0.9.6-Vita-rePatch-patches.zip",
+        "bytes": 16300445,
+        "sha256": "561d41ec99fdc31ae4d6b48012f5bf875c6794633a294508f58eae07de5a71ef"
+      }
     }
   ]
 }

@@ -16,7 +16,7 @@ def validate_release(path, repo, data):
     """Pre-publication registration gate for binary, DCP and Vita profiles."""
     import json
     from .core import MAX_METADATA, validate_repo
-    from . import vita_translation, vita_repatch
+    from . import vita_translation, vita_repatch, ps3_dlc
     library.validate(data)
     repo = validate_repo(repo)
     with Path(path).open('rb') as stream:
@@ -24,7 +24,15 @@ def validate_release(path, repo, data):
     library.require(len(raw) <= MAX_METADATA, 'Release profile is too large.')
     manifest = json.loads(raw)
     library.require(isinstance(manifest, dict), 'Release profile must be a JSON object.')
-    if manifest.get('schema') in (vita_translation.SCHEMA, vita_repatch.SCHEMA):
+    if manifest.get('schema') == ps3_dlc.SCHEMA:
+        manifest = ps3_dlc.read_profile(raw)
+        matches = [g for g in data['games'] if g['repo'] == repo and g['game_id'] == manifest['game_id']]
+        library.require(len(matches) == 1, 'Register the DLC game before releasing.')
+        registered = library.package_ids(matches[0]['package_ids'])
+        required = {('PS3', 'title-id', manifest['disc_id']), ('PS3', 'title-id', manifest['dlc_title_id'])}
+        required.update(('PS3', 'content-id', row['content_id']) for row in manifest['packs'])
+        library.require(required <= registered, 'Register every DLC content ID before releasing.')
+    elif manifest.get('schema') in (vita_translation.SCHEMA, vita_repatch.SCHEMA):
         profile = vita_translation if manifest['schema'] == vita_translation.SCHEMA else vita_repatch
         manifest = profile.read_description(raw)
         content = manifest.get('content_id', manifest.get('package', {}).get('content_id'))

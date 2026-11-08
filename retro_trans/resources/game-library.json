@@ -196,6 +196,161 @@
       "name": "Super Robot Taisen Z3: Jigoku-hen (PS3)",
       "repo": "retro-trans/SRW-Z3",
       "package_ids": [
+          {
+            "platform": "PS3",
+            "kind": "title-id",
+            "id": "BLJS10256"
+          },
+          {
+            "platform": "PS3",
+            "kind": "title-id",
+            "id": "NPJB00520"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00301"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00302"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00303"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00304"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00305"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00306"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00307"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00308"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00309"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00310"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00311"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00312"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00313"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00314"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00315"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00316"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00317"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00318"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00319"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00320"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00321"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00322"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00323"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00324"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00327"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00328"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00329"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00330"
+          },
+          {
+            "platform": "PS3",
+            "kind": "content-id",
+            "id": "JP0700-NPJB00520_00-SRWZ3OF1DLC00331"
+          },
         {
           "platform": "PS3",
           "kind": "project",

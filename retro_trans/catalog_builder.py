@@ -163,6 +163,39 @@ def release_record(repo, release, client, reviewed=None):
                     raise PatchError('Checksummed release extra disagrees with publisher metadata: ' + name)
                 path = client.download(Asset(name, url, a['size'], digest), directory / 'cache')
                 shutil.copyfile(path, directory / name)
+        dlc_record = None
+        from . import ps3_dlc as dlc
+        dlc_zips = [name for name in assets if name.endswith(dlc.SUFFIX)]
+        if dlc.PROFILE in assets or dlc_zips:
+            if dlc.PROFILE not in assets or len(dlc_zips) != 1:
+                raise PatchError('DLC extras require one profile and one patch ZIP.')
+            names = (dlc.PROFILE, dlc_zips[0], 'DLC-VALIDATION.json')
+            if not set(names) <= checksummed:
+                raise PatchError('DLC extras require canonical release checksums and roundtrip validation.')
+            dlc_raw = (directory / dlc.PROFILE).read_bytes()
+            archive, dlc_data = dlc.open_bundle(directory / dlc_zips[0], dlc_raw)
+            archive.close()
+            if (dlc_data['game_id'] != manifest['game_id'] or dlc_data['version'] != manifest['version']
+                    or dlc_data['version'] != tag.lstrip('v') or
+                    dlc_data['base']['version'] != manifest['version'] or not any(
+                        p['target_format'] == 'iso' and p['target_bytes'] == dlc_data['base']['iso']['bytes'] and
+                        p['target_sha256'] == dlc_data['base']['iso']['sha256'] and
+                        p.get('platform', manifest['platform']) == 'PS3' for p in manifest['patches'])):
+                raise PatchError('DLC requires the exact base ISO from this release.')
+            proof = json.loads((directory / 'DLC-VALIDATION.json').read_text(encoding='utf-8'))
+            if (proof.get('profile_sha256') != hashlib.sha256(dlc_raw).hexdigest() or
+                    type(proof.get('roundtrips')) is not int or proof['roundtrips'] != len(dlc_data['packs']) or
+                    proof.get('all_passed') is not True):
+                raise PatchError('DLC roundtrip report does not match the profile.')
+            dlc_record = {}
+            for key, name in (('profile', dlc.PROFILE), ('archive', dlc_zips[0])):
+                a, url = fetch(name)
+                digest = hashlib.sha256((directory / name).read_bytes()).hexdigest()
+                if a.get('digest') != 'sha256:' + digest:
+                    raise PatchError('DLC assets require publisher checksums.')
+                dlc_record[key] = dict(url=url, bytes=a['size'], sha256=digest)
+        if reviewed and reviewed.get('ps3_dlc') and reviewed['ps3_dlc'] != dlc_record:
+            raise PatchError('Published DLC extras were removed or replaced.')
         validate_directory(directory)
     record = {"repo": repo, "tag": tag, "manifest": imported or manifest,
               "assets": {p["patch"]: assets[p["patch"]]["browser_download_url"] for p in manifest["patches"]}}
@@ -170,6 +203,8 @@ def release_record(repo, release, client, reviewed=None):
         record['solution_import'] = copy.deepcopy(reviewed['solution_import'])
     if vita_record:
         record['vita_repatch'] = vita_record
+    if dlc_record:
+        record['ps3_dlc'] = dlc_record
     if vita_archive:
         record['vita_archive'] = vita_archive
         minimum = description.get('minimum_app_version', '0.5.16')

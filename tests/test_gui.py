@@ -154,12 +154,12 @@ class GuiTests(unittest.TestCase):
     def test_tabs_layout_and_long_diagnostics(self):
         app = self.app
         self.assertEqual(app.title(), 'Retro Trans ' + __version__)
-        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP"])
+        self.assertEqual([app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], ["Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP", "PS3 DLC"])
         app.geometry("{}x{}".format(*app.minsize()))
         detail = "Hash mismatch: " + "a" * 64 + "\nCheck the binary.\n" * 12
         app.detail.set(detail)
         app.status.set("Downloading SRWZ-English-Best-v0.9.79-to-v0.9.83.xdelta")
-        for tab in range(5):
+        for tab in range(6):
             app.notebook.select(tab)
             app.update()
             self.assertEqual(app.detail_text.get("1.0", "end-1c"), detail)
@@ -169,6 +169,27 @@ class GuiTests(unittest.TestCase):
                 self.assertGreater(widget.winfo_height(), 1)
                 self.assertLessEqual(widget.winfo_rootx() + widget.winfo_width(), app.winfo_rootx() + app.winfo_width())
                 self.assertLessEqual(widget.winfo_rooty() + widget.winfo_height(), app.winfo_rooty() + app.winfo_height())
+
+    def test_ps3_dlc_requires_base_and_source_and_uses_safe_worker(self):
+        app = self.app
+        app.notebook.select(5); app.update()
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.dlc_source.set('original-dlc'); app.dlc_output.set('new-output')
+        self.assertEqual(str(app.apply_button['state']), 'disabled')
+        app.dlc_base.set('english-game.iso')
+        self.assertEqual(str(app.apply_button['state']), 'normal')
+        self.assertEqual(str(app.apply_button['text']), 'Create DLC copy')
+        with patch.object(app, 'start') as start, patch('retro_trans.gui.ps3_dlc.apply') as apply:
+            app.apply()
+            work, kind = start.call_args.args
+            self.assertEqual(kind, 'ps3_dlc')
+            work(None, None)
+            self.assertEqual(apply.call_args.args, ('original-dlc', 'english-game.iso', 'new-output'))
+            self.assertIsNone(apply.call_args.kwargs['bundle'])
+        app.dlc_patch.set('local.zip')
+        with patch.object(app, 'start') as start, patch('retro_trans.gui.ps3_dlc.apply') as apply:
+            app.apply(); start.call_args.args[0](None, None)
+            self.assertEqual(apply.call_args.kwargs['bundle'], 'local.zip')
 
     def test_dcp_requires_inputs_and_runs_matching_worker(self):
         app = self.app

@@ -415,6 +415,11 @@ def application_root():
 
 
 def assert_immutable(previous, current):
+    old_dlc = {(r['repo'], r['tag']): r['ps3_dlc'] for r in previous.data.get('releases', []) if r.get('ps3_dlc')}
+    new_dlc = {(r['repo'], r['tag']): r.get('ps3_dlc') for r in current.data.get('releases', [])}
+    for key, value in old_dlc.items():
+        if new_dlc.get(key) != value:
+            raise PatchError('Catalog removed or changed published DLC metadata.')
     old_dcp = {(r['repo'],r['tag']):r for r in previous.data.get('dcp_releases',[])}
     new_dcp = {(r['repo'],r['tag']):r for r in current.data.get('dcp_releases',[])}
     if any(new_dcp.get(k) != value for k,value in old_dcp.items()):

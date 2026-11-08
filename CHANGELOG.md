@@ -34,6 +34,21 @@
 - Register the Japanese PS2 disc SLPS-25070 and the verified original-to-v0.8.0 patch route. Preserve every earlier catalog release, withdrawn route and binary identity.
 - Import the corrected standard release manifest, validation and canonical checksums while retaining the existing published xdelta and source/output hashes. This is a catalog update; existing clients can use Refresh catalog without an app update.
 - Hosted refresh, 46 focused checks and the full real-ISO Automatic backend path pass. Empty-cache download/application produces the exact verified target and recognizes it as already-current; earlier catalog records remain equal. See docs/catalog-imports/sunrise-eiyuutan-2-v0.8.0.md/json.
+## Unreleased — PS3 DLC folder workflow (2026-11-08)
+
+- Add native PS3 DLC tab and hash-locked ZIP engine with exact base ISO or
+  executable/font dependencies, partial sets and already-current packs.
+  Originals, licenses and installations remain untouched.
+- Reject modified packs, duplicate/unsafe paths, corrupt ZIPs, changed
+  content/license headers, output mismatches and existing destinations.
+- Add registered public Z3 discovery and local ZIP override; register both
+  title IDs and 29 content IDs without changing existing routes.
+- Catalog validation pins DLC extras and requires matching base ISO,
+  canonical checksums and roundtrip proof. Add publication registration gate.
+- Verify real 0.9.4 delivery: 29 packs, subset, current input and wrong-base
+  rejection. No push/release/install; physical DLC gameplay unverified.
+- Full suite:343 tests,4 platform-dependent skips; final focused DLC/catalog
+  checks:18+43 passing. Cached DLC identities cannot be silently replaced.
 
 ## Unreleased — Fewer GitHub requests during Vita conversion
 

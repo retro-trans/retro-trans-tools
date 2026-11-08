@@ -16,7 +16,7 @@ from .core import Cancelled, GitHubClient, PatchError, cache_directory, manual_p
 from .catalog import (APP_REPO, application_root, apply_plan, atomic_json, load_catalog,
                       recognize, refresh_catalog, scan_root)
 from .updater import stage_update, update_status
-from . import z3_saves, mx_converter, vita_repatch, vita_translation, dcp, rvz
+from . import z3_saves, mx_converter, vita_repatch, vita_translation, dcp, rvz, ps3_dlc
 from .chd import (ChdSource, is_chd, inspect_chd, extraction_folder, unpack_to_folder, unpacked_layout)
 from .ps3 import INSTALLATION_WARNING, MANUAL_REMINDER, is_ps3_platform, looks_like_ps3
 from .solutions import SolutionSource, SolutionPlan
@@ -62,6 +62,7 @@ class Application(tk.Tk):
         self.apply_source, self.apply_delta, self.apply_output = (tk.StringVar() for _ in range(3))
         self.dcp_source, self.dcp_patch, self.dcp_output = (tk.StringVar() for _ in range(3))
         self.dcp_format = tk.StringVar(value='GDI')
+        self.dlc_source, self.dlc_base, self.dlc_patch, self.dlc_output = (tk.StringVar() for _ in range(4))
         self.save_ps3, self.save_vita = tk.StringVar(), tk.StringVar()
         self.save_output = tk.StringVar(value=str(self.next_save_output(Path.home() / 'Documents' / 'Retro Trans')))
         self.save_directions = {'PS3 → Vita': 'rpcs3-to-vita3k', 'Vita → PS3': 'vita3k-to-rpcs3', 'Both directions': 'both'}
@@ -156,7 +157,7 @@ class Application(tk.Tk):
         self.notebook = ttk.Notebook(outer)
         self.notebook.pack(fill="x")
         self.tabs = []
-        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP"):
+        for title in ("Automatic", "Apply xdelta", "Save conversion", "Vita", "DCP", "PS3 DLC"):
             page = ttk.Frame(self.notebook, padding=10)
             page.columnconfigure(1, weight=1)
             self.notebook.add(page, text=title)
@@ -272,7 +273,29 @@ class Application(tk.Tk):
                   style='Muted.TLabel').grid(row=4, column=0, columnspan=3, sticky='w', pady=6)
         for value in (self.dcp_source, self.dcp_patch, self.dcp_output):
             value.trace_add('write', lambda *args: self.update_action())
+<<<<<<< HEAD
         self.notebook.bind("<<NotebookTabChanged>>", self.tab_changed)
+=======
+        dlc = self.tabs[5]
+        for row, label, variable in ((0, 'Original DLC folder:', self.dlc_source),
+                                     (3, 'New output folder:', self.dlc_output)):
+            ttk.Label(dlc, text=label).grid(row=row, column=0, sticky='w', padx=(0, 8))
+            entry = ttk.Entry(dlc, textvariable=variable, width=1)
+            entry.grid(row=row, column=1, sticky='ew', pady=3); self.controls.append(entry)
+            self.button(dlc, 'Browse…', lambda v=variable: self.pick_dlc_folder(v)).grid(
+                row=row, column=2, sticky='ew', padx=(8, 0))
+        self.path_row(dlc, 1, 'English base ISO:', self.dlc_base, extension='.iso')
+        self.path_row(dlc, 2, 'Local patch (optional):', self.dlc_patch, extension='.zip')
+        self.button(dlc, 'Base game folder…', lambda: self.pick_dlc_folder(self.dlc_base)).grid(
+            row=4, column=2, sticky='ew', padx=(8, 0))
+        ttk.Label(dlc, text='ISO or extracted game folder must match the DLC patch.\n'
+                  'Leave Local patch blank for published Z3 DLC discovery.\n'
+                  'Creates a new folder; never installs or changes licenses.', style='Muted.TLabel').grid(
+                      row=4, column=0, columnspan=2, sticky='w', pady=6)
+        for value in (self.dlc_source, self.dlc_base, self.dlc_patch, self.dlc_output):
+            value.trace_add('write', lambda *args: self.update_action())
+        self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
+>>>>>>> c07105f (Add verified PS3 DLC folder workflow and publication gates)
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
         self.progress = ttk.Progressbar(outer, maximum=100)
@@ -903,9 +926,20 @@ class Application(tk.Tk):
                 (self.vita_source, self.vita_output, self.vita_license))
         if tab == 4:
             enabled = enabled and all(v.get().strip() for v in (self.dcp_source, self.dcp_patch, self.dcp_output))
+        if tab == 5:
+            enabled = enabled and all(v.get().strip() for v in (self.dlc_source, self.dlc_base, self.dlc_output))
         self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves',
-            'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch', 'Apply DCP')[tab],
+            'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch', 'Apply DCP', 'Create DLC copy')[tab],
             state="normal" if enabled else "disabled")
+
+    def pick_dlc_folder(self, variable):
+        output = variable is self.dlc_output
+        path = filedialog.askdirectory(title='Choose parent for a new DLC output folder' if output else
+                                       'Choose game or DLC folder', mustexist=True, parent=self)
+        if path:
+            if output:
+                path = str(Path(path) / ('Translated-DLC-' + datetime.now().strftime('%Y%m%d-%H%M%S')))
+            variable.set(path)
 
     def pick_vita_folder(self, variable, output=False):
         if output and self.vita_game.get() == 'Vita3K PKG':
@@ -1037,6 +1071,13 @@ class Application(tk.Tk):
         if self.busy:
             return
         tab = self.notebook.index(self.notebook.select())
+        if tab == 5:
+            source, base, bundle, output = [v.get().strip() for v in
+                                           (self.dlc_source, self.dlc_base, self.dlc_patch, self.dlc_output)]
+            if all((source, base, output)):
+                self.start(lambda cancel, progress: ps3_dlc.apply(source, base, output, bundle=bundle or None,
+                           client=self.client, cancel=cancel, progress=progress), 'ps3_dlc')
+            return
         if tab == 4:
             source, delta, output = [v.get().strip() for v in (self.dcp_source, self.dcp_patch, self.dcp_output)]
             if not all((source, delta, output)):

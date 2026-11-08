@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.22 — PS3 DLC workflow — 2026-11-08
+
+- Add PS3 DLC tab: create verified translated copies of owned EDATs using a
+  matching English base ISO or game folder. Discover registered public Z3
+  bundles or select a local patch ZIP. Originals and emulator data stay intact.
+- Verify profile, archive, patches, exact base dependencies and every output;
+  support owned subsets and already-current packs. Never download licenses,
+  unpack DLC PKGs, supply missing content or install automatically.
+- Add strict publication/catalog checks and register Z3 DLC product IDs.
+- Preserve all shipped 0.5.21 workflows, including RVZ. Windows release only;
+  existing macOS and Android downloads remain unchanged.
+- Pre-publication full suite: 362 tests run, 358 passed and four platform skips.
+  Library registration passes (27 games). Hosted packaging and public-download
+  verification remain required; no physical PS3 DLC gameplay claim.
+
 ## Catalog — Cross Hermit v0.8.0 — 2026-11-06
 
 - Register the Windows PC project ID `cross-hermit` for `retro-trans/cross-hermit` and its exact original-to-English ISO route. Preserve existing catalog records and patch bytes; existing clients use Refresh catalog without an application update.

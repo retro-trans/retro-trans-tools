@@ -1,4 +1,4 @@
-# PS3 DLC translation (local development, not released)
+# PS3 DLC translation (Retro Trans 0.5.22)
 
 The **PS3 DLC** tab creates translated copies of installed DLC EDAT files.
 It never installs, reads/downloads licenses, decrypts content, unpacks PKGs,
@@ -12,8 +12,8 @@ modifies console/emulator data, or provides missing DLC.
 2. Select the matching English **base ISO**, or use **Base game folder** for
    an extracted game. ISO size/SHA-256 must match. Folder input checks the
    executable AND font archive; a version label or manifest alone is insufficient.
-3. Select the reviewed ZIP in **Local patch**. Once a compatible release is
-   published, leave this blank for public Z3 discovery.
+3. Leave **Local patch** blank for compatible public Z3 release discovery,
+   or select a reviewed local patch ZIP.
 4. Choose a new output folder outside the inputs; click **Create DLC copy**.
 5. Review `DLC-RESULT.json` and `INSTALL.txt`. Only present recognized packs
    are produced. Current packs are verified/copied. Unknown EDATs are reported

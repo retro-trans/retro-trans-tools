@@ -49,6 +49,7 @@ if (Test-Path -LiteralPath $TkLicense) {
 Copy-Item -LiteralPath README.md,THIRD_PARTY_NOTICES.md -Destination $OutputDirectory
 New-Item -ItemType Directory -Force (Join-Path $OutputDirectory 'docs') | Out-Null
 Copy-Item -LiteralPath 'docs/RVZ.md' -Destination (Join-Path $OutputDirectory 'docs/RVZ.md')
+Copy-Item -LiteralPath 'docs/PS3_DLC.md' -Destination (Join-Path $OutputDirectory 'docs/PS3_DLC.md')
 Copy-Item -LiteralPath 'retro_trans\resources\XDELTA-LICENSE.txt' -Destination $LicensesDirectory
 & $BuildPython -m retro_trans.dependency_notices $LicensesDirectory
 if ($LASTEXITCODE -ne 0) { throw "Could not package cryptography dependency notices." }

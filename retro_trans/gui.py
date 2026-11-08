@@ -273,9 +273,6 @@ class Application(tk.Tk):
                   style='Muted.TLabel').grid(row=4, column=0, columnspan=3, sticky='w', pady=6)
         for value in (self.dcp_source, self.dcp_patch, self.dcp_output):
             value.trace_add('write', lambda *args: self.update_action())
-<<<<<<< HEAD
-        self.notebook.bind("<<NotebookTabChanged>>", self.tab_changed)
-=======
         dlc = self.tabs[5]
         for row, label, variable in ((0, 'Original DLC folder:', self.dlc_source),
                                      (3, 'New output folder:', self.dlc_output)):
@@ -294,8 +291,7 @@ class Application(tk.Tk):
                       row=4, column=0, columnspan=2, sticky='w', pady=6)
         for value in (self.dlc_source, self.dlc_base, self.dlc_patch, self.dlc_output):
             value.trace_add('write', lambda *args: self.update_action())
-        self.notebook.bind("<<NotebookTabChanged>>", lambda event: self.update_action())
->>>>>>> c07105f (Add verified PS3 DLC folder workflow and publication gates)
+        self.notebook.bind("<<NotebookTabChanged>>", self.tab_changed)
         self.status_label = ttk.Label(outer, textvariable=self.status, style="Status.TLabel")
         self.status_label.pack(fill="x", pady=(10, 5))
         self.progress = ttk.Progressbar(outer, maximum=100)

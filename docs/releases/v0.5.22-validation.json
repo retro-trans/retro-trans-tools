@@ -1,0 +1,20 @@
+{
+  "version": "0.5.22",
+  "source_commit": "843ef18b0d8d78514997366162cbb37964dca2bd",
+  "workflow_run": 42460459883,
+  "workflow_result": "success",
+  "local_suite": {"run": 362, "passed": 358, "skipped": 4},
+  "public_downloads": {
+    "Retro-Trans.exe": {"bytes": 70199187, "sha256": "4f2a38d219a6aac601e789592f78513e19229106802489a6737c9d5c95312549"},
+    "Retro-Trans-Windows.zip": {"bytes": 80123812, "sha256": "dcc904c48347360cc2f4191eb355d4b3732045677063146470aab51ae84c74db"},
+    "UPDATE.json": {"bytes": 212, "sha256": "79acd7d58ddaaf8adadc967e846f809500eeda43a189e8181f57d3d5830723b2"}
+  },
+  "public_executable_health": true,
+  "ps3_dlc_tab_present": true,
+  "packaged_chd_rvz_dcp_and_vita_checks": true,
+  "hosted_packaged_next_launch_update": true,
+  "actual_public_updater_staging_from_0_5_21": true,
+  "test_update_installed_to_user_app": false,
+  "physical_ps3_dlc_gameplay_verified": false,
+  "game_release_0_9_5_validation": "pending separately"
+}

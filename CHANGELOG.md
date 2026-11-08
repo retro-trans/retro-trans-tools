@@ -2,6 +2,12 @@
 
 ## 0.5.22 — PS3 DLC workflow — 2026-11-08
 
+- Published from 843ef18 after workflow 42460459883 passed packaging, standalone
+  health and next-launch update checks. Actual public EXE/ZIP/metadata hashes,
+  public EXE health and isolated public updater staging pass. See
+  [verification](docs/releases/v0.5.22-validation.json). Z3 0.9.5's game bundle
+  and end-to-end public DLC/catalog verification are tracked separately.
+
 - Add PS3 DLC tab: create verified translated copies of owned EDATs using a
   matching English base ISO or game folder. Discover registered public Z3
   bundles or select a local patch ZIP. Originals and emulator data stay intact.

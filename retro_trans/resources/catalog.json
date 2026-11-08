@@ -4259,6 +4259,152 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z",
+      "tag": "v0.9.91",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "srw-z",
+        "game_name": "Super Robot Wars Z",
+        "platform": "PS2",
+        "version": "0.9.91",
+        "source_commit": "1c55608a82f6700ba6989b0b4b41a3eb82753681",
+        "patches": [
+          {
+            "patch": "SRWZ-English-v0.9.91.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ddbedefc0061213c50928fb213a7fb277c0345f01dab7386adc0383638a78cd2",
+            "source_sha1": "e8dbe37e88afe8f82d48889b0775274ccde3cf99",
+            "source_bytes": 3758358528,
+            "target_sha256": "fb44886e693e4c28bc5f280c99f423d4c24fd67d327d4caa65e47920e4e2f547",
+            "target_sha1": "b48c9cb10b22c69ed5eb1031d8e4ef770e689fb0",
+            "target_bytes": 3763404800,
+            "patch_sha256": "74e47c84cd8d1f9e5fa7345dd4f024b7e058ebb2c94a39bbc6a5cac8c0541ffc",
+            "patch_bytes": 20208352
+          },
+          {
+            "patch": "SRWZ-English-v0.9.90-to-v0.9.91.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.9.90",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "128d86216391595cb1191c0956190fc68e57fa5e94c37b12f7f989d49d78ac07",
+            "source_sha1": "53b21fd6b790384d65b49ee30b559ec18f145923",
+            "source_bytes": 3763390464,
+            "target_sha256": "fb44886e693e4c28bc5f280c99f423d4c24fd67d327d4caa65e47920e4e2f547",
+            "target_sha1": "b48c9cb10b22c69ed5eb1031d8e4ef770e689fb0",
+            "target_bytes": 3763404800,
+            "patch_sha256": "2653e039a9bcdab666916d8daa4d267e62d3564f16d73a564185130e752325c5",
+            "patch_bytes": 718592
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.91.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "950e2759d0d7482387d97d6df31325d9e352097a23e0bb4724073d1538d8cf77",
+            "source_sha1": "2ebadb5c8fa764135206eaec2044ea5482dd4d6b",
+            "source_bytes": 3755081728,
+            "target_sha256": "1f4ddd9bb900bc918b97f5740409697b8c80c055befdada13c1db268284b6a1f",
+            "target_sha1": "80f206188cbe1c12e668918a5648c95b7e205e0a",
+            "target_bytes": 3760525312,
+            "patch_sha256": "694604fbf13903bca796aafc0bf2dc4d6b511e69334a1ff76eb9c30553974487",
+            "patch_bytes": 19192051
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.90-to-v0.9.91.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "0.9.90",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ec866c64d96c742158dec35e7c120447259accd9db449cf9d3140f3871687d7b",
+            "source_sha1": "f8a8acd434f31c36e2cd0c16edebec1b48a13e8a",
+            "source_bytes": 3760510976,
+            "target_sha256": "1f4ddd9bb900bc918b97f5740409697b8c80c055befdada13c1db268284b6a1f",
+            "target_sha1": "80f206188cbe1c12e668918a5648c95b7e205e0a",
+            "target_bytes": 3760525312,
+            "patch_sha256": "cfd5fc2192ba04ec2ac54a1cb8078de0d901fc8355b1bd386e7a7804ab147a9f",
+            "patch_bytes": 688890
+          }
+        ],
+        "build_provenance": {
+          "repository_snapshot_note": "source_commit pins the upstream repository snapshot. Cumulative local input and tool fingerprints are recorded separately; the commit alone is not a complete reproducible recipe.",
+          "base_images": [
+            {
+              "edition": "original",
+              "sha256": "80546560d2691fd19268ecd7ff1cd62ae605c090182c0e4e00f23d440709a23e"
+            },
+            {
+              "edition": "best",
+              "sha256": "b492ab4c025db141a00ee8c52b88d3c97f6fd2444bc9af3768499cfcec7325ee"
+            }
+          ],
+          "official_naming": {
+            "source": "https://gundam-official.com/",
+            "precedence": "Dedicated English series profiles",
+            "catalogue_sha256": "37f5287a1e420422707e5019c59494b96aa48dc0cca2dc264077ef01b63ca15a"
+          },
+          "source_integration": {
+            "change_manifest_sha256": "af662df98f2e406e2666e27b8c6ce37100527bccb4ac715ff8949d6b0a03dc94",
+            "proof": {
+              "status": "PASS",
+              "guarded_record_replays": 1112,
+              "stable_glossary_IDs": true,
+              "native_bound_source_values": 5336,
+              "tool_mirrors": true
+            }
+          },
+          "data_help": {
+            "reviewed_fields": 532,
+            "typed_owners_per_edition": 541,
+            "cpu_traces_previously_passed": 2128,
+            "unchanged_in_naming_pass": true
+          },
+          "pending": "Fresh-boot full playtesting, selected UI visual checks, new narration wording and live Sheet reconciliation are pending. Best remains experimental.",
+          "local_tool_sha256": {
+            "_work/gundam-official-2026-11-08/prepare_release.py": "c03b760804c5912a2b257ed8aa41d25e38f9c9b4d78ba10da16fb54e9a341ce5",
+            "_work/gundam-official-2026-11-08/names.py": "6c034da9fca30ce1080887638b25deecd53c7c1aac53dcbcaa670e05054cc0df",
+            "_work/gundam-official-2026-11-08/accent_font.py": "4ecd07297daf26e14e00a06f734a36dd072e7411fa6a50600aec621e3d1fd729",
+            "_work/gundam-official-2026-11-08/prove_accents.py": "e404d2dee54d0d064fed8235c6273a6ae8960a62f59bf7c25a0366c0e5bca543",
+            "_work/gundam-official-2026-11-08/pack_release.py": "1876e20c23563e9ebed716f4e71d7648d5c00853180cdbc4ea2cac7966c03846",
+            "_work/gundam-official-2026-11-08/repair_pool.py": "c1f430c650035d48446881e8b001cdcd9d847c39e09d3947e60db94985cf8399",
+            "_work/gundam-official-2026-11-08/repair_pack.py": "d4da397f32980a90b37788bc82c6cd932e8f3bd10184a650f2665ecce3871f41",
+            "_work/gundam-official-2026-11-08/build_release.py": "bafd7aab68f694690b966787dd0f4cc408cd090436723777316969b13a27eef8",
+            "_work/gundam-official-2026-11-08/sync_sources.py": "872a8aa2dde890e2b965a80374d7ccb030447278adde329e41a6f1327eb3b954",
+            "_work/gundam-official-2026-11-08/verify_sources.py": "ace0d2093b639363c38c53c1e8c74129c79742a2b7526eb00099450dab1f27c0",
+            "_work/gundam-official-2026-11-08/package.py": "b10d858cbfb60e3d2bf0e31ff5572daf338e55e3a446a0de93ada854150b92df"
+          },
+          "catalog_registration": {
+            "date": "2026-11-08",
+            "registry_file_sha": "b739a4f925dd04c445758e72db30ee5822ec05ba",
+            "identifier_source": "retro_trans/resources/game-library.json",
+            "prior_manifest_sha256": "f3582db2ec36a141db51d704ffaf9878f9e66196faa8fc02e04a30887e8a46ac",
+            "metadata_correction_tool_sha256": "fe239df0e75ab3dccb5aeedb770a93d7b5c89efee6e1903ca2298ae88cdf8bcc"
+          }
+        },
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "project",
+            "id": "srw-z"
+          }
+        ]
+      },
+      "assets": {
+        "SRWZ-English-v0.9.91.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.91/SRWZ-English-v0.9.91.xdelta",
+        "SRWZ-English-v0.9.90-to-v0.9.91.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.91/SRWZ-English-v0.9.90-to-v0.9.91.xdelta",
+        "SRWZ-English-Best-v0.9.91.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.91/SRWZ-English-Best-v0.9.91.xdelta",
+        "SRWZ-English-Best-v0.9.90-to-v0.9.91.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.91/SRWZ-English-Best-v0.9.90-to-v0.9.91.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z-Special-Disc",
       "tag": "v0.3.0",
       "manifest": {

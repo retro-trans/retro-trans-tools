@@ -2757,6 +2757,102 @@
     },
     {
       "repo": "retro-trans/SRW-MX-Portable",
+      "tag": "v0.4.58",
+      "manifest": {
+        "game_id": "srw-mx-portable",
+        "game_name": "Super Robot Taisen MX Portable",
+        "platform": "PSP",
+        "version": "0.4.58",
+        "source_commit": "3bcfd6417ffceb4a9fcd98762b8a583878daa55c",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "SRWMX-English-v0.4.58.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d76732108a9ecc20645ef388f41ffeaeb2c02f203b922c9bc2352a9e271c18b",
+            "source_bytes": 1295122432,
+            "target_sha256": "3b7984e969234ba81671f764e3742503fad96bed593631704efcb3616e5198d1",
+            "target_bytes": 1353797632,
+            "patch_sha256": "9043952d00a1669125ba63c0893a7e26ebb3f18f25c93384507b94acfb327bce",
+            "patch_bytes": 3000554,
+            "platform": "PSP",
+            "game_name": "Super Robot Taisen MX Portable"
+          },
+          {
+            "patch": "SRWMX-English-v0.4.54-to-v0.4.58.xdelta",
+            "edition": "ULJS-00041",
+            "language": "en",
+            "source_version": "0.4.54",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b048a2169782b326990920a27492f1b5c1083e201099e9fe30893929ca0c05bc",
+            "source_bytes": 1340352512,
+            "target_sha256": "3b7984e969234ba81671f764e3742503fad96bed593631704efcb3616e5198d1",
+            "target_bytes": 1353797632,
+            "patch_sha256": "d44edc09128cae4aeadba5ddcf95e83dce6245d559ddda50cf952ce239f079ec",
+            "patch_bytes": 7920,
+            "platform": "PSP",
+            "game_name": "Super Robot Taisen MX Portable"
+          },
+          {
+            "patch": "SRWMX-PS2-English-v0.4.58.xdelta",
+            "edition": "SLPS-25345",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "bcc9a6c5e20ffe4afc02aae482819de7b18c8bb1437a6d7a0feff096801934ce",
+            "source_bytes": 3777167360,
+            "target_sha256": "7978a43b76ed2561d3f5a1f0ba85bb6c24a4d4b2adc36f618476b74f4cf29c31",
+            "target_bytes": 4678762496,
+            "patch_sha256": "b49d6d79c73c5d78c24d7b7c2cf357ef9ff9e8d51c9992b8fed657afa993346d",
+            "patch_bytes": 130381878,
+            "platform": "PS2",
+            "game_name": "Super Robot Taisen MX"
+          },
+          {
+            "patch": "SRWMX-PS2-English-v0.4.54-to-v0.4.58.xdelta",
+            "edition": "SLPS-25345",
+            "language": "en",
+            "source_version": "0.4.54",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "581113beaea9ec033b88618f97ba0e90520ad8b9fb3105119c7ca3e77cf9cabd",
+            "source_bytes": 4678762496,
+            "target_sha256": "7978a43b76ed2561d3f5a1f0ba85bb6c24a4d4b2adc36f618476b74f4cf29c31",
+            "target_bytes": 4678762496,
+            "patch_sha256": "f9057203ce5ee92db2bbe23d07e6d8c4f9685ab63aa14535dbb152aa55decd2e",
+            "patch_bytes": 18482,
+            "platform": "PS2",
+            "game_name": "Super Robot Taisen MX"
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "project",
+            "id": "srw-mx-portable"
+          },
+          {
+            "platform": "PS2",
+            "kind": "project",
+            "id": "srw-mx-portable"
+          }
+        ]
+      },
+      "assets": {
+        "SRWMX-English-v0.4.58.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.58/SRWMX-English-v0.4.58.xdelta",
+        "SRWMX-English-v0.4.54-to-v0.4.58.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.58/SRWMX-English-v0.4.54-to-v0.4.58.xdelta",
+        "SRWMX-PS2-English-v0.4.58.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.58/SRWMX-PS2-English-v0.4.58.xdelta",
+        "SRWMX-PS2-English-v0.4.54-to-v0.4.58.xdelta": "https://github.com/retro-trans/SRW-MX-Portable/releases/download/v0.4.58/SRWMX-PS2-English-v0.4.54-to-v0.4.58.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/SRW-MX-Portable",
       "tag": "v0.4.9",
       "manifest": {
         "game_id": "srw-mx-portable",

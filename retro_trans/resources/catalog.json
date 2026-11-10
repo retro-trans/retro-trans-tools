@@ -6645,6 +6645,46 @@
       }
     },
     {
+      "repo": "retro-trans/Sunrise-World-War",
+      "tag": "v0.8.0",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "sunrise-world-war",
+        "game_name": "Sunrise World War",
+        "platform": "PS2",
+        "version": "0.8.0",
+        "source_commit": "c507990c60230f7f4e8a418c238cde2ba7eb93d6",
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "disc-id",
+            "id": "SLPS-25270"
+          }
+        ],
+        "patches": [
+          {
+            "patch": "SWW-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_bytes": 4278190080,
+            "source_sha1": "d912cbc2dc35bd63ac03022fe7c5d3589622d2ba",
+            "source_sha256": "4368d5959e861d654ea3bd16efcca06742bacbdf3ae4a50088d4f3ae35c05a36",
+            "target_bytes": 4285376512,
+            "target_sha1": "c2bb2577dfd7d317fe665a3d96e303ed37c08ce2",
+            "target_sha256": "ea276534cbb9b0fd082e894821206b37ab6e355db1e344bf78d5a45c799c955b",
+            "patch_bytes": 2136509,
+            "patch_sha256": "5b289b3118d6f63e6003b4068e6262244fc80125c6ac1c0c204667f27c20598e"
+          }
+        ]
+      },
+      "assets": {
+        "SWW-English-v0.8.0.xdelta": "https://github.com/retro-trans/Sunrise-World-War/releases/download/v0.8.0/SWW-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
       "tag": "v0.3.18",
       "manifest": {

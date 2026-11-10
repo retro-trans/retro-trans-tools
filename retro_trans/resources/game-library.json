@@ -494,6 +494,18 @@
           "id": "cross-hermit"
         }
       ]
+    },
+    {
+      "game_id": "sunrise-world-war",
+      "name": "Sunrise World War",
+      "repo": "retro-trans/Sunrise-World-War",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPS-25270"
+        }
+      ]
     }
   ],
   "vita_releases": [

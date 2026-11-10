@@ -436,6 +436,18 @@
       ]
     },
     {
+      "game_id": "sunrise-world-war",
+      "name": "Sunrise World War",
+      "repo": "retro-trans/Sunrise-World-War",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPS-25270"
+        }
+      ]
+    },
+    {
       "game_id": "super-tokusatsu-taisen-2001",
       "name": "Super Tokusatsu Taisen 2001",
       "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
@@ -492,18 +504,6 @@
           "platform": "Windows PC",
           "kind": "project",
           "id": "cross-hermit"
-        }
-      ]
-    },
-    {
-      "game_id": "sunrise-world-war",
-      "name": "Sunrise World War",
-      "repo": "retro-trans/Sunrise-World-War",
-      "package_ids": [
-        {
-          "platform": "PS2",
-          "kind": "disc-id",
-          "id": "SLPS-25270"
         }
       ]
     }

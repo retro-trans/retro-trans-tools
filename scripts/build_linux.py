@@ -102,9 +102,10 @@ def prepare():
                     shutil.copy2(source,notices/(package+'-'+source.name))
     import _tkinter
     system_notices(notices,sources+[Path(sys.executable),Path(_tkinter.__file__)])
-    GitHubClient().download(Asset('Python-'+PYTHON_VERSION+'-LICENSE.txt',
+    python_license = GitHubClient().download(Asset('Python-'+PYTHON_VERSION+'-LICENSE.txt',
         'https://raw.githubusercontent.com/python/cpython/v'+PYTHON_VERSION+'/LICENSE',
-        13936, '3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf'), notices)
+        13936, '3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf'), ROOT/'.build-tools')
+    shutil.copy2(python_license, notices/('Python-'+PYTHON_VERSION+'-LICENSE.txt'))
     (notices/'XDELTA-SOURCE.txt').write_text('Pinned xdelta 3.2.0: https://github.com/jmacd/xdelta/releases/tag/v3.2.0\n'
         'Source: https://github.com/jmacd/xdelta/releases/download/v3.2.0/xdelta3-3.2.0.tar.gz\n'
         'Source SHA-256: 628cfa920fb5cf9f0c61b2c91a036b713fc08c7858fc53f1cc87e0921d74ffa1\n',encoding='utf-8')

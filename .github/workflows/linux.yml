@@ -8,7 +8,7 @@ permissions:
 jobs:
   linux:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,6 +23,12 @@ jobs:
           sudo apt-get install -y --no-install-recommends mame-tools xvfb xauth libtk8.6 fonts-dejavu-core cmake ninja-build g++ pkg-config libudev-dev libusb-1.0-0-dev liblzma-dev libbz2-dev liblzo2-dev liblz4-dev libzstd-dev libcurl4-openssl-dev libmbedtls-dev libhidapi-dev
           python -m pip install pyinstaller==6.22.3 certifi==2026.7.22
           python -m pip install -e .
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .build-tools/dolphin-linux-source
+            .build-tools/dolphin-linux-build
+          key: linux-rvz-ubuntu24-${{ hashFiles('scripts/bundle_linux_dolphin.py') }}
       - name: Build pinned RVZ helper
         run: python scripts/bundle_linux_dolphin.py
       - name: Build pinned DCP helper

@@ -138,6 +138,7 @@ def main():
         env=os.environ.copy();env['RETRO_TRANS_DATA_DIR']=temporary
         env['DOTNET_SYSTEM_GLOBALIZATION_INVARIANT']='1'
         subprocess.run([str(app/'Retro-Trans'),'--health-check',str(health)],check=True,env=env,timeout=180)
+        subprocess.run([str(app/'Retro-Trans'),'--network-check',str(ROOT/'dist/LINUX-NETWORK.json')],check=True,env=env,timeout=120)
     report=json.loads(health.read_text())
     if not report['ok']:raise RuntimeError('Packaged Linux health check failed')
     output=ROOT/'dist'/archive_name(__version__)

@@ -39,7 +39,9 @@ The DCP helper includes its pinned corresponding source and dependency notices
 in `_internal/retro_trans/resources/native/dcp/linux-x64`.
 
 Build with `scripts/build_linux.py` on native Ubuntu 24.04 after installing the
-dependencies in `.github/workflows/linux.yml` and building the Linux DCP helper.
+dependencies in `.github/workflows/linux.yml`, running
+`python scripts/bundle_linux_dolphin.py`, and building the Linux DCP helper with
+`python scripts/bundle_dcp.py --rid linux-x64 --write`.
 The workflow runs regression tests, packaged conversion/startup checks, and a
 network-disabled container check without Python or installed patching engines.
 Windows release assets and the existing v0.5.22 tag are preserved.

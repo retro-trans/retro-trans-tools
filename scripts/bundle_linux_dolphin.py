@@ -37,7 +37,7 @@ def build():
     run('cmake', '-S', str(SOURCE), '-B', str(BUILD), '-G', 'Ninja',
         '-DCMAKE_BUILD_TYPE=Release', '-DENABLE_CLI_TOOL=ON',
         '-DDISTRIBUTOR=Retro Trans', *flags)
-    run('cmake', '--build', str(BUILD), '--target', 'dolphin-tool', '--parallel', '2')
+    run('cmake', '--build', str(BUILD), '--target', 'dolphin-tool', '--parallel', str(min(os.cpu_count() or 2, 4)))
     return BUILD/'Binaries/dolphin-tool'
 
 

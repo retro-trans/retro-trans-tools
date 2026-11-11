@@ -139,6 +139,21 @@ selected key material in memory only. These keys are not saved in reports,
 caches, or conversion outputs. The development-only native layout verifier
 optionally uses Unicorn, which is not part of the application runtime.
 
+## Linux runtime and native tools
+
+The Linux package uses official xdelta 3.2.0, Ubuntu's MAME chdman, and
+DolphinTool built from Dolphin commit
+`409881c34357d0f105fd473167d15ab0bd9c1628`. Exact binary hashes, source-package
+versions/URLs, corresponding license texts, and Dolphin dependency notices are
+in `_internal/retro_trans/resources/native/linux-x86_64/licenses` and the adjacent
+`manifest.json`. The build scripts record the pinned Dolphin source and selected
+submodule revisions. The self-contained DCP helper ships its corresponding source
+and .NET notices in the adjacent `dcp/linux-x64` directory.
+
+Linux MX AES uses the bundled cryptography library and OpenSSL. Their notices,
+Python/Tcl/Tk notices, certifi's Mozilla certificate-bundle license, and
+PyInstaller's license are included with the Linux runtime notices.
+
 ## Translation patches
 
 Patches retain the terms published by their respective repositories. No game

@@ -91,8 +91,8 @@ class NetworkTests(unittest.TestCase):
                 self.assertIn('Try again after', str(raised.exception))
                 self.assertNotIn('secret', str(raised.exception))
 
-    @unittest.skipUnless(sys.platform == 'darwin', 'Mac certificate bundle test')
-    def test_real_mac_context_has_roots_without_host_certificate_paths(self):
+    @unittest.skipUnless(sys.platform in ('darwin', 'linux'), 'Bundled certificate test')
+    def test_real_context_has_roots_without_host_certificate_paths(self):
         with tempfile.TemporaryDirectory() as temp, patch.dict(os.environ, {
                 'SSL_CERT_FILE': str(Path(temp)/'absent.pem'),
                 'SSL_CERT_DIR': str(Path(temp)/'absent')}):

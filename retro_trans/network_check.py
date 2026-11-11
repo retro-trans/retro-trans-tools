@@ -28,6 +28,15 @@ def diagnose_network(path):
         step = 'public catalog'
         catalog = Catalog(client.json(CATALOG_URL))
         report['catalog_patches'] = len(catalog.edges)
+        if sys.platform == 'linux':
+            from .game_library import URL, validate
+            step = 'public game library'
+            library = client.json(URL)
+            validate(library)
+            report['game_library_games'] = len(library['games'])
+            report['ok'] = True
+            atomic_json(path, report)
+            return 0
         with tempfile.TemporaryDirectory(prefix='retro-network-check-') as temp:
             cache = Path(temp)
             step = 'Vita profile and patch ZIP'

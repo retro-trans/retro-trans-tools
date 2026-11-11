@@ -1,5 +1,12 @@
 # Retro Trans
 
+**Linux 0.5.22:** a portable x86-64 package is available on the
+[0.5.22 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.22).
+Extract the whole archive and run `Retro-Trans/Retro-Trans`. It targets Ubuntu
+24.04 and compatible desktops, bundles xdelta/CHD/RVZ/DCP tools, and needs no
+Python or .NET installation. App updates are manual; Vita PKG rebuilding still
+requires Windows. See [Linux instructions and limits](docs/LINUX.md).
+
 **Windows 0.5.22:** adds the **PS3 DLC** tab for verified translated copies of
 owned Z3 EDATs, matched to the exact English base ISO or game folder. Download
 the [latest Windows release](https://github.com/retro-trans/retro-trans-tools/releases/latest)
@@ -30,7 +37,7 @@ are also supported. Download the Windows EXE or ZIP from
 
 Mac **0.5.18** and Android **0.1.0-test1** downloads remain available on the
 [0.5.18 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.18).
-DCP is currently included in the Windows release only; Vita PKG output is also
+DCP is included in the Windows and Linux releases; Vita PKG output remains
 Windows-only. The Mac ZIPs are ad hoc signed and are not notarized by Apple.
 
 A compact Windows desktop toolkit for translation releases from

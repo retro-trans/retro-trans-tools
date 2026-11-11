@@ -196,7 +196,7 @@ class GitHubClient:
                 self._tls_context = ssl.create_default_context(cafile=certifi.where())
             except (ImportError, OSError, ssl.SSLError) as exc:
                 raise PatchError('The app\'s HTTPS certificate bundle is missing or damaged. '
-                                 'Download a fresh Mac app and try again.') from exc
+                                 'Download a fresh app package and try again.') from exc
         return self._tls_context
 
     def open(self, url):

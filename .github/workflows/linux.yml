@@ -24,6 +24,7 @@ jobs:
           python -m pip install pyinstaller==6.22.3 certifi==2026.7.22
           python -m pip install -e .
       - uses: actions/cache@v4
+        id: rvz-cache
         with:
           path: |
             .build-tools/dolphin-linux-source
@@ -31,6 +32,13 @@ jobs:
           key: linux-rvz-ubuntu24-${{ hashFiles('scripts/bundle_linux_dolphin.py') }}
       - name: Build pinned RVZ helper
         run: python scripts/bundle_linux_dolphin.py
+      - uses: actions/cache/save@v4
+        if: steps.rvz-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            .build-tools/dolphin-linux-source
+            .build-tools/dolphin-linux-build
+          key: linux-rvz-ubuntu24-${{ hashFiles('scripts/bundle_linux_dolphin.py') }}
       - name: Build pinned DCP helper
         run: python scripts/bundle_dcp.py --rid linux-x64 --write
       - name: Test and build portable package

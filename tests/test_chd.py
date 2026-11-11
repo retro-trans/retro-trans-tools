@@ -294,7 +294,7 @@ class ChdTests(unittest.TestCase):
         self.assertEqual(output.read_bytes(), b'keep')
         broken = self.root / 'broken-engine.zip'
         broken.write_bytes(b'not the engine')
-        guard = (patch('retro_trans.core.sha256_file', return_value='0'*64) if sys.platform in ('darwin','linux')
+        guard = (patch('retro_trans.linux.sha256_file' if sys.platform == 'linux' else 'retro_trans.core.sha256_file', return_value='0'*64) if sys.platform in ('darwin','linux')
                  else patch.object(chd, 'RESOURCE', broken))
         message = ('bundled Linux tools' if sys.platform == 'linux' else 'bundled Mac tools') if sys.platform in ('darwin','linux') else 'engine failed verification'
         with guard, self.assertRaisesRegex(PatchError, message):

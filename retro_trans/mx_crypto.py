@@ -1,4 +1,4 @@
-"""MX Portable mode-3 savedata reads using Windows CNG.
+"""MX Portable mode-3 savedata reads using the platform's AES provider.
 
 No game or KIRK key material is shipped. The experimental profile reads it
 from the user's hash-identified BOOT.BIN and installed PPSSPP executable.
@@ -32,7 +32,7 @@ def xor(a, b):
 
 
 class AES:
-    """Small bounded AES-CBC interface to the Windows built-in provider."""
+    """Bounded AES-CBC interface to CNG, CommonCrypto or cryptography/OpenSSL."""
     def __init__(self, key):
         if sys.platform == 'linux':
             require(len(key) == 16, 'Invalid savedata key length')

@@ -1,0 +1,162 @@
+{
+  "version": "0.5.22",
+  "source_commit": "93c5f0c21ad6d44efd2c4986358cb53cfd14fd7b",
+  "platform": "linux-x86_64",
+  "minimum_glibc": "2.39",
+  "python": "3.12.16",
+  "build_os": {
+    "NAME": "Ubuntu",
+    "ID": "ubuntu",
+    "PRETTY_NAME": "Ubuntu 24.04.5 LTS",
+    "VERSION_ID": "24.04",
+    "VERSION": "24.04.5 LTS (Noble Numbat)",
+    "VERSION_CODENAME": "noble",
+    "ID_LIKE": "debian",
+    "HOME_URL": "https://www.ubuntu.com/",
+    "SUPPORT_URL": "https://help.ubuntu.com/",
+    "BUG_REPORT_URL": "https://bugs.launchpad.net/ubuntu/",
+    "PRIVACY_POLICY_URL": "https://www.ubuntu.com/legal/terms-and-policies/privacy-policy",
+    "UBUNTU_CODENAME": "noble",
+    "LOGO": "ubuntu-logo"
+  },
+  "archive": {
+    "name": "Retro-Trans-Linux-x86_64-0.5.22.tar.gz",
+    "bytes": 96716554,
+    "sha256": "6107b09c9a33149ee271e2981445e104a3b6b86f92f493273f337a4fc5c4ad52"
+  },
+  "health": {
+    "ok": true,
+    "version": "0.5.22",
+    "stage": "complete",
+    "tk": "8.6.14",
+    "title": "Retro Trans 0.5.22",
+    "window": [
+      729,
+      484
+    ],
+    "patches": 281,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP",
+      "PS3 DLC"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "rvz_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "OpenSSL (cryptography)",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": false,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true,
+    "automatic_dcp": true,
+    "automatic_dcp_profiles": 4,
+    "game_library_games": 28,
+    "vita_library_routes": 12
+  },
+  "tests_passed": true,
+  "engines": [
+    "xdelta3",
+    "chdman",
+    "dolphin-tool"
+  ],
+  "standalone": true,
+  "auto_app_install": false,
+  "network": {
+    "ok": true,
+    "version": "0.5.22",
+    "frozen": true,
+    "real_game_pkg_tested": false,
+    "tls": {
+      "verification_required": true,
+      "hostname_checked": true,
+      "trusted_ca_count": 121,
+      "default_ca_count": 120
+    },
+    "catalog_patches": 281,
+    "game_library_games": 28
+  },
+  "clean_offline_health": {
+    "ok": true,
+    "version": "0.5.22",
+    "stage": "complete",
+    "tk": "8.6.14",
+    "title": "Retro Trans 0.5.22",
+    "window": [
+      729,
+      484
+    ],
+    "patches": 281,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP",
+      "PS3 DLC"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "rvz_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "OpenSSL (cryptography)",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": false,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true,
+    "automatic_dcp": true,
+    "automatic_dcp_profiles": 4,
+    "game_library_games": 28,
+    "vita_library_routes": 12
+  },
+  "ci": {
+    "url": "https://github.com/retro-trans/retro-trans-tools/actions/runs/43074975386",
+    "conclusion": "success",
+    "linux_tests": {
+      "run": 367,
+      "skipped": 10
+    },
+    "windows_tests": {
+      "run": 367,
+      "skipped": 5
+    }
+  },
+  "offline_environment": {
+    "os": "Ubuntu 24.04",
+    "non_root": true,
+    "network": "disabled",
+    "system_python": false,
+    "system_dotnet": false,
+    "system_patch_engines": false
+  },
+  "archive_inspection": {
+    "paths_safe": true,
+    "executable_modes_preserved": true,
+    "engine_hashes_match": true,
+    "python_license_verified": true,
+    "chd_wayland_libraries_included": true
+  },
+  "limits": {
+    "vita_pkg_rebuild": false,
+    "auto_app_install": false,
+    "arm_linux_tested": false,
+    "steam_deck_tested": false,
+    "gameplay_validation": false
+  },
+  "existing_release_tag_commit": "843ef18b0d8d78514997366162cbb37964dca2bd"
+}

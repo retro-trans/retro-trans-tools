@@ -23,6 +23,7 @@ TOOLS = ('xdelta3', 'chdman', 'dolphin-tool')
 NATIVE = ROOT/'retro_trans/resources/native/linux-x86_64'
 XDELTA_NAME = 'xdelta3-3.2.0-linux-x86_64.tar.gz'
 XDELTA_SHA = 'ef65aafaa6daaf1f04ebe0028609f4eddf470cc1f7588fcf8298b65e1cfd5fd8'
+PYTHON_VERSION = '3.12.16'
 
 
 def manifest(root):
@@ -101,8 +102,9 @@ def prepare():
                     shutil.copy2(source,notices/(package+'-'+source.name))
     import _tkinter
     system_notices(notices,sources+[Path(sys.executable),Path(_tkinter.__file__)])
-    for path in Path(sys.base_prefix).glob('LICENSE*'):
-        if path.is_file():shutil.copy2(path,notices/('Python-'+path.name))
+    GitHubClient().download(Asset('Python-'+PYTHON_VERSION+'-LICENSE.txt',
+        'https://raw.githubusercontent.com/python/cpython/v'+PYTHON_VERSION+'/LICENSE',
+        13936, '3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf'), notices)
     (notices/'XDELTA-SOURCE.txt').write_text('Pinned xdelta 3.2.0: https://github.com/jmacd/xdelta/releases/tag/v3.2.0\n'
         'Source: https://github.com/jmacd/xdelta/releases/download/v3.2.0/xdelta3-3.2.0.tar.gz\n'
         'Source SHA-256: 628cfa920fb5cf9f0c61b2c91a036b713fc08c7858fc53f1cc87e0921d74ffa1\n',encoding='utf-8')
@@ -111,6 +113,8 @@ def prepare():
 def main():
     if sys.platform != 'linux' or platform.machine().lower() != 'x86_64':
         raise SystemExit('Build natively on Linux x86-64.')
+    if platform.python_version() != PYTHON_VERSION:
+        raise SystemExit('Use the pinned Python '+PYTHON_VERSION+' build runtime.')
     os.chdir(ROOT)
     prepare()
     if '--prepare-only' in sys.argv:return
@@ -127,6 +131,14 @@ def main():
     args=[sys.executable,'-m','PyInstaller','--noconfirm','--clean','--onedir','--name','Retro-Trans',
           '--collect-data','certifi','--add-data',str(resources)+':retro_trans/resources']
     for name in TOOLS:args+=['--add-binary',str(NATIVE/name)+':retro_trans/resources/native/linux-x86_64']
+    # PyInstaller excludes Wayland libraries by default. Ubuntu's command-line
+    # chdman links SDL, which requires these even without opening a window.
+    dependencies = subprocess.check_output(['ldd', str(NATIVE/'chdman')], text=True)
+    for name in ('libwayland-egl.so.1', 'libwayland-client.so.0', 'libwayland-cursor.so.0'):
+        match = re.search(re.escape(name)+r'\s+=>\s+(/\S+)', dependencies)
+        if not match or not Path(match.group(1)).is_file():
+            raise RuntimeError('Missing CHD runtime dependency: '+name)
+        args += ['--add-binary', match.group(1)+':.']
     subprocess.run(args+['launch.py'],check=True)
     app=ROOT/'dist/Retro-Trans'
     packaged=app/'_internal/retro_trans/resources/native'
@@ -151,7 +163,7 @@ def main():
     (ROOT/'dist'/('SHA256SUMS-Linux-'+__version__+'.txt')).write_text(checksum+'  '+output.name+'\n',encoding='utf-8')
     atomic_json(ROOT/'dist'/('LINUX-'+__version__+'-VALIDATION.json'),dict(version=__version__,
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-        platform='linux-x86_64',minimum_glibc='2.39',build_os=platform.freedesktop_os_release(),
+        platform='linux-x86_64',minimum_glibc='2.39',python=PYTHON_VERSION,build_os=platform.freedesktop_os_release(),
         archive=dict(name=output.name,bytes=output.stat().st_size,sha256=checksum),
         health=report,tests_passed=True,engines=TOOLS,standalone=True,auto_app_install=False))
     print('Verified Linux archive:',output)

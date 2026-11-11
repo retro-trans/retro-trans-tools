@@ -130,7 +130,11 @@ class GuiTests(unittest.TestCase):
             # The helper finishes after the app starts; About must see the new record.
             atomic_json(status, {'message': 'Updated to ' + __version__})
             self.app.about()
-            self.assertIn('Updated to ' + __version__, show.call_args.args[1])
+            if sys.platform == 'linux':
+                self.assertIn('download and extract',show.call_args.args[1])
+                self.assertNotIn('Updated to ',show.call_args.args[1])
+            else:
+                self.assertIn('Updated to ' + __version__, show.call_args.args[1])
             for message in ('App 9.0.0 downloaded; installs on next launch.',
                             'Update check unavailable: offline'):
                 self.app.events.put(('update', None, message))

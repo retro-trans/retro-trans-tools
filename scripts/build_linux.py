@@ -70,10 +70,11 @@ def prepare():
             raise RuntimeError('Invalid pinned xdelta archive')
         (NATIVE/'xdelta3').write_bytes(tar.extractfile(entries[0]).read())
     sources = []
+    from bundle_linux_dolphin import BUILD, copy_notices as dolphin_notices
     for name in ('chdman','dolphin-tool'):
-        path = shutil.which(name) or '/usr/games/'+name
+        path = (BUILD/'Binaries/dolphin-tool') if name == 'dolphin-tool' else (shutil.which(name) or '/usr/games/'+name)
         if not Path(path).is_file():
-            raise RuntimeError('Build machine needs mame-tools and dolphin-emu')
+            raise RuntimeError('Install mame-tools and build the pinned Dolphin tool first')
         sources.append(Path(path))
         shutil.copy2(path,NATIVE/name)
     for name in TOOLS:
@@ -82,6 +83,7 @@ def prepare():
     manifest(NATIVE)
     notices = NATIVE/'licenses'
     notices.mkdir(exist_ok=True)
+    dolphin_notices(notices/'dolphin')
     for path in (ROOT/'THIRD_PARTY_NOTICES.md',ROOT/'retro_trans/resources/XDELTA-LICENSE.txt'):
         shutil.copy2(path,notices/path.name)
     from retro_trans.dependency_notices import copy_notices

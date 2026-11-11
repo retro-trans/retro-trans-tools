@@ -188,7 +188,7 @@ class GitHubClient:
         # Python's OpenSSL on macOS does not automatically use the Keychain.
         # A frozen app cannot depend on its builder's certificate-file path.
         # Windows keeps its existing OS certificate-store behavior.
-        if sys.platform != 'darwin':
+        if sys.platform not in ('darwin', 'linux'):
             return None
         if not hasattr(self, '_tls_context'):
             try:

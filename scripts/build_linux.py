@@ -42,7 +42,11 @@ def system_notices(destination, binaries):
             result = subprocess.run(['dpkg-query', '-S', spelling], capture_output=True, text=True)
             for row in result.stdout.splitlines():
                 if ': ' in row:
-                    packages.add(row.split(': ',1)[0])
+                    # dpkg also prints diversion descriptions, which are not
+                    # package names. Multiple real owners use a comma list.
+                    for owner in row.split(': ',1)[0].split(', '):
+                        if re.fullmatch(r'[a-z0-9][a-z0-9+.-]*(?::[a-z0-9-]+)?', owner):
+                            packages.add(owner)
     records = []
     for package in sorted(packages):
         info = subprocess.check_output(['dpkg-query','-W','-f=${binary:Package}\t${Version}\t${source:Package}\t${source:Version}',package], text=True).split('\t')

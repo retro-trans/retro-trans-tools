@@ -54,7 +54,7 @@ def diagnose(path):
             source = Path(cache) / 'health.iso'
             source.write_bytes(bytes(range(256)) * 64)
             chd.compress_verified(source, Path(cache) / 'health.chd', chd.Disc('dvd', source.stat().st_size))
-            if sys.platform == 'win32':
+            if rvz.supported():
                 data = bytearray(1024*1024)
                 data[:6] = b'GTEST0'
                 data[0x1c:0x20] = bytes.fromhex('c2339f3d')
@@ -63,8 +63,8 @@ def diagnose(path):
         report.update(ok=True, tk=app.tk.call("info", "patchlevel"), title=app.title(),
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
-            chd_round_trip=True, rvz_round_trip=sys.platform == 'win32', mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
-            mx_crypto_provider='CommonCrypto' if sys.platform == 'darwin' else 'Windows CNG',
+            chd_round_trip=True, rvz_round_trip=rvz.supported(), mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,
+            mx_crypto_provider={'darwin':'CommonCrypto','linux':'OpenSSL (cryptography)'}.get(sys.platform,'Windows CNG'),
             vita_pkg_profile_engine=True,vita_pkg_crypto_self_check=True,
             whole_pkg_xdelta=False,installed_cpk_patching=True,local_pkg_rebuilding=sys.platform == 'win32',license_required_for_pkg_patching=True,
             dreamcast_dcp=True,dcp_engine_bundled=dcp_engine.is_file(),dcp_engine_started=True,

@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import os
+import sys
 from pathlib import Path
 import struct
 import tempfile
@@ -13,7 +14,7 @@ from retro_trans import rvz, chd
 from retro_trans.catalog import Catalog, recognize, scan_root, apply_plan
 from retro_trans.core import manual_patch, PatchError, Cancelled, sha256_file
 
-@unittest.skipUnless(os.name == 'nt', 'Bundled Windows RVZ converter')
+@unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ converter')
 class RvzTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -164,7 +165,8 @@ class RvzTests(unittest.TestCase):
     def test_unrelated_binary_and_engine_integrity(self):
         binary=self.root/'binary.iso';binary.write_bytes(b'not a GameCube disc')
         with self.assertRaises(PatchError):rvz.compress_verified(binary,self.root/'bad.rvz')
-        with patch.object(rvz,'ENGINE_SHA256','0'*64),self.assertRaises(PatchError):
+        guard = patch('retro_trans.linux.sha256_file',return_value='0'*64) if sys.platform == 'linux' else patch.object(rvz,'ENGINE_SHA256','0'*64)
+        with guard,self.assertRaises(PatchError):
             with rvz.engine_context():pass
 
     def test_cancellation_during_native_conversion_cleans_owned_process(self):

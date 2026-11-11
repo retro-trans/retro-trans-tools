@@ -22,9 +22,9 @@ from retro_trans.vita_automatic import VitaAutomaticPlan
 from test_vita_downloads import pkg_bytes
 
 
-@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native desktop UI')
+@unittest.skipUnless(os.name == 'nt' or sys.platform in ('darwin', 'linux'), 'Native desktop UI')
 class GuiTests(unittest.TestCase):
-    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    @unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ conversion')
     def test_rvz_consent_retained_iso_default_and_output_worker(self):
         import hashlib
         root=Path(self.storage.name);app=self.app
@@ -62,7 +62,7 @@ class GuiTests(unittest.TestCase):
         app.output_format.set('Original format');app.change_output_format()
         self.assertEqual(Path(app.output.get()).suffix,'.iso')
 
-    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    @unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ conversion')
     def test_manual_rvz_consent_output_selection_and_raw_override(self):
         app=self.app;root=Path(self.storage.name)
         source=root/'disc.rvz';source.write_bytes(b'RVZ\x01')
@@ -83,7 +83,7 @@ class GuiTests(unittest.TestCase):
             self.assertFalse(apply.call_args.kwargs['unpack_chd'])
             self.assertFalse(apply.call_args.kwargs['rvz_output'])
 
-    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    @unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ conversion')
     def test_manual_tab_offers_rvz_for_iso_selected_in_automatic(self):
         app=self.app;source=Path(self.storage.name)/'game.iso'
         raw=bytearray(1024);raw[0x1c:0x20]=bytes.fromhex('c2339f3d');source.write_bytes(raw)
@@ -93,7 +93,7 @@ class GuiTests(unittest.TestCase):
         app.change_output_format(manual=True)
         self.assertEqual(Path(app.apply_output.get()).suffix,'.rvz')
 
-    @unittest.skipUnless(os.name == 'nt', 'Windows RVZ conversion')
+    @unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ conversion')
     def test_rvz_multiple_scan_candidates_do_not_extract_or_prompt(self):
         app=self.app;root=Path(self.storage.name)
         source=root/'disc.rvz';source.write_bytes(b'RVZ\x01')
@@ -247,10 +247,10 @@ class GuiTests(unittest.TestCase):
     def test_open_logs_native_folder_and_worker_error_record(self):
         app = self.app
         expected = str(Path(self.storage.name)/'RetroTrans/logs')
-        if sys.platform == 'darwin':
+        if sys.platform in ('darwin','linux'):
             with patch('retro_trans.gui.subprocess.Popen') as launch:
                 app.open_logs()
-                self.assertEqual(launch.call_args.args[0], ['/usr/bin/open', expected])
+                self.assertEqual(launch.call_args.args[0], ['/usr/bin/open' if sys.platform == 'darwin' else 'xdg-open', expected])
         else:
             with patch('retro_trans.gui.os.startfile') as launch:
                 app.open_logs()
@@ -282,6 +282,7 @@ class GuiTests(unittest.TestCase):
         self.assertFalse(app.busy)
         self.assertEqual(app.detail.get(), "Current failure")
 
+    @unittest.skipIf(sys.platform == 'linux', 'PKG-based rePatch unavailable on Linux')
     def test_vita_tab_worker_and_busy_controls(self):
         app = self.app
         app.notebook.select(3); app.update()
@@ -310,6 +311,7 @@ class GuiTests(unittest.TestCase):
         self.assertEqual(app.saved_output, Path('new output'))
         self.assertEqual(str(app.folder_button['state']), 'normal')
 
+    @unittest.skipIf(sys.platform == 'linux', 'Vita PKG rebuilding unavailable on Linux')
     def test_generic_vita_pkg_profile_and_worker(self):
         app=self.app
         app.notebook.select(3);app.vita_game.set('Vita3K PKG');app.update()
@@ -336,6 +338,7 @@ class GuiTests(unittest.TestCase):
         self.assertEqual(app.vita_source.get(),'')
         self.assertEqual(app.apply_button['text'],'Create rePatch')
 
+    @unittest.skipIf(sys.platform == 'linux', 'Vita PKG rebuilding unavailable on Linux')
     def test_vita_pkg_blank_patch_requests_automatic_download(self):
         app = self.app
         app.notebook.select(3); app.vita_game.set('Vita3K PKG')
@@ -360,6 +363,7 @@ class GuiTests(unittest.TestCase):
         app.select_found()
         self.assertIsNotNone(app.selection)
 
+    @unittest.skipIf(sys.platform == 'linux', 'Vita PKG rebuilding unavailable on Linux')
     def test_automatic_vita_browse_license_and_patch_worker(self):
         app=self.app
         with tempfile.TemporaryDirectory() as folder:
@@ -503,11 +507,11 @@ class GuiTests(unittest.TestCase):
             self.assertEqual(z3_saves.source_blobs(z3_saves.load_ps3(ps3), z3_saves.load_vita(vita)), before)
             self.assertEqual(app.apply_button['text'], 'Check saves')
             self.assertNotEqual(app.save_output.get(), str(root / 'converted'))
-            target = 'retro_trans.gui.subprocess.Popen' if sys.platform == 'darwin' else 'retro_trans.gui.os.startfile'
+            target = 'retro_trans.gui.subprocess.Popen' if sys.platform in ('darwin','linux') else 'retro_trans.gui.os.startfile'
             with patch(target) as open_folder:
                 app.open_folder()
-                expected = ['/usr/bin/open', str(root/'converted')] if sys.platform == 'darwin' else str(root/'converted')
-                open_folder.assert_called_once_with(expected)
+                expected = ['/usr/bin/open' if sys.platform == 'darwin' else 'xdg-open', str(root/'converted')] if sys.platform in ('darwin','linux') else str(root/'converted')
+                self.assertEqual(open_folder.call_args.args, (expected,))
 
     def test_save_checks_invalidated_by_changed_inputs_and_direction(self):
         with tempfile.TemporaryDirectory() as temporary:

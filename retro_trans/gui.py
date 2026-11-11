@@ -83,7 +83,7 @@ class Application(tk.Tk):
         self.mx_slot = tk.StringVar(value='')
         self.mx_boot = tk.StringVar(value=self.settings.get('mx_game_file', ''))
         self.mx_ppsspp = tk.StringVar(value=self.settings.get('mx_ppsspp',
-            '' if sys.platform == 'darwin' else
+            '' if sys.platform != 'win32' else
             str(Path(os.environ.get('ProgramFiles', 'C:/Program Files')) / 'PPSSPP' / 'PPSSPPWindows64.exe')))
         self.mx_psp_difficulty = tk.BooleanVar(value=True)
         self.mx_ps2_output_difficulty = True
@@ -103,6 +103,10 @@ class Application(tk.Tk):
         self.mx_experimental = tk.BooleanVar(value=False)
         self.build_styles()
         self.build_layout()
+        if sys.platform == 'linux':
+            self.vita_summary.set('Vita PKG conversion is unavailable on Linux')
+            self.vita_note.set('Use Windows for original PKG conversion and PKG-based rePatch.\n'
+                               'Use Apply xdelta for an already decrypted CPK and a matching local patch.')
         for variable in (self.save_ps3, self.save_vita, self.save_output, self.save_direction, self.save_closed,
                          self.mx_slot, self.mx_boot, self.mx_ppsspp, self.mx_experimental):
             variable.trace_add('write', self.invalidate_saves)
@@ -128,7 +132,7 @@ class Application(tk.Tk):
         style = ttk.Style(self)
         if "vista" in style.theme_names():
             style.theme_use("vista")
-        if sys.platform != 'darwin':
+        if sys.platform == 'win32':
             for name in ("TkDefaultFont", "TkTextFont", "TkMenuFont"):
                 font.nametofont(name).configure(family="Segoe UI", size=9)
         self.option_add("*Font", "TkDefaultFont")
@@ -814,6 +818,8 @@ class Application(tk.Tk):
             self.route.set(self.plan.summary)
             self.detail.set('Select your matching work.bin or .rif, then click Patch. '
                             'The small translation ZIP downloads automatically; the PKG is rebuilt locally. Allow 6 GB free.')
+            if sys.platform == 'linux':
+                self.detail.set('Vita PKG rebuilding requires Windows. On Linux, use Apply xdelta with an already decrypted CPK.')
             self.auto_output_label.configure(text='Translated PKG:')
             self.auto_output_button.configure(text='Save as…')
             self.output_format.set('Original format')
@@ -924,6 +930,8 @@ class Application(tk.Tk):
             enabled = enabled and all(v.get().strip() for v in (self.dcp_source, self.dcp_patch, self.dcp_output))
         if tab == 5:
             enabled = enabled and all(v.get().strip() for v in (self.dlc_source, self.dlc_base, self.dlc_output))
+        if sys.platform == 'linux' and (tab == 3 or (tab == 0 and auto_vita)):
+            enabled = False
         self.apply_button.configure(text=("Patch", "Apply patch", 'Convert saves' if self.save_checked else 'Check saves',
             'Create translated PKG' if self.vita_game.get() == 'Vita3K PKG' else 'Create rePatch', 'Apply DCP', 'Create DLC copy')[tab],
             state="normal" if enabled else "disabled")
@@ -958,6 +966,10 @@ class Application(tk.Tk):
                 variable.set(path)
 
     def create_vita_repatch(self):
+        if sys.platform == 'linux':
+            messagebox.showinfo('Vita packages', 'PKG conversion and PKG-based rePatch require Windows in this build. '
+                                'Use Apply xdelta for decrypted CPK files.', parent=self)
+            return
         source, output, description = [v.get().strip() for v in
                                        (self.vita_source, self.vita_output, self.vita_description)]
         if not source or not output:
@@ -991,6 +1003,10 @@ class Application(tk.Tk):
                           'Leave Local patch blank: small download, local rebuilding; needs 6 GB free.' if english else
                           'Downloads the official Vita3K tool; needs 6 GB temporary space.\n'
                           'Use the matching work.bin for this game; leave Local patch blank to download its overlay patches.')
+        if sys.platform == 'linux':
+            self.vita_summary.set('Vita PKG conversion is unavailable on Linux')
+            self.vita_note.set('Use Windows for original PKG conversion and PKG-based rePatch.\n'
+                               'Use Apply xdelta for an already decrypted CPK and a matching local patch.')
         self.update_action()
 
     def vita_instructions(self):
@@ -1341,6 +1357,9 @@ class Application(tk.Tk):
         try:
             if sys.platform == 'darwin':
                 subprocess.Popen(['/usr/bin/open', str(path.parent)])
+            elif sys.platform == 'linux':
+                from .linux import system_environment
+                subprocess.Popen(['xdg-open', str(path.parent)], env=system_environment())
             else:
                 os.startfile(str(path.parent))
         except OSError as exc:
@@ -1357,6 +1376,9 @@ class Application(tk.Tk):
             folder = str(self.saved_output if self.saved_output.is_dir() else self.saved_output.parent)
             if sys.platform == 'darwin':
                 subprocess.Popen(['/usr/bin/open', folder])
+            elif sys.platform == 'linux':
+                from .linux import system_environment
+                subprocess.Popen(['xdg-open', folder], env=system_environment())
             else:
                 os.startfile(folder)
 

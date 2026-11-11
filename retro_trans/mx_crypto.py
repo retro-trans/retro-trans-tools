@@ -34,6 +34,10 @@ def xor(a, b):
 class AES:
     """Small bounded AES-CBC interface to the Windows built-in provider."""
     def __init__(self, key):
+        if sys.platform == 'linux':
+            require(len(key) == 16, 'Invalid savedata key length')
+            self.linux_key = bytearray(key)
+            return
         if sys.platform == 'darwin':
             require(len(key) == 16, 'Invalid savedata key length')
             self.apple_key = bytearray(key)
@@ -76,6 +80,12 @@ class AES:
 
     def crypt(self, data, decrypt=False, iv=bytes(16)):
         require(len(data) > 0 and len(data) % 16 == 0 and len(iv) == 16, 'Invalid AES data length')
+        if hasattr(self, 'linux_key'):
+            from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+            require(len(self.linux_key) == 16, 'Savedata cipher is closed')
+            cipher = Cipher(algorithms.AES(bytes(self.linux_key)), modes.CBC(iv))
+            operation = cipher.decryptor() if decrypt else cipher.encryptor()
+            return operation.update(data) + operation.finalize()
         if hasattr(self, 'apple_key'):
             require(len(self.apple_key) == 16, 'Savedata cipher is closed')
             output = ctypes.create_string_buffer(len(data))
@@ -96,6 +106,10 @@ class AES:
         return output.raw
 
     def close(self):
+        if hasattr(self, 'linux_key'):
+            self.linux_key[:] = bytes(len(self.linux_key))
+            self.linux_key.clear()
+            return
         if hasattr(self, 'apple_key'):
             self.apple_key[:] = bytes(len(self.apple_key))
             self.apple_key.clear()

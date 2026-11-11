@@ -13,7 +13,7 @@ from retro_trans.core import Cancelled, PatchError, manual_patch
 from retro_trans.release import build_release, validate_directory
 
 
-@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled xdelta')
+@unittest.skipUnless(os.name == 'nt' or sys.platform in ('darwin', 'linux'), 'Native bundled xdelta')
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

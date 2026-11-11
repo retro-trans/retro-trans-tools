@@ -103,6 +103,8 @@ def cache_directory():
         return Path(os.environ['RETRO_TRANS_DATA_DIR']) / 'cache'
     if sys.platform == 'darwin':
         return Path.home() / 'Library/Application Support/RetroTrans/cache'
+    if sys.platform == 'linux' and os.environ.get('XDG_CACHE_HOME'):
+        return Path(os.environ['XDG_CACHE_HOME']) / 'RetroTrans/cache'
     root = Path(os.environ.get("LOCALAPPDATA", str(Path.home() / ".cache")))
     return root / "RetroTrans" / "cache"
 
@@ -409,6 +411,19 @@ def identify_source(source, release, cancel=None, progress=None):
 
 
 def ensure_engine(client, cache, cancel=None, progress=None):
+    if sys.platform == 'linux':
+        from .linux import native_tool
+        check_cancel(cancel)
+        source = native_tool('xdelta3')
+        Path(cache).mkdir(parents=True, exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix='engine-', dir=str(cache)))
+        try:
+            target = root/'xdelta3'
+            shutil.copy2(source, target)
+            return target
+        except BaseException:
+            shutil.rmtree(root)
+            raise
     if sys.platform == 'darwin':
         from .macos import native_tool
         # Keep the existing ownership contract: callers remove engine.parent.

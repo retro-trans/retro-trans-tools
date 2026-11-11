@@ -230,7 +230,7 @@ class SolutionTests(unittest.TestCase):
         self.assertTrue((stage / 'file.bin').exists())
 
 
-@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled xdelta')
+@unittest.skipUnless(os.name == 'nt' or sys.platform in ('darwin', 'linux'), 'Native bundled xdelta')
 class SolutionRoundTrips(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()

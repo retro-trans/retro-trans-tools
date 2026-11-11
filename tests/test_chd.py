@@ -15,7 +15,7 @@ from retro_trans.catalog import Catalog, apply_plan, recognize, scan_root
 from retro_trans.core import Cancelled, PatchError, manual_patch
 
 
-@unittest.skipUnless(os.name == 'nt' or sys.platform == 'darwin', 'Native bundled engines')
+@unittest.skipUnless(os.name == 'nt' or sys.platform in ('darwin', 'linux'), 'Native bundled engines')
 class ChdTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -294,9 +294,9 @@ class ChdTests(unittest.TestCase):
         self.assertEqual(output.read_bytes(), b'keep')
         broken = self.root / 'broken-engine.zip'
         broken.write_bytes(b'not the engine')
-        guard = (patch('retro_trans.core.sha256_file', return_value='0'*64) if sys.platform == 'darwin'
+        guard = (patch('retro_trans.core.sha256_file', return_value='0'*64) if sys.platform in ('darwin','linux')
                  else patch.object(chd, 'RESOURCE', broken))
-        message = 'bundled Mac tools' if sys.platform == 'darwin' else 'engine failed verification'
+        message = ('bundled Linux tools' if sys.platform == 'linux' else 'bundled Mac tools') if sys.platform in ('darwin','linux') else 'engine failed verification'
         with guard, self.assertRaisesRegex(PatchError, message):
             with chd.prepared_source(self.base / 'dvd.chd', self.root):
                 self.fail('Bad engine used')

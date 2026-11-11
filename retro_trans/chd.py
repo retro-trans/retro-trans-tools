@@ -107,6 +107,11 @@ def require_space(folder, size):
 
 @contextmanager
 def engine_context(cancel=None):
+    if sys.platform == 'linux':
+        from .linux import native_tool
+        check_cancel(cancel)
+        yield native_tool('chdman')
+        return
     if sys.platform == 'darwin':
         from .macos import native_tool
         check_cancel(cancel)

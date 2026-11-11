@@ -23,6 +23,9 @@ def update_directory(target=None):
 
 
 def stage_update(client=None, directory=None, current=__version__, cancel=None):
+    if sys.platform == 'linux':
+        from .linux import update_notice
+        return update_notice(client or GitHubClient(), current, cancel)
     if sys.platform == 'darwin':
         from .mac_updater import stage_update as mac_stage
         return mac_stage(client, directory, current, cancel)
@@ -235,6 +238,8 @@ def helper_main(target, directory):
 
 def update_status(directory=None, current=__version__):
     """Read current installation status without presenting an older success as current."""
+    if sys.platform == 'linux':
+        return 'Linux app updates: download and extract the new package. Catalogs refresh automatically.'
     default = "Updates install automatically on the next launch."
     directory = Path(directory) if directory else update_directory()
     try:

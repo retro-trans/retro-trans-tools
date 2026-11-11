@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import struct
 import subprocess
+import sys
 import tempfile
 import time
 import zipfile
@@ -31,7 +32,7 @@ class Disc:
     size: int
 
 def supported():
-    return os.name == 'nt'
+    return os.name == 'nt' or sys.platform == 'linux'
 
 def is_rvz(path):
     path = Path(path)
@@ -76,6 +77,11 @@ def require_space(folder, size):
 
 @contextmanager
 def engine_context(cancel=None):
+    if sys.platform == 'linux':
+        from .linux import native_tool
+        check_cancel(cancel)
+        yield native_tool('dolphin-tool')
+        return
     if not supported():
         raise RvzError('RVZ conversion in this build requires 64-bit Windows.')
     if not RESOURCE.is_file() or sha256_file(RESOURCE, cancel) != ENGINE_SHA256:
@@ -101,6 +107,8 @@ def run(engine, args, user, message, cancel=None, progress=None, bounded_output=
                 stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                 creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         except OSError as exc:
+            if sys.platform == 'linux':
+                raise RvzError('Could not start the bundled RVZ converter. Extract a fresh Linux package.') from exc
             raise RvzError('Could not start the RVZ converter. On Windows, install the current '
                            'Microsoft Visual C++ v14 x64 runtime and retry.') from exc
         try:
@@ -114,6 +122,8 @@ def run(engine, args, user, message, cancel=None, progress=None, bounded_output=
                 time.sleep(.1)
             check_cancel(cancel)
             if process.returncode:
+                if sys.platform == 'linux':
+                    raise RvzError(message+' failed. The disc may be damaged or unsupported.')
                 raise RvzError(message+' failed. The disc may be damaged or unsupported. '
                                'Check that the Microsoft Visual C++ v14 x64 runtime is installed.')
         finally:

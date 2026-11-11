@@ -51,8 +51,12 @@ jobs:
           docker build -t retro-linux-smoke -f scripts/linux-smoke.Dockerfile .
           mkdir -p dist/clean-smoke
           chmod 777 dist/clean-smoke
-          docker run --rm --network none --user 10001:10001 -v "$PWD/dist:/packages:ro" -v "$PWD/dist/clean-smoke:/results" retro-linux-smoke
+          if ! docker run --rm --network none --user 10001:10001 -v "$PWD/dist:/packages:ro" -v "$PWD/dist/clean-smoke:/results" retro-linux-smoke; then
+            cat dist/clean-smoke/*.json
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: Retro-Trans-Linux-x86_64
           path: |

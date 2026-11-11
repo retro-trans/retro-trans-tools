@@ -51,7 +51,7 @@ jobs:
           docker build -t retro-linux-smoke -f scripts/linux-smoke.Dockerfile .
           mkdir -p dist/clean-smoke
           chmod 777 dist/clean-smoke
-          if ! docker run --rm --network none --user 10001:10001 -v "$PWD/dist:/packages:ro" -v "$PWD/dist/clean-smoke:/results" retro-linux-smoke; then
+          if ! docker run --rm --network none --user "$(id -u):$(id -g)" -v "$PWD/dist:/packages:ro" -v "$PWD/dist/clean-smoke:/results" retro-linux-smoke; then
             cat dist/clean-smoke/*.json
             exit 1
           fi

@@ -12,7 +12,7 @@ from retro_trans import mx_converter, mx_crypto
 
 def diagnose(path):
     app = None
-    report = {"ok": False, "version": __version__}
+    report = {"ok": False, "version": __version__, "stage": "native interface"}
     try:
         app = Application(startup=False, visible=False)
         app.update_idletasks()
@@ -28,10 +28,12 @@ def diagnose(path):
             raise RuntimeError("Bundled Z3 save instructions are missing.")
         if not mx_converter.GUIDE.read_text(encoding="utf-8").strip():
             raise RuntimeError("Bundled MX save instructions are missing.")
+        report['stage'] = 'savedata cryptography'
         if mx_crypto.cmac(bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'), b'').hex() != 'bb1d6929e95937287fa37d129b756746':
             raise RuntimeError('Savedata cryptography self-check failed.')
         from retro_trans import vita_pfs
         from retro_trans import dcp
+        report['stage'] = 'DCP engine integrity'
         dcp_engine = dcp.engine()
         vita_pfs.constants()
         if vita_pfs.cbc_tail(bytes.fromhex('6bc1bee22e409f96e93d7e117393172a'),
@@ -40,11 +42,13 @@ def diagnose(path):
         import tempfile
         import subprocess
         import json
+        report['stage'] = 'DCP engine startup'
         result = subprocess.run([str(dcp_engine)], capture_output=True, timeout=15,
             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         if result.returncode != 1 or json.loads(result.stdout).get('error') != 'Expected a command and JSON request.':
-            raise RuntimeError('Bundled DCP engine did not start correctly.')
+            raise RuntimeError('Bundled DCP engine did not start correctly. ' + result.stderr.decode('utf-8', errors='replace')[:1000])
         with tempfile.TemporaryDirectory() as cache:
+            report['stage'] = 'xdelta engine startup'
             with engine_context(cache=cache) as engine:
                 result = subprocess.run([str(engine), "-V"], capture_output=True,
                     creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
@@ -53,14 +57,16 @@ def diagnose(path):
             from pathlib import Path
             source = Path(cache) / 'health.iso'
             source.write_bytes(bytes(range(256)) * 64)
+            report['stage'] = 'CHD round trip'
             chd.compress_verified(source, Path(cache) / 'health.chd', chd.Disc('dvd', source.stat().st_size))
             if rvz.supported():
+                report['stage'] = 'RVZ round trip'
                 data = bytearray(1024*1024)
                 data[:6] = b'GTEST0'
                 data[0x1c:0x20] = bytes.fromhex('c2339f3d')
                 source.write_bytes(data)
                 rvz.compress_verified(source, Path(cache)/'health.rvz')
-        report.update(ok=True, tk=app.tk.call("info", "patchlevel"), title=app.title(),
+        report.update(ok=True, stage='complete', tk=app.tk.call("info", "patchlevel"), title=app.title(),
             window=[app.winfo_width(), app.winfo_height()], patches=len(catalog.edges),
             tabs=[app.notebook.tab(tab, "text") for tab in app.notebook.tabs()], z3_save_converter=True,
             chd_round_trip=True, rvz_round_trip=rvz.supported(), mx_converter='experimental early Hugo intermission', mx_cng_self_check=True,

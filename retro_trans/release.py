@@ -18,8 +18,50 @@ from .catalog import validate_manifest, atomic_json
 
 
 def build_release(config_path, output, cancel=None, progress=None, cache=None, library=None):
+    """Prepare explicit combined sources privately, then use the ordinary builder."""
+    from .combined import concatenate
     config_path = Path(config_path).resolve()
-    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config = json.loads(config_path.read_text(encoding='utf-8'))
+    if not any('source_files' in row for row in config.get('patches', [])):
+        return _build_release(config_path, output, cancel, progress, cache, library)
+    # Registration and output checks happen before reading original game files.
+    from .game_library import validate_registration
+    validate_registration(config, library=library)
+    output = Path(output).absolute()
+    if output.exists():
+        raise PatchError('Release directory already exists. Use a new directory.')
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.release-source-', dir=str(output.parent)) as temporary:
+        originals = []
+        for index, row in enumerate(config['patches']):
+            if 'source_files' not in row:
+                continue
+            if 'source' in row or 'combined_source' in row:
+                raise PatchError('Use source_files instead of source for a combined input.')
+            files = row.pop('source_files')
+            if not isinstance(files, list) or not 2 <= len(files) <= 16:
+                raise PatchError('A combined source requires two to sixteen files.')
+            unresolved = [config_path.parent / item['source'] for item in files]
+            paths = [p.resolve() for p in unresolved]
+            if any(not p.is_file() or p.is_symlink() for p in unresolved) or len(set(paths)) != len(paths):
+                raise PatchError('Combined inputs must be distinct regular files.')
+            if shutil.disk_usage(output.parent).free < sum(p.stat().st_size for p in paths) + 64 * 1024**2:
+                raise PatchError('Not enough space to prepare the combined release source.')
+            metadata = [dict(name=item['name'], bytes=p.stat().st_size, sha256=sha256_file(p, cancel, progress))
+                        for item, p in zip(files, paths)]
+            row['combined_source'] = dict(method='concat', files=metadata)
+            from .combined import components
+            parts = components(row['combined_source'])
+            source = Path(temporary) / ('source-' + str(index) + '.bin')
+            concatenate(paths, parts, source, cancel, progress)
+            row['source'] = str(source)
+            originals.extend(zip(paths, parts))
+        return _build_release(config_path, output, cancel, progress, cache, library, config, originals)
+
+
+def _build_release(config_path, output, cancel=None, progress=None, cache=None, library=None, config=None, originals=()):
+    config_path = Path(config_path).resolve()
+    config = config if config is not None else json.loads(config_path.read_text(encoding="utf-8"))
     output = Path(output).absolute()
     if output.exists():
         raise PatchError("Release directory already exists. Use a new directory; published versions are immutable.")
@@ -28,6 +70,8 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None, l
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = {k: config[k] for k in ("game_id", "game_name", "platform", "version", "source_commit")}
     manifest.update(schema_version=2 if 'solutions' in config else 1, patches=[])
+    if any('combined_source' in row for row in config['patches']):
+        manifest.update(schema_version=3, min_app_version='0.5.23')
     manifest['package_ids'] = copy.deepcopy(config['package_ids'])
     inputs = []
     digests = {}
@@ -47,6 +91,8 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None, l
                 digests[path] = (sha256_file(path, cancel, progress), path.stat().st_size)
         entry = {k: row[k] for k in ("patch", "edition", "language", "source_version", "source_format", "target_format")}
         entry.update({k: row[k] for k in ("platform", "game_name") if k in row})
+        if 'combined_source' in row:
+            entry['combined_source'] = copy.deepcopy(row['combined_source'])
         entry.update(source_sha256=digests[source][0], source_bytes=digests[source][1],
                      target_sha256=digests[target][0], target_bytes=digests[target][1],
                      patch_sha256="0" * 64, patch_bytes=0)
@@ -71,9 +117,13 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None, l
     with tempfile.TemporaryDirectory(prefix=".release-build-", dir=str(output.parent)) as temporary:
         stage = Path(temporary)
         with engine_context(cache=cache, cancel=cancel, progress=progress) as engine:
-            for entry, (source, target) in zip(manifest["patches"], inputs):
+            for row, entry, (source, target) in zip(config['patches'], manifest["patches"], inputs):
                 delta = stage / entry["patch"]
-                encode(engine, source, target, delta, cancel, progress)
+                if 'patch_source' in row:
+                    # Import an issued delta byte for byte, with a new full decode proof.
+                    shutil.copyfile((config_path.parent / row['patch_source']).resolve(), delta)
+                else:
+                    encode(engine, source, target, delta, cancel, progress)
                 decoded = stage / "verification.part"
                 decode(engine, source, delta, decoded, entry["target_bytes"], cancel, progress)
                 if decoded.stat().st_size != entry["target_bytes"] or sha256_file(decoded, cancel, progress) != entry["target_sha256"]:
@@ -94,6 +144,9 @@ def build_release(config_path, output, cancel=None, progress=None, cache=None, l
         (stage / "SHA256SUMS.txt").write_text("\n".join(checksums) + "\n", encoding="utf-8")
         validate_directory(stage)
         check_cancel(cancel)
+        for path, (name, size, digest) in originals:
+            if path.stat().st_size != size or sha256_file(path, cancel) != digest:
+                raise PatchError('A combined-source input changed during the build: ' + name)
         # Reserve the final directory exclusively; never merge/overwrite builds.
         output.mkdir()
         try:

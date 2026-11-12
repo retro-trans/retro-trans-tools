@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.23 candidate — combined sources — 2026-11-12
+
+- Add manifest v3 with explicit ordered concatenation, per-file sizes/SHA-256,
+  aggregate source verification and a minimum supported app version. Older
+  manifests and ordinary incremental routes retain their existing behavior.
+- Automatic recognizes a required file or folder, explains missing/changed
+  components, and constructs the combined source only after Patch is clicked.
+  Originals, saves and existing output files are never overwritten. Temporary
+  combined inputs are removed on success, failure or cancellation.
+- The shared release builder accepts private `source_files` lists and can import
+  an issued delta byte for byte while repeating its full decode verification.
+  Component identities/order are immutable in the catalog.
+- Register Apathy - Gakkou de Atta Kowai Hanashi - Kiwame, Steam app 2283710.
+  Its local 0.8.1 candidate supplies original-to-English and 0.8.0 upgrade routes.
+  No app/game release or source push has been performed for this candidate.
+
 ## 0.5.22 — PS3 DLC workflow — 2026-11-08
 
 - Published from 843ef18 after workflow 42460459883 passed packaging, standalone

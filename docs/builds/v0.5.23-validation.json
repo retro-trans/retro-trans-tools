@@ -1,0 +1,71 @@
+{
+  "version": "0.5.23",
+  "published": false,
+  "tests": {
+    "run": 372,
+    "skipped": 5,
+    "passed": true
+  },
+  "native_gui_tests": 40,
+  "standalone_health": {
+    "ok": true,
+    "version": "0.5.23",
+    "stage": "complete",
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.23",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 253,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP",
+      "PS3 DLC"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "rvz_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true,
+    "automatic_dcp": true,
+    "automatic_dcp_profiles": 4,
+    "game_library_games": 30,
+    "vita_library_routes": 12
+  },
+  "artifacts": [
+    {
+      "name": "Retro-Trans.exe",
+      "bytes": 70619535,
+      "sha256": "6d719ab666498d9306775da3958d45ce65b9de87f0b8580be56b6bb4a451976e"
+    },
+    {
+      "name": "Retro-Trans-Windows-0.5.23-candidate.zip",
+      "bytes": 80530588,
+      "sha256": "236e2ec877d9ed8940faf38297ed50ef35d983d3ea55e695b9ad866d2d758af2"
+    }
+  ],
+  "apathy": {
+    "version": "0.8.1",
+    "steam_app_id": "2283710",
+    "full_and_upgrade_apply_verified": true,
+    "source_files_and_saves_unchanged": true,
+    "full_patch_bytes": 162330751,
+    "upgrade_patch_bytes": 246802,
+    "native_title_font_audio_verified": true,
+    "catalog_asset_admission_verified": true
+  }
+}

@@ -47,7 +47,7 @@ def validate_manifest(data, legacy=False):
     required = ("game_id", "game_name", "platform", "version", "patches")
     if any(k not in data for k in required):
         raise PatchError("Missing required release fields.")
-    if not legacy and (type(data.get("schema_version")) is not int or data["schema_version"] not in (1, 2)):
+    if not legacy and (type(data.get("schema_version")) is not int or data["schema_version"] not in (1, 2, 3)):
         raise PatchError("Unsupported manifest schema version.")
     for name in ("game_id", "game_name", "platform"):
         text_field(data[name], name)
@@ -100,6 +100,8 @@ def validate_manifest(data, legacy=False):
             raise PatchError("Incomplete patch metadata.") from exc
     from .solutions import validate_solutions
     validate_solutions(data, legacy)
+    from .combined import validate as validate_combined
+    validate_combined(data)
     return data
 
 
@@ -127,6 +129,7 @@ class Binary:
     format: str
     size: object
     hashes: dict = field(default_factory=dict)
+    source_parts: tuple = ()
 
     @property
     def label(self):
@@ -211,8 +214,12 @@ class Catalog:
         game_name = patch.get("game_name", manifest["game_name"])
         hashes = {algorithm: patch[side + "_" + algorithm].lower() for algorithm in ("sha256", "sha1") if patch.get(side + "_" + algorithm)}
         size = patch.get(side + "_bytes")
+        from .combined import components
+        parts = components(patch['combined_source']) if side == 'source' and 'combined_source' in patch else ()
         if key in self.nodes:
             node = self.nodes[key]
+            if node.source_parts != parts:
+                raise PatchError('Conflicting combined-source definition for binary ' + node.label)
             if node.platform != platform or node.format != patch[side + "_format"]:
                 raise PatchError("Conflicting platform or format for binary " + node.label)
             if node.size is not None and size is not None and node.size != size:
@@ -225,7 +232,7 @@ class Catalog:
                 node.size = size
             return node
         node = Binary(key, game_name, platform, version,
-            patch["edition"], patch["language"], patch[side + "_format"], size, hashes)
+            patch["edition"], patch["language"], patch[side + "_format"], size, hashes, parts)
         self.nodes[key] = node
         return node
 
@@ -241,6 +248,9 @@ class Catalog:
                       key=lambda n: version_key(n.version), reverse=True)
 
     def plan(self, source, target="Latest"):
+        from .combined import CombinedSource
+        if isinstance(source, CombinedSource) and source.problems:
+            raise PatchError('\n'.join(source.problems))
         from .dcp_automatic import DcpSource, plan
         if isinstance(source, DcpSource):
             return plan(source, target)
@@ -349,7 +359,7 @@ def _recognize_binary(path, catalog, cancel=None, progress=None, *, defer_chd=Fa
             return sorted([n for n in candidates if matches(n, hashes, binary.stat().st_size)],
                           key=lambda n: version_key(n.version), reverse=True)
     size = path.stat().st_size
-    candidates = [n for n in catalog.nodes.values() if n.id in catalog.available_ids and (n.size is None or n.size == size)]
+    candidates = [n for n in catalog.nodes.values() if not n.source_parts and n.id in catalog.available_ids and (n.size is None or n.size == size)]
     if not candidates:
         return []
     algorithms = required_hashes(candidates)
@@ -358,6 +368,19 @@ def _recognize_binary(path, catalog, cancel=None, progress=None, *, defer_chd=Fa
 
 
 def recognize(path, catalog, cancel=None, progress=None, *, defer_chd=False):
+    from .combined import recognize as recognize_combined
+    if any(n.source_parts for n in catalog.nodes.values()):
+        selected = Path(path)
+        if selected.is_dir():
+            return [node for _, node in scan_root(selected, catalog, cancel, progress, defer_chd=defer_chd)]
+        ordinary = _recognize_binary(selected, catalog, cancel, progress, defer_chd=defer_chd)
+        if ordinary:
+            # Continue through the existing grouped-file recognizer where needed.
+            if not any(n.id[:3] in catalog.grouped_families for n in ordinary if hasattr(n, 'id')):
+                return ordinary
+        combined = recognize_combined(selected, catalog, cancel, progress)
+        if combined:
+            return combined
     from .dcp_automatic import recognize as recognize_dcp
     found = recognize_dcp(path, catalog.dcp_profiles, cancel, progress)
     if found:
@@ -372,6 +395,12 @@ def recognize(path, catalog, cancel=None, progress=None, *, defer_chd=False):
 
 def scan_root(root, catalog, cancel=None, progress=None, *, defer_chd=False):
     result = _scan_root(root, catalog, cancel, progress, defer_chd=defer_chd)
+    from .combined import recognize as recognize_combined
+    families = {node.id[:3] for _, node in result if hasattr(node, 'id')}
+    if any(n.source_parts for n in catalog.nodes.values()):
+        result.extend((Path(root) / node.source_parts[0][0], node)
+                      for node in recognize_combined(root, catalog, cancel, progress)
+                      if node.id[:3] not in families)
     if catalog.dcp_profiles:
         from .dcp_automatic import recognize as recognize_dcp
         for path in sorted(Path(root).iterdir()):
@@ -433,7 +462,7 @@ def assert_immutable(previous, current):
             raise PatchError("Catalog removed or changed an existing patch: " + edge.asset.name)
     for key, node in previous.nodes.items():
         updated = current.nodes.get(key)
-        if updated is None or any(updated.hashes.get(a) != v for a, v in node.hashes.items()) or (node.size is not None and updated.size != node.size):
+        if updated is None or updated.source_parts != node.source_parts or any(updated.hashes.get(a) != v for a, v in node.hashes.items()) or (node.size is not None and updated.size != node.size):
             raise PatchError("Catalog changed a known binary identity.")
     for key, solution in previous.solutions.items():
         if current.solutions.get(key) != solution:
@@ -462,6 +491,11 @@ def refresh_catalog(client=None, cache=None, cancel=None):
 def apply_plan(source, output, plan, catalog, client=None, cache=None, cancel=None, progress=None, chd_output=False, rvz_output=False):
     if chd_output and rvz_output:
         raise PatchError('Choose one output format.')
+    from .combined import CombinedSource, apply as apply_combined
+    if isinstance(plan.source, CombinedSource):
+        if chd_output or rvz_output:
+            raise PatchError('Combined sources produce an ordinary file, not a compressed disc.')
+        return apply_combined(source, output, plan, catalog, client, cache, cancel, progress)
     from .dcp_automatic import DcpPlan, apply as apply_dcp
     if isinstance(plan,DcpPlan):
         if rvz_output:

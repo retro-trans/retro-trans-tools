@@ -48,6 +48,10 @@ it lists, `SHA256SUMS.txt`, and `VALIDATION.json`. Optional texture packs, sourc
 archives, screenshots and documentation are separate assets. Do not include any
 original or complete translated game binaries in the release directory.
 
+Combined-source releases use `schema/game-release-v3.schema.json` and Retro
+Trans 0.5.23+. See [combined sources](COMBINED_SOURCES.md) for ordered input files,
+builder configuration, compatibility and upgrade rules.
+
 Single-file releases use `schema/game-release-v1.schema.json`; releases declaring
 multi-file solutions use `schema/game-release-v2.schema.json`. The shared
 validator additionally checks unique asset names, matching release tags, asset

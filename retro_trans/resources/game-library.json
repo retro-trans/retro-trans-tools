@@ -38,6 +38,18 @@
       ]
     },
     {
+      "game_id": "apathy-kiwame",
+      "name": "Apathy - Gakkou de Atta Kowai Hanashi - Kiwame",
+      "repo": "retro-trans/Apathy-Kiwame",
+      "package_ids": [
+        {
+          "platform": "PC",
+          "kind": "steam-app-id",
+          "id": "2283710"
+        }
+      ]
+    },
+    {
       "game_id": "black-matrix-ad-dreamcast",
       "name": "Black/Matrix AD",
       "repo": "retro-trans/Black-Matrix-AD",

@@ -24,6 +24,29 @@ from test_vita_downloads import pkg_bytes
 
 @unittest.skipUnless(os.name == 'nt' or sys.platform in ('darwin', 'linux'), 'Native desktop UI')
 class GuiTests(unittest.TestCase):
+    def test_combined_source_selection_details_and_output_worker(self):
+        from test_combined import CombinedTests
+        fixture = CombinedTests()
+        fixture.setUp()
+        try:
+            record, _ = fixture.build()
+            app = self.app
+            app.catalog = Catalog(dict(schema_version=1, releases=[record]))
+            with patch('retro_trans.gui.filedialog.askdirectory', return_value=str(fixture.game)):
+                app.choose_folder()
+            self.finish_worker()
+            self.assertIn('combined source', app.detected.get())
+            self.assertIn('game.exe', app.detail.get())
+            self.assertIn('game.tpatch', app.detail.get())
+            self.assertEqual(Path(app.output.get()).suffix, '.exe')
+            self.assertEqual(str(app.apply_button['state']), 'normal')
+            with patch('retro_trans.gui.apply_plan', return_value=Path(app.output.get())) as apply:
+                app.apply()
+                self.finish_worker()
+            self.assertEqual(apply.call_args.args[0], fixture.game / 'game.exe')
+        finally:
+            fixture.doCleanups()
+
     @unittest.skipUnless(os.name == 'nt' or sys.platform == 'linux', 'Bundled RVZ conversion')
     def test_rvz_consent_retained_iso_default_and_output_worker(self):
         import hashlib

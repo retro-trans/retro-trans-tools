@@ -24,7 +24,7 @@ def output_name(value):
 def validate_solutions(manifest, legacy=False):
     from .catalog import text_field
     schema = manifest.get('schema_version', 1)
-    if schema != 2:
+    if schema != 2 and not (schema == 3 and 'solutions' in manifest):
         if 'solutions' in manifest:
             raise PatchError("Multi-file solutions require manifest schema_version 2.")
         return

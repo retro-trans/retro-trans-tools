@@ -855,6 +855,9 @@ class Application(tk.Tk):
                     self.update_action()
                     return
                 self.route.set(self.plan.summary if self.plan.edges else "Already at the selected version. " + self.plan.summary)
+                from .combined import CombinedSource
+                if isinstance(self.plan.source, CombinedSource):
+                    self.detail.set(self.plan.source.details + '\nBoth originals are verified and combined temporarily; neither is changed.')
                 path = self.selection[0]
                 if isinstance(self.plan, SolutionPlan):
                     self.output_format_box.configure(values=['Original format'])
@@ -901,7 +904,9 @@ class Application(tk.Tk):
                 text.configure(state='disabled')
                 dialog.bind('<Escape>', lambda event: dialog.destroy())
             else:
-                messagebox.showinfo("Patch route", self.plan.summary + "\n\n" + "\n".join(e.asset.name for e in self.plan.edges))
+                from .combined import CombinedSource
+                details = self.plan.source.details + '\n\n' if isinstance(self.plan.source, CombinedSource) else ''
+                messagebox.showinfo("Patch route", self.plan.summary + "\n\n" + details + "\n".join(e.asset.name for e in self.plan.edges))
 
     def update_detail(self, *args):
         self.detail_text.configure(state="normal")
@@ -1242,7 +1247,8 @@ class Application(tk.Tk):
                             self.detected.set("Choose a file to identify or patch" if self.found else "No recognized binary")
                             self.route.set("Select a file set above." if self.found else "Browse to another file or folder, or use Apply xdelta for a local patch.")
                         self.status.set("{} file/version entries found.".format(len(self.found)))
-                        if not isinstance(self.plan,(VitaAutomaticPlan,DcpPlan)):
+                        from .combined import CombinedSource
+                        if not isinstance(self.plan,(VitaAutomaticPlan,DcpPlan)) and not isinstance(getattr(self.plan, 'source', None), CombinedSource):
                             self.detail.set(self.plan_problem or "Your original is preserved. The route runs only when you click Patch.")
                         if not self.found and Path(self.apply_source.get()).resolve() in self.extracted_inputs:
                             self.detail.set('No catalog match. The extracted disc is kept at:\n' +

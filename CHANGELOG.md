@@ -2,6 +2,12 @@
 
 ## 0.5.23 — combined sources — 2026-11-12
 
+- Published from cbf7858 after workflow 43180734720 passed packaging, standalone
+  startup and next-launch update checks. Public EXE/ZIP/update checksums,
+  downloaded EXE health, actual updater staging from 0.5.22 and both Apathy
+  public Automatic routes pass. Catalog workflow 43181567788 succeeded. See
+  [public verification](docs/releases/v0.5.23-validation.json).
+
 - Add manifest v3 with explicit ordered concatenation, per-file sizes/SHA-256,
   aggregate source verification and a minimum supported app version. Older
   manifests and ordinary incremental routes retain their existing behavior.

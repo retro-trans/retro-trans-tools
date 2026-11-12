@@ -1,0 +1,59 @@
+{
+  "version": "0.5.23",
+  "source_commit": "cbf7858899859a71abd300745a19446b1facd405",
+  "workflow_run": 43180734720,
+  "workflow_result": "success",
+  "local_suite": {
+    "run": 372,
+    "passed": 367,
+    "skipped": 5
+  },
+  "public_downloads": {
+    "Retro-Trans-Windows.zip": {
+      "bytes": 80145284,
+      "sha256": "95bfb1aa24834461da519203872ee5edf12cafb336b58c413f134061bce9e407"
+    },
+    "Retro-Trans.exe": {
+      "bytes": 70218919,
+      "sha256": "2b9ad23339dc152da758c47360db3607691813bd1acb94a3c8bb636edacbd5a7"
+    },
+    "UPDATE.json": {
+      "bytes": 212,
+      "sha256": "df1187984657fd7e1126035acb3590f24ef75a3aafa8b197f7f9fc1ecaf36488"
+    }
+  },
+  "public_executable_health": true,
+  "hosted_packaged_next_launch_update": true,
+  "actual_public_updater_staging_from_0_5_22": true,
+  "test_update_installed_to_user_app": false,
+  "apathy_release": {
+    "version": "0.8.1",
+    "published": true,
+    "catalog_workflow": 43181567788,
+    "catalog_result": "success",
+    "public_api_assets_verified": 6,
+    "public_catalog_enrollment_verified": true,
+    "actual_public_full_and_upgrade_verified": true,
+    "already_current_recognition": true,
+    "source_files_and_saves_unchanged": true,
+    "previous_0_8_0_assets_unchanged": true,
+    "routes": [
+      {
+        "source_version": "original",
+        "target_version": "0.8.1",
+        "patch": "Apathy-Kiwame-Steam-original-to-0.8.1.xdelta",
+        "download_bytes": 162330751,
+        "downloaded_sha256": "fd4421683b2559673877d0094a9443a4cde05c52a146528f26b09d98e015d6b9",
+        "output_sha256": "55f523091dc62de6d73cdc1fb9d2dcb3b675a4ab47acf4a6688d08dcab693f95"
+      },
+      {
+        "source_version": "0.8.0",
+        "target_version": "0.8.1",
+        "patch": "Apathy-Kiwame-Steam-0.8.0-to-0.8.1.xdelta",
+        "download_bytes": 246802,
+        "downloaded_sha256": "24918ac699f0bc18723628a5aa8fa12b7d3aa9dc61458969bfe48489d1614879",
+        "output_sha256": "55f523091dc62de6d73cdc1fb9d2dcb3b675a4ab47acf4a6688d08dcab693f95"
+      }
+    ]
+  }
+}

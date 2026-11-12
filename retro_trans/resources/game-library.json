@@ -506,6 +506,18 @@
           "id": "cross-hermit"
         }
       ]
+    },
+    {
+      "game_id": "gundam-climax-uc",
+      "name": "Mobile Suit Gundam: Climax U.C.",
+      "repo": "retro-trans/Gundam-Climax-UC",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPS-25627"
+        }
+      ]
     }
   ],
   "vita_releases": [

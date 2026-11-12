@@ -916,6 +916,44 @@
       "vita_min_app_version": "0.5.16"
     },
     {
+      "repo": "retro-trans/Gundam-Climax-UC",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "gundam-climax-uc",
+        "game_name": "Mobile Suit Gundam: Climax U.C.",
+        "platform": "PS2",
+        "version": "0.8.0",
+        "source_commit": "55aac9a9b3cf81db64c643ddd6d6940ec6dc5791",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "GundamClimaxUC-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "eae0c2c7a6c3768a35d327cd39968b9c5039c9d41959254ce93961a9bbf3d58e",
+            "source_bytes": 4416110592,
+            "target_sha256": "9dbe37307e8d9f77a331868bd222222f4a154a7832be9089e183e2905a0a25cd",
+            "target_bytes": 4416110592,
+            "patch_sha256": "04e736e52f8fdce540c8bd55c0eee725dfa3d2ab8061df29f88d51cb6ab16684",
+            "patch_bytes": 421004
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "disc-id",
+            "id": "SLPS-25627"
+          }
+        ]
+      },
+      "assets": {
+        "GundamClimaxUC-English-v0.8.0.xdelta": "https://github.com/retro-trans/Gundam-Climax-UC/releases/download/v0.8.0/GundamClimaxUC-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Heroes-Phantasia",
       "tag": "v0.1.45",
       "manifest": {

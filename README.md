@@ -1,10 +1,10 @@
 # Retro Trans
 
-**0.5.23 candidate:** Automatic can verify and concatenate explicitly declared
+**Windows 0.5.23:** Automatic can verify and concatenate explicitly declared
 source files before applying xdelta. This supports Apathy's original Steam
 `kiwame.exe` plus `kiwame.tpatch`, and ordinary incremental patches from an
 already translated executable. See [combined sources](docs/COMBINED_SOURCES.md).
-This candidate has not been published.
+Download the [Windows release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.23).
 
 **Linux 0.5.22:** a portable x86-64 package is available on the
 [0.5.22 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.22).

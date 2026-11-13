@@ -530,6 +530,18 @@
           "id": "cross-hermit"
         }
       ]
+    },
+    {
+      "game_id": "gakkou-de-atta-kowai-hanashi-s",
+      "name": "Gakkou de Atta Kowai Hanashi S",
+      "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-00404"
+        }
+      ]
     }
   ],
   "vita_releases": [

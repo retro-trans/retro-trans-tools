@@ -765,6 +765,90 @@
       }
     },
     {
+      "repo": "retro-trans/Apathy-Kiwame",
+      "tag": "v0.8.2",
+      "manifest": {
+        "game_id": "apathy-kiwame",
+        "game_name": "Apathy - Gakkou de Atta Kowai Hanashi - Kiwame",
+        "platform": "PC",
+        "version": "0.8.2",
+        "source_commit": "17bd0d7ac6f024f9470465396f03982f4aa9975a",
+        "schema_version": 3,
+        "patches": [
+          {
+            "patch": "Apathy-Kiwame-Steam-original-to-0.8.2.xdelta",
+            "edition": "Steam build 10331351",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "exe",
+            "combined_source": {
+              "method": "concat",
+              "files": [
+                {
+                  "name": "kiwame.exe",
+                  "bytes": 601000405,
+                  "sha256": "3024dba7e99020ffc04840c88d28af19395c32e75ae982f5e6dfd05237ed15d5"
+                },
+                {
+                  "name": "kiwame.tpatch",
+                  "bytes": 196845942,
+                  "sha256": "ca8ac62083dcc5129c46d310313658377b3c9493a7ca1d14b5dfeb2cdf1781d8"
+                }
+              ]
+            },
+            "source_sha256": "166919d57cd3235e57fd3f7bcef4decee7bc9a1da1111769fcc6c6ea5aad6ab9",
+            "source_bytes": 797846347,
+            "target_sha256": "46dc61201eec500f4a40a165f65e2c151fbec95bb11b1a5052a81ec43739314d",
+            "target_bytes": 989369434,
+            "patch_sha256": "785604816bfb8ecacf70587359c8aedfb675be4048623c4ee4ec23df124c666c",
+            "patch_bytes": 198140252
+          },
+          {
+            "patch": "Apathy-Kiwame-Steam-0.8.0-to-0.8.2.xdelta",
+            "edition": "Steam build 10331351",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "exe",
+            "target_format": "exe",
+            "source_sha256": "72ec7a82ad41e98c2f29e8a1f8684c003bf7cc123147895d8215a3fba9a8cd62",
+            "source_bytes": 953561420,
+            "target_sha256": "46dc61201eec500f4a40a165f65e2c151fbec95bb11b1a5052a81ec43739314d",
+            "target_bytes": 989369434,
+            "patch_sha256": "5d6bb80691512f9fc5665fedf8ca11fbddfbd2b57c000ce72a3bcae9fb3b7609",
+            "patch_bytes": 36064518
+          },
+          {
+            "patch": "Apathy-Kiwame-Steam-0.8.1-to-0.8.2.xdelta",
+            "edition": "Steam build 10331351",
+            "language": "en",
+            "source_version": "0.8.1",
+            "source_format": "exe",
+            "target_format": "exe",
+            "source_sha256": "55f523091dc62de6d73cdc1fb9d2dcb3b675a4ab47acf4a6688d08dcab693f95",
+            "source_bytes": 953561417,
+            "target_sha256": "46dc61201eec500f4a40a165f65e2c151fbec95bb11b1a5052a81ec43739314d",
+            "target_bytes": 989369434,
+            "patch_sha256": "3aa048f83e8611aca86282bcf6cfb3dd49b1070a2506194dfc5844ec66d209d3",
+            "patch_bytes": 36057705
+          }
+        ],
+        "min_app_version": "0.5.23",
+        "package_ids": [
+          {
+            "platform": "PC",
+            "kind": "steam-app-id",
+            "id": "2283710"
+          }
+        ]
+      },
+      "assets": {
+        "Apathy-Kiwame-Steam-original-to-0.8.2.xdelta": "https://github.com/retro-trans/Apathy-Kiwame/releases/download/v0.8.2/Apathy-Kiwame-Steam-original-to-0.8.2.xdelta",
+        "Apathy-Kiwame-Steam-0.8.0-to-0.8.2.xdelta": "https://github.com/retro-trans/Apathy-Kiwame/releases/download/v0.8.2/Apathy-Kiwame-Steam-0.8.0-to-0.8.2.xdelta",
+        "Apathy-Kiwame-Steam-0.8.1-to-0.8.2.xdelta": "https://github.com/retro-trans/Apathy-Kiwame/releases/download/v0.8.2/Apathy-Kiwame-Steam-0.8.1-to-0.8.2.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Cross-Ange",
       "tag": "v0.1.12",
       "manifest": {

@@ -79,6 +79,18 @@
       ]
     },
     {
+      "game_id": "elminage-iii",
+      "name": "Elminage III",
+      "repo": "retro-trans/Elminage-III",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "disc-id",
+          "id": "ULJM-05883"
+        }
+      ]
+    },
+    {
       "game_id": "gakkou-de-atta-kowai-hanashi-s",
       "name": "Gakkou de Atta Kowai Hanashi S",
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
@@ -540,18 +552,6 @@
           "platform": "Windows PC",
           "kind": "project",
           "id": "cross-hermit"
-        }
-      ]
-    },
-    {
-      "game_id": "elminage-iii",
-      "name": "Elminage III",
-      "repo": "retro-trans/Elminage-III",
-      "package_ids": [
-        {
-          "platform": "PSP",
-          "kind": "disc-id",
-          "id": "ULJM-05883"
         }
       ]
     }

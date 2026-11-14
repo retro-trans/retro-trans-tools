@@ -1069,6 +1069,44 @@
       "vita_min_app_version": "0.5.16"
     },
     {
+      "repo": "retro-trans/Elminage-III",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "elminage-iii",
+        "game_name": "Elminage III",
+        "platform": "PSP",
+        "version": "0.8.0",
+        "source_commit": "46fb217dbe0dda8f6e478e086579252fc055844e",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage3-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b68ce890a8fe247c0d5f3fdc5e1682c52fa9d38f71d86bf2d5e8c03841ba454f",
+            "source_bytes": 717815808,
+            "target_sha256": "0d79a40eea82a005852dcccefd15beeca7e60e601e15559a61e81abbab7b10f3",
+            "target_bytes": 734363648,
+            "patch_sha256": "43acbb82b0bb81bd2fcff8bad424fdacc65dd2250ab88b6938990877c51c1b31",
+            "patch_bytes": 9338265
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05883"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage3-English-v0.8.0.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.0/Elminage3-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
       "tag": "v0.8.0",
       "manifest": {

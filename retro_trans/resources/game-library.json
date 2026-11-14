@@ -542,6 +542,18 @@
           "id": "cross-hermit"
         }
       ]
+    },
+    {
+      "game_id": "elminage-iii",
+      "name": "Elminage III",
+      "repo": "retro-trans/Elminage-III",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "disc-id",
+          "id": "ULJM-05883"
+        }
+      ]
     }
   ],
   "vita_releases": [

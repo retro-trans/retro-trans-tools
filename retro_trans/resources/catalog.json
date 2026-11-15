@@ -1130,6 +1130,20 @@
             "target_bytes": 734361600,
             "patch_sha256": "e252322b46818686ff44708d791f57069b6c08565ee423f786c566fe46280a43",
             "patch_bytes": 9337346
+          },
+          {
+            "patch": "Elminage3-English-v0.8.0-to-v0.8.1.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d79a40eea82a005852dcccefd15beeca7e60e601e15559a61e81abbab7b10f3",
+            "source_bytes": 734363648,
+            "target_sha256": "ee393e1ea012cb8c0eb0c6343f9483a8858867418f116347495e4bc5d98ea581",
+            "target_bytes": 734361600,
+            "patch_sha256": "a4d3c96effbc8af9aa2ccdf4bc0dcf6e50e8f0bc6d5f1c1075127c5fdb34256f",
+            "patch_bytes": 28298
           }
         ],
         "package_ids": [
@@ -1141,7 +1155,8 @@
         ]
       },
       "assets": {
-        "Elminage3-English-v0.8.1.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.1/Elminage3-English-v0.8.1.xdelta"
+        "Elminage3-English-v0.8.1.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.1/Elminage3-English-v0.8.1.xdelta",
+        "Elminage3-English-v0.8.0-to-v0.8.1.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.1/Elminage3-English-v0.8.0-to-v0.8.1.xdelta"
       }
     },
     {

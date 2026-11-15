@@ -1251,6 +1251,74 @@
       }
     },
     {
+      "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
+      "tag": "v0.8.3",
+      "manifest": {
+        "game_id": "gakkou-de-atta-kowai-hanashi-s",
+        "game_name": "Gakkou de Atta Kowai Hanashi S",
+        "platform": "PS1",
+        "version": "0.8.3",
+        "source_commit": "2029f8da4bfe96a373eb8e7ccc73aec0e90ed11c",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.3.xdelta",
+            "edition": "Japan, SLPS-00404, single-track MODE2/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "2839867ede237784c8f880f840974f4407578c322f774effceec0758854f68b4",
+            "source_bytes": 379521072,
+            "target_sha256": "45cf92d7865044cda895f6731292c7bdde7234a3b94081b2b34a5a1515381d69",
+            "target_bytes": 379991472,
+            "patch_sha256": "293550a136c688130516f165c04b9199cb380a9348e72dd94609bb7f2accfd4a",
+            "patch_bytes": 28946804
+          },
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.8.3.xdelta",
+            "edition": "Japan, SLPS-00404, English v0.8.1 image",
+            "language": "en",
+            "source_version": "0.8.1",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "ea1c5ddadc762f9103ae00da36ec1b0964099421dbad574cd7851a5017877f33",
+            "source_bytes": 379991472,
+            "target_sha256": "45cf92d7865044cda895f6731292c7bdde7234a3b94081b2b34a5a1515381d69",
+            "target_bytes": 379991472,
+            "patch_sha256": "d3a785c4253ced026de8aca8678bbbd79a257ae49fc4575564356d335464d623",
+            "patch_bytes": 5685637
+          },
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.8.3.xdelta",
+            "edition": "Japan, SLPS-00404, English v0.8.0 image",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "8849dccccd7af04cc3d0d8854693f49a04d2f61f1e92cae2d358f69a16ad7620",
+            "source_bytes": 379991472,
+            "target_sha256": "45cf92d7865044cda895f6731292c7bdde7234a3b94081b2b34a5a1515381d69",
+            "target_bytes": 379991472,
+            "patch_sha256": "528394b5d7d1bcf1e3beea0f6fe4caf7e64c08336fbab8fc66a03eed20dacc07",
+            "patch_bytes": 5685562
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-00404"
+          }
+        ]
+      },
+      "assets": {
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.3.xdelta",
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.8.3.xdelta",
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.8.3.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Gundam-Climax-UC",
       "tag": "v0.8.0",
       "manifest": {

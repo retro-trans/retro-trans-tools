@@ -1425,6 +1425,59 @@
       }
     },
     {
+      "repo": "retro-trans/Gundam-Climax-UC",
+      "tag": "v0.8.1",
+      "manifest": {
+        "game_id": "gundam-climax-uc",
+        "game_name": "Mobile Suit Gundam: Climax U.C.",
+        "platform": "PS2",
+        "version": "0.8.1",
+        "source_commit": "2a67562484145ee02aef947ee1144f8f12caf716",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "GundamClimaxUC-English-v0.8.1.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "eae0c2c7a6c3768a35d327cd39968b9c5039c9d41959254ce93961a9bbf3d58e",
+            "source_bytes": 4416110592,
+            "target_sha256": "4012905951d25c866437e27de7cf04ca41bab80be81f56eb4ed1cf7b091abb6b",
+            "target_bytes": 4416110592,
+            "patch_sha256": "b7d3555a91d71473e67a79716c2ea74b0b98612cb67b60ebacbcec62e9fd3df2",
+            "patch_bytes": 442295
+          },
+          {
+            "patch": "GundamClimaxUC-English-v0.8.0-to-v0.8.1.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "9dbe37307e8d9f77a331868bd222222f4a154a7832be9089e183e2905a0a25cd",
+            "source_bytes": 4416110592,
+            "target_sha256": "4012905951d25c866437e27de7cf04ca41bab80be81f56eb4ed1cf7b091abb6b",
+            "target_bytes": 4416110592,
+            "patch_sha256": "137fb5fb84714ad64ed5aa27dbab9a18317e1c271aaa0189c47a25a264edf10e",
+            "patch_bytes": 64570
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "disc-id",
+            "id": "SLPS-25627"
+          }
+        ]
+      },
+      "assets": {
+        "GundamClimaxUC-English-v0.8.1.xdelta": "https://github.com/retro-trans/Gundam-Climax-UC/releases/download/v0.8.1/GundamClimaxUC-English-v0.8.1.xdelta",
+        "GundamClimaxUC-English-v0.8.0-to-v0.8.1.xdelta": "https://github.com/retro-trans/Gundam-Climax-UC/releases/download/v0.8.1/GundamClimaxUC-English-v0.8.0-to-v0.8.1.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Heroes-Phantasia",
       "tag": "v0.1.45",
       "manifest": {

@@ -504,6 +504,11 @@
           "platform": "PS1",
           "kind": "project",
           "id": "super-tokusatsu-taisen-2001"
+        },
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-02863"
         }
       ]
     },

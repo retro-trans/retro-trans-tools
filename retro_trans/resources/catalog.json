@@ -1228,6 +1228,89 @@
       }
     },
     {
+      "repo": "retro-trans/Elminage-III",
+      "tag": "v0.8.5",
+      "manifest": {
+        "game_id": "elminage-iii",
+        "game_name": "Elminage III",
+        "platform": "PSP",
+        "version": "0.8.5",
+        "source_commit": "64b78cef5cfd0912c47ce797a2b7c4eed0a03a28",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage3-English-v0.8.5.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b68ce890a8fe247c0d5f3fdc5e1682c52fa9d38f71d86bf2d5e8c03841ba454f",
+            "source_bytes": 717815808,
+            "target_sha256": "8ff28aad2c1e7a9a0adac7aa280cfd4142fcea2aa59fcd4b0a4ce4792ddf5445",
+            "target_bytes": 734361600,
+            "patch_sha256": "8de0afcf24cb66d265a9e49ae654cdcd83cc2bcb353fb5087b6e65daf883fe8b",
+            "patch_bytes": 9337238
+          },
+          {
+            "patch": "Elminage3-English-v0.8.3-to-v0.8.5.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.3",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "9922d0f26e59aabaa125e0dd9ca95e87c7a1b49574fafba826a8a98261efb8e0",
+            "source_bytes": 734361600,
+            "target_sha256": "8ff28aad2c1e7a9a0adac7aa280cfd4142fcea2aa59fcd4b0a4ce4792ddf5445",
+            "target_bytes": 734361600,
+            "patch_sha256": "961d89b376341d1d42786f6ead8d3c39e616899b8db270c24e20deded0e3540e",
+            "patch_bytes": 7323
+          },
+          {
+            "patch": "Elminage3-English-v0.8.1-to-v0.8.5.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.1",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ee393e1ea012cb8c0eb0c6343f9483a8858867418f116347495e4bc5d98ea581",
+            "source_bytes": 734361600,
+            "target_sha256": "8ff28aad2c1e7a9a0adac7aa280cfd4142fcea2aa59fcd4b0a4ce4792ddf5445",
+            "target_bytes": 734361600,
+            "patch_sha256": "71f6517bfe094bec1f3169875e3f4dfd54b1ccbbab0bde8db0f28e849979855d",
+            "patch_bytes": 11030
+          },
+          {
+            "patch": "Elminage3-English-v0.8.0-to-v0.8.5.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0d79a40eea82a005852dcccefd15beeca7e60e601e15559a61e81abbab7b10f3",
+            "source_bytes": 734363648,
+            "target_sha256": "8ff28aad2c1e7a9a0adac7aa280cfd4142fcea2aa59fcd4b0a4ce4792ddf5445",
+            "target_bytes": 734361600,
+            "patch_sha256": "0ee91606b1e7a7846b1ce79d7180b35d125034a5177b5786e9933a5115a57aef",
+            "patch_bytes": 31349
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05883"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage3-English-v0.8.5.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.5/Elminage3-English-v0.8.5.xdelta",
+        "Elminage3-English-v0.8.3-to-v0.8.5.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.5/Elminage3-English-v0.8.3-to-v0.8.5.xdelta",
+        "Elminage3-English-v0.8.1-to-v0.8.5.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.5/Elminage3-English-v0.8.1-to-v0.8.5.xdelta",
+        "Elminage3-English-v0.8.0-to-v0.8.5.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.5/Elminage3-English-v0.8.0-to-v0.8.5.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
       "tag": "v0.8.0",
       "manifest": {

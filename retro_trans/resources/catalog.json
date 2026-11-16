@@ -7747,6 +7747,59 @@
       }
     },
     {
+      "repo": "retro-trans/Tengai-Makyou-II",
+      "tag": "v0.8.4",
+      "manifest": {
+        "game_id": "tengai-makyou-ii",
+        "game_name": "Tengai Makyou II: Manji Maru",
+        "platform": "GameCube",
+        "version": "0.8.4",
+        "source_commit": "2ed4225b7a84c56700d4d3c7ffaab18427a76fa7",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Tengai-Makyou-II-English-v0.8.4.xdelta",
+            "edition": "japan",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "0f6840aebaa0cc5ed71ffbef6692037f6a3292d88ae8d338626f96b58bafe470",
+            "source_bytes": 1459978240,
+            "target_sha256": "24631312ba51f4e901b527e2dc83821d11a24d6744c3e3ad9e508ffefe23d2f7",
+            "target_bytes": 1459978240,
+            "patch_sha256": "9212b3134659cc4c13ca587b08e23cf54990c1988579687f83930d641c99af1c",
+            "patch_bytes": 2204268
+          },
+          {
+            "patch": "Tengai-Makyou-II-English-v0.8.3-to-v0.8.4.xdelta",
+            "edition": "japan",
+            "language": "en",
+            "source_version": "0.8.3",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "777e765ac2e424a061896cb9bd757d40416ca41df1256c6ed878c383263a82ac",
+            "source_bytes": 1459978240,
+            "target_sha256": "24631312ba51f4e901b527e2dc83821d11a24d6744c3e3ad9e508ffefe23d2f7",
+            "target_bytes": 1459978240,
+            "patch_sha256": "a9f677e7a514129122a13ada7b8325332d2570da008e4833e13b1ec9e5f167e9",
+            "patch_bytes": 14141
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "GameCube",
+            "kind": "disc-id",
+            "id": "GT2J18"
+          }
+        ]
+      },
+      "assets": {
+        "Tengai-Makyou-II-English-v0.8.4.xdelta": "https://github.com/retro-trans/Tengai-Makyou-II/releases/download/v0.8.4/Tengai-Makyou-II-English-v0.8.4.xdelta",
+        "Tengai-Makyou-II-English-v0.8.3-to-v0.8.4.xdelta": "https://github.com/retro-trans/Tengai-Makyou-II/releases/download/v0.8.4/Tengai-Makyou-II-English-v0.8.3-to-v0.8.4.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Vampir",
       "tag": "v0.6.0",
       "manifest": {

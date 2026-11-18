@@ -1161,6 +1161,59 @@
     },
     {
       "repo": "retro-trans/Elminage-III",
+      "tag": "v0.8.14",
+      "manifest": {
+        "game_id": "elminage-iii",
+        "game_name": "Elminage III",
+        "platform": "PSP",
+        "version": "0.8.14",
+        "source_commit": "13776fd45e514289a593ac00c7e5d3bebc248b0b",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage3-English-v0.8.14.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b68ce890a8fe247c0d5f3fdc5e1682c52fa9d38f71d86bf2d5e8c03841ba454f",
+            "source_bytes": 717815808,
+            "target_sha256": "534e8d758c7c8afab7478be6b7c393bbb00bc00203f31550f3c052b02a2ec1fd",
+            "target_bytes": 734361600,
+            "patch_sha256": "e6867433e00a7c46d13b2b2050ea3e68edf60c2dbe111b1297644cf5be5de6e2",
+            "patch_bytes": 9343935
+          },
+          {
+            "patch": "Elminage3-English-v0.8.5-to-v0.8.14.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.5",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "8ff28aad2c1e7a9a0adac7aa280cfd4142fcea2aa59fcd4b0a4ce4792ddf5445",
+            "source_bytes": 734361600,
+            "target_sha256": "534e8d758c7c8afab7478be6b7c393bbb00bc00203f31550f3c052b02a2ec1fd",
+            "target_bytes": 734361600,
+            "patch_sha256": "16ba338b182130d75da42c2bad081979481200d2990634b7179b524592245949",
+            "patch_bytes": 47992
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05883"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage3-English-v0.8.14.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.14/Elminage3-English-v0.8.14.xdelta",
+        "Elminage3-English-v0.8.5-to-v0.8.14.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.14/Elminage3-English-v0.8.5-to-v0.8.14.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Elminage-III",
       "tag": "v0.8.3",
       "manifest": {
         "game_id": "elminage-iii",

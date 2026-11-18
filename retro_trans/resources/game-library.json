@@ -91,6 +91,18 @@
       ]
     },
     {
+      "game_id": "elminage-ibun",
+      "name": "Elminage Ibun: Ame no Mihashira",
+      "repo": "retro-trans/Elminage-Ibun",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "disc-id",
+          "id": "ULJM-06141"
+        }
+      ]
+    },
+    {
       "game_id": "gakkou-de-atta-kowai-hanashi-s",
       "name": "Gakkou de Atta Kowai Hanashi S",
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",

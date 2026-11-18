@@ -1364,6 +1364,44 @@
       }
     },
     {
+      "repo": "retro-trans/Elminage-Ibun",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "elminage-ibun",
+        "game_name": "Elminage Ibun: Ame no Mihashira",
+        "platform": "PSP",
+        "version": "0.8.0",
+        "source_commit": "c9718ae510ded574e07ce115939d1e4863379140",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "ElminageIbun-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "536c5dd158ce3e775419f7496c25a946885bbd9015aabe9cbc8d2b86662c721b",
+            "source_bytes": 512524288,
+            "target_sha256": "b3f0ebb2063eec4f68703cde37edb4b18d55598a5e809b276db10ca05f4e57bc",
+            "target_bytes": 527419392,
+            "patch_sha256": "11469f3f3b7cfa562cb7df38ae71e299c7eb3b689eee1b01ae76b90448394fc0",
+            "patch_bytes": 8398058
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-06141"
+          }
+        ]
+      },
+      "assets": {
+        "ElminageIbun-English-v0.8.0.xdelta": "https://github.com/retro-trans/Elminage-Ibun/releases/download/v0.8.0/ElminageIbun-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
       "tag": "v0.8.0",
       "manifest": {

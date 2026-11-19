@@ -7835,6 +7835,64 @@
       }
     },
     {
+      "repo": "retro-trans/Super-Tokusatsu-Taisen-2001",
+      "tag": "v0.9.7",
+      "manifest": {
+        "game_id": "super-tokusatsu-taisen-2001",
+        "game_name": "Super Tokusatsu Taisen 2001",
+        "platform": "PS1",
+        "version": "0.9.7",
+        "source_commit": "c64a91f2a9cb33a4b3e642a9261f71265a5261a1",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "STT2001-English-v0.9.7.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "219d9c4f64caf670b5e400612fa19677ed9a3f59a7ebdb72c12c425412795465",
+            "source_bytes": 725316816,
+            "target_sha256": "110ab27fcbb9de6b5dc991e7f6ad2dd25291733f516814ef044951bcdacf92ae",
+            "target_bytes": 725316816,
+            "patch_sha256": "a5d60dd1487d670c86f4fd9df4631d70fa3c685056154b0d291c9ecbe58d8d01",
+            "patch_bytes": 67092800
+          },
+          {
+            "patch": "STT2001-English-v0.9.1-to-v0.9.7.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.9.1",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "363356615fcca99fd595ed5f8ab866c1786b84a0b49fa2969c71d6a9db025c6e",
+            "source_bytes": 725316816,
+            "target_sha256": "110ab27fcbb9de6b5dc991e7f6ad2dd25291733f516814ef044951bcdacf92ae",
+            "target_bytes": 725316816,
+            "patch_sha256": "a3bb2f71780edf85eb47d81df2688158ff7c124cda152bb51ce8c12effebe00f",
+            "patch_bytes": 22234360
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "project",
+            "id": "super-tokusatsu-taisen-2001"
+          },
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-02863"
+          }
+        ]
+      },
+      "assets": {
+        "STT2001-English-v0.9.7.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.7/STT2001-English-v0.9.7.xdelta",
+        "STT2001-English-v0.9.1-to-v0.9.7.xdelta": "https://github.com/retro-trans/Super-Tokusatsu-Taisen-2001/releases/download/v0.9.7/STT2001-English-v0.9.1-to-v0.9.7.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Tengai-Makyou-II",
       "tag": "v0.8.0",
       "manifest": {

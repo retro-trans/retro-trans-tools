@@ -571,6 +571,18 @@
           "id": "cross-hermit"
         }
       ]
+    },
+    {
+      "game_id": "bounty-sword-double-edge",
+      "name": "Bounty Sword: Double Edge",
+      "repo": "retro-trans/Bounty-Sword-Double-Edge",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-01479"
+        }
+      ]
     }
   ],
   "vita_releases": [

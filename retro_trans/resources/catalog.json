@@ -849,6 +849,46 @@
       }
     },
     {
+      "repo": "retro-trans/Bounty-Sword-Double-Edge",
+      "tag": "v0.3.19",
+      "manifest": {
+        "game_id": "bounty-sword-double-edge",
+        "game_name": "Bounty Sword: Double Edge",
+        "platform": "PS1",
+        "version": "0.3.19",
+        "source_commit": "5155a4c6f0925854858a2b8e821ba21cbbe4a855",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "BountySword-DoubleEdge-English-v0.3.19.xdelta",
+            "edition": "Japan, SLPS-01479, single-track MODE2/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "24787d24c7ad9a008ce741056e92832f28785715a7fdbc964f35b24cb42f68d7",
+            "source_sha1": "6b3f9e455daec3fe38ee4688172a7544bebbeef9",
+            "source_bytes": 630707616,
+            "target_sha256": "309dbc7e38c5cba65d05609883ea6c4ca68ea5acafa96c4fb532f82ec189802a",
+            "target_sha1": "02146dea84000c3455d2e29c468b2039eb7574bf",
+            "target_bytes": 636662880,
+            "patch_sha256": "dd7bd0aa4543571f9540dd96706ecc1b3db0e97b93fe81350ffe167f111069fb",
+            "patch_bytes": 1498719
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-01479"
+          }
+        ]
+      },
+      "assets": {
+        "BountySword-DoubleEdge-English-v0.3.19.xdelta": "https://github.com/retro-trans/Bounty-Sword-Double-Edge/releases/download/v0.3.19/BountySword-DoubleEdge-English-v0.3.19.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Bounty-Sword-First",
       "tag": "v0.5.20",
       "manifest": {

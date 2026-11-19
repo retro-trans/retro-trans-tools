@@ -62,6 +62,18 @@
       ]
     },
     {
+      "game_id": "bounty-sword-first",
+      "name": "Bounty Sword First",
+      "repo": "retro-trans/Bounty-Sword-First",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-00757"
+        }
+      ]
+    },
+    {
       "game_id": "cross-ange",
       "name": "CROSS ANGE Rondo of Angel and Dragon tr.",
       "repo": "retro-trans/Cross-Ange",

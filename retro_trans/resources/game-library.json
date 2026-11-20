@@ -127,6 +127,18 @@
       ]
     },
     {
+      "game_id": "getter-robo-daikessen",
+      "name": "Getter Robo Daikessen!",
+      "repo": "retro-trans/Getter-Robo-Daikessen",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-02232"
+        }
+      ]
+    },
+    {
       "game_id": "gakkou-de-atta-kowai-hanashi-s",
       "name": "Gakkou de Atta Kowai Hanashi S",
       "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",

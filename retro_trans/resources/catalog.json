@@ -8771,6 +8771,144 @@
         "Black-Matrix-AD-Disc1-English-v0.9.1.dcp": "https://github.com/retro-trans/Black-Matrix-AD/releases/download/v0.9.1/Black-Matrix-AD-Disc1-English-v0.9.1.dcp",
         "Black-Matrix-AD-Disc2-English-v0.9.1.dcp": "https://github.com/retro-trans/Black-Matrix-AD/releases/download/v0.9.1/Black-Matrix-AD-Disc2-English-v0.9.1.dcp"
       }
+    },
+    {
+      "repo": "retro-trans/Seireiki-Rayblade",
+      "tag": "v0.7.50",
+      "manifest": {
+        "schema_version": 1,
+        "format": "DCP",
+        "game_id": "seireiki-rayblade",
+        "game_name": "Seireiki Rayblade",
+        "platform": "Dreamcast",
+        "language": "en",
+        "version": "0.7.50",
+        "minimum_app_version": "0.5.20",
+        "source_commit": "6939e92795c5926333613c849236f061d1ace76d",
+        "package_ids": [
+          {
+            "platform": "Dreamcast",
+            "kind": "project",
+            "id": "seireiki-rayblade"
+          }
+        ],
+        "patches": [
+          {
+            "patch": "Rayblade-English-v0.7.50.dcp",
+            "bytes": 4614327,
+            "sha256": "682e700c64d46e41499bd80c06534833623dbd9b91cd60595c6eda3f1a1f4a4b",
+            "edition": "jp-disc1",
+            "metadata": {
+              "retro_trans_dcp": 1,
+              "game_id": "seireiki-rayblade",
+              "game_name": "Seireiki Rayblade",
+              "disc": 1,
+              "source_version": "original",
+              "target_version": "0.7.50",
+              "version": "0.7.50",
+              "source_tree_sha256": "81addd42981923ba95636d06e912598b61f275069082cef62938add7d0416db3",
+              "target_tree_sha256": "8737c81a375894f55d0e8fc8a73f1e81f3836400e635c1f86ec072432ed5325c",
+              "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+              "game_files": 140,
+              "engine": "Universal Dreamcast Patcher 2.1.8",
+              "upstream_commit": "8b352f959bcc56ab39174c9e311b7ab7f0d522a2",
+              "font": "Original Skies Native 1x only",
+              "diagnostic": false,
+              "public_release": true,
+              "hardware_result": "User-reported passing on Dreamcast/GDEMU/VGA, 2026-11-20",
+              "package_ids": [
+                {
+                  "platform": "Dreamcast",
+                  "kind": "project",
+                  "id": "seireiki-rayblade"
+                }
+              ]
+            },
+            "source_tracks": [
+              {
+                "bytes": 705600,
+                "sha256": "7b1aa484d8182e4cde8df5e9d7027d15e653528948c1c4ad5f62e940124f2664"
+              },
+              {
+                "bytes": 2389632,
+                "sha256": "4e62562304cd5995cf525d0edead622f1286195d43dc9ba613a443d57536474b"
+              },
+              {
+                "bytes": 26535264,
+                "sha256": "6513b0292f67ddf25ae53db6157deabce46c0bc1abc5dd261b5884ce2a242886"
+              },
+              {
+                "bytes": 2036832,
+                "sha256": "0f417136fb40bb897fd90c7185312133bbba5c94f1e99f8ec3739bb9909eadfa"
+              },
+              {
+                "bytes": 1157188704,
+                "sha256": "b8a0c55de28b1a486183ba11da0677ccb30c48d98d13a02bab636a8022b2841d"
+              }
+            ]
+          },
+          {
+            "patch": "Rayblade-English-v0.7.23-to-v0.7.50-upgrade.dcp",
+            "bytes": 15537,
+            "sha256": "8344f59367c7aa1ee4ba8e5ad0ca065815901d6290aae70cadadd3fe50e274a8",
+            "edition": "jp-disc1",
+            "metadata": {
+              "retro_trans_dcp": 1,
+              "game_id": "seireiki-rayblade",
+              "game_name": "Seireiki Rayblade",
+              "disc": 1,
+              "source_version": "0.7.23",
+              "target_version": "0.7.50",
+              "version": "0.7.50",
+              "source_tree_sha256": "c1f73e677d4edf93fea4f897a0d07ef78e510a8e712feba5ca926e587512d476",
+              "target_tree_sha256": "8737c81a375894f55d0e8fc8a73f1e81f3836400e635c1f86ec072432ed5325c",
+              "bootsector_invariant_sha256": "05aadce6ab93f677cb121cbb1c7135d34ef516848976e66d4fdad81597148853",
+              "game_files": 140,
+              "engine": "Universal Dreamcast Patcher 2.1.8",
+              "upstream_commit": "8b352f959bcc56ab39174c9e311b7ab7f0d522a2",
+              "font": "Original Skies Native 1x only",
+              "diagnostic": false,
+              "public_release": true,
+              "hardware_result": "User-reported passing on Dreamcast/GDEMU/VGA, 2026-11-20",
+              "package_ids": [
+                {
+                  "platform": "Dreamcast",
+                  "kind": "project",
+                  "id": "seireiki-rayblade"
+                }
+              ]
+            },
+            "source_tracks": [
+              {
+                "bytes": 705600,
+                "sha256": "7b1aa484d8182e4cde8df5e9d7027d15e653528948c1c4ad5f62e940124f2664"
+              },
+              {
+                "bytes": 2389632,
+                "sha256": "4e62562304cd5995cf525d0edead622f1286195d43dc9ba613a443d57536474b"
+              },
+              {
+                "bytes": 26535264,
+                "sha256": "aa52a77f4fb1b52e3c47172ef48e8db994c55a6a268d8b924fae10a933740929"
+              },
+              {
+                "bytes": 2036832,
+                "sha256": "0f417136fb40bb897fd90c7185312133bbba5c94f1e99f8ec3739bb9909eadfa"
+              },
+              {
+                "bytes": 1157188704,
+                "sha256": "3bcd0dba28fd990954acdb7a097467034ef339d6322b9d1631e3f5c8ff3b53b9"
+              }
+            ]
+          }
+        ]
+      },
+      "prerelease": false,
+      "manifest_sha256": "a08f0c2f31d1599f91e87ddb6ff2b1efb94e52013cd446b26fb04dd9dbc83bf0",
+      "assets": {
+        "Rayblade-English-v0.7.50.dcp": "https://github.com/retro-trans/Seireiki-Rayblade/releases/download/v0.7.50/Rayblade-English-v0.7.50.dcp",
+        "Rayblade-English-v0.7.23-to-v0.7.50-upgrade.dcp": "https://github.com/retro-trans/Seireiki-Rayblade/releases/download/v0.7.50/Rayblade-English-v0.7.23-to-v0.7.50-upgrade.dcp"
+      }
     }
   ],
   "withdrawn_releases": [

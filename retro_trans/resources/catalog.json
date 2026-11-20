@@ -1292,6 +1292,59 @@
     },
     {
       "repo": "retro-trans/Elminage-III",
+      "tag": "v0.8.23",
+      "manifest": {
+        "game_id": "elminage-iii",
+        "game_name": "Elminage III",
+        "platform": "PSP",
+        "version": "0.8.23",
+        "source_commit": "6cae10c2947f6af4f49f05f920841c21a8f5807f",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage3-English-v0.8.23.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b68ce890a8fe247c0d5f3fdc5e1682c52fa9d38f71d86bf2d5e8c03841ba454f",
+            "source_bytes": 717815808,
+            "target_sha256": "1ee49d123b2f90c4ff612c8eac828cecb18224fd82359c1d9f976d3042f2938b",
+            "target_bytes": 734361600,
+            "patch_sha256": "04b73731247adb86788ee6d4099b91d48150f7c16dc3ade5296ed28f669937d7",
+            "patch_bytes": 9356917
+          },
+          {
+            "patch": "Elminage3-English-v0.8.14-to-v0.8.23.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.14",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "534e8d758c7c8afab7478be6b7c393bbb00bc00203f31550f3c052b02a2ec1fd",
+            "source_bytes": 734361600,
+            "target_sha256": "1ee49d123b2f90c4ff612c8eac828cecb18224fd82359c1d9f976d3042f2938b",
+            "target_bytes": 734361600,
+            "patch_sha256": "2a824d36746c80f384046e860ac5bd45e7fdf46ad155e646ac8915a94f6a4335",
+            "patch_bytes": 182605
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05883"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage3-English-v0.8.23.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.23/Elminage3-English-v0.8.23.xdelta",
+        "Elminage3-English-v0.8.14-to-v0.8.23.xdelta": "https://github.com/retro-trans/Elminage-III/releases/download/v0.8.23/Elminage3-English-v0.8.14-to-v0.8.23.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Elminage-III",
       "tag": "v0.8.3",
       "manifest": {
         "game_id": "elminage-iii",
@@ -1636,6 +1689,89 @@
         "Gakkou-Kowai-Hanashi-S-English-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.3.xdelta",
         "Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.8.3.xdelta",
         "Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.8.3.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.8.3/Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.8.3.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S",
+      "tag": "v0.9.0",
+      "manifest": {
+        "game_id": "gakkou-de-atta-kowai-hanashi-s",
+        "game_name": "Gakkou de Atta Kowai Hanashi S",
+        "platform": "PS1",
+        "version": "0.9.0",
+        "source_commit": "de5dc3ec2e2edbc2bff4809099b657a5efa06fa6",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.9.0.xdelta",
+            "edition": "Japan, SLPS-00404, single-track MODE2/2352",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "2839867ede237784c8f880f840974f4407578c322f774effceec0758854f68b4",
+            "source_bytes": 379521072,
+            "target_sha256": "a14c2dec093691d7ebf2cc4c082dedde981b4c024f7b13e5a269224f53188d7c",
+            "target_bytes": 380047920,
+            "patch_sha256": "3e6ab6dbb2f0b9314de39bfb170de77601aba1f42667f62aa072e87eada4f189",
+            "patch_bytes": 28973287
+          },
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.3-to-v0.9.0.xdelta",
+            "edition": "Japan, SLPS-00404, published English v0.8.3 image",
+            "language": "en",
+            "source_version": "0.8.3",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "45cf92d7865044cda895f6731292c7bdde7234a3b94081b2b34a5a1515381d69",
+            "source_bytes": 379991472,
+            "target_sha256": "a14c2dec093691d7ebf2cc4c082dedde981b4c024f7b13e5a269224f53188d7c",
+            "target_bytes": 380047920,
+            "patch_sha256": "fc6cd18722c061149c290d47bf0c431ba1ddfc1252b63788a54d955912430267",
+            "patch_bytes": 695232
+          },
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.9.0.xdelta",
+            "edition": "Japan, SLPS-00404, published English v0.8.1 image",
+            "language": "en",
+            "source_version": "0.8.1",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "ea1c5ddadc762f9103ae00da36ec1b0964099421dbad574cd7851a5017877f33",
+            "source_bytes": 379991472,
+            "target_sha256": "a14c2dec093691d7ebf2cc4c082dedde981b4c024f7b13e5a269224f53188d7c",
+            "target_bytes": 380047920,
+            "patch_sha256": "2b320f9f6e1a37cead3c7d5eef7be03ee2930c502a63d30b82bdb4fd62cded6a",
+            "patch_bytes": 5902489
+          },
+          {
+            "patch": "Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.9.0.xdelta",
+            "edition": "Japan, SLPS-00404, published English v0.8.0 image",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "8849dccccd7af04cc3d0d8854693f49a04d2f61f1e92cae2d358f69a16ad7620",
+            "source_bytes": 379991472,
+            "target_sha256": "a14c2dec093691d7ebf2cc4c082dedde981b4c024f7b13e5a269224f53188d7c",
+            "target_bytes": 380047920,
+            "patch_sha256": "f8690ecc2180bee33500c02fab5fd48e61fe01bae58b4279c0dc5bcd04220ad9",
+            "patch_bytes": 5902963
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-00404"
+          }
+        ]
+      },
+      "assets": {
+        "Gakkou-Kowai-Hanashi-S-English-v0.9.0.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.9.0/Gakkou-Kowai-Hanashi-S-English-v0.9.0.xdelta",
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.3-to-v0.9.0.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.9.0/Gakkou-Kowai-Hanashi-S-English-v0.8.3-to-v0.9.0.xdelta",
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.9.0.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.9.0/Gakkou-Kowai-Hanashi-S-English-v0.8.1-to-v0.9.0.xdelta",
+        "Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.9.0.xdelta": "https://github.com/retro-trans/Gakkou-de-Atta-Kowai-Hanashi-S/releases/download/v0.9.0/Gakkou-Kowai-Hanashi-S-English-v0.8.0-to-v0.9.0.xdelta"
       }
     },
     {

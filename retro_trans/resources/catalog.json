@@ -1828,6 +1828,44 @@
       }
     },
     {
+      "repo": "retro-trans/Getter-Robo-Daikessen",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "getter-robo-daikessen",
+        "game_name": "Getter Robo Daikessen!",
+        "platform": "PS1",
+        "version": "0.8.0",
+        "source_commit": "3a0b8b0296ecb83fa55d02156dad051e55d9337f",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "GetterRoboDaikessen-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "08f189c914fa753af0ba690579712636f1d8b21eb7777c89b6fc10041c725807",
+            "source_bytes": 663111120,
+            "target_sha256": "b8340dff5ef0e3c8c5b3c3cc252864dda4221347dc9d19ec51f97b8a1d1e0044",
+            "target_bytes": 663663840,
+            "patch_sha256": "1e56d2b0d154a92957e090833436a7220f690b9141c9cebf9c73ab2b6ee624a3",
+            "patch_bytes": 244843364
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-02232"
+          }
+        ]
+      },
+      "assets": {
+        "GetterRoboDaikessen-English-v0.8.0.xdelta": "https://github.com/retro-trans/Getter-Robo-Daikessen/releases/download/v0.8.0/GetterRoboDaikessen-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Gundam-Climax-UC",
       "tag": "v0.8.0",
       "manifest": {

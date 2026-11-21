@@ -1,5 +1,14 @@
 # Changelog
 
+## Catalog maintenance — 2026-11-21
+
+- Accept checksummed CUE sidecars up to 64 KiB during hosted catalog
+  ingestion, verifying their size and full SHA-256 like other release extras.
+  This lets Getter Robo Daikessen 0.8.26 enter Automatic without changing
+  published release assets, patch identities or the Windows app version.
+- Added valid/corrupt CUE coverage and retained bounds for oversized CUEs,
+  metadata, ZIPs and unsupported executable extras.
+
 ## 0.5.23 — combined sources — 2026-11-12
 
 - Published from cbf7858 after workflow 43180734720 passed packaging, standalone

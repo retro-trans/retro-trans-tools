@@ -155,8 +155,9 @@ def release_record(repo, release, client, reviewed=None):
                 # Complete PC patch/update ZIPs can exceed the metadata limit.
                 # Keep them bounded and stream/hash every checksummed byte too.
                 suffix = Path(name).suffix.lower()
-                limit = 256 * 1024**2 if suffix == '.zip' else 64 * 1024**2
-                if (suffix not in ('.json', '.txt', '.md', '.png', '.zip')
+                limit = (64 * 1024 if suffix == '.cue' else
+                         256 * 1024**2 if suffix == '.zip' else 64 * 1024**2)
+                if (suffix not in ('.json', '.txt', '.md', '.png', '.zip', '.cue')
                         or not 0 < a['size'] <= limit):
                     raise PatchError('Unsupported or oversized checksummed release extra: ' + name)
                 if a.get('digest') and a['digest'] != 'sha256:' + digest:

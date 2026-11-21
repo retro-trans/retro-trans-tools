@@ -300,9 +300,30 @@ class CatalogBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(PatchError, 'Download verification failed'):
             build_catalog(previous, client)
 
+    def test_checksummed_cue_sidecar_is_verified_without_changing_patch_identity(self):
+        client = ReleaseClient()
+        name = 'English.cue'
+        raw = b'FILE "English.bin" BINARY\n  TRACK 01 MODE2/2352\n    INDEX 01 00:00:00\n'
+        digest = hashlib.sha256(raw).hexdigest()
+        client.files[name] = raw
+        client.assets.append(dict(name=name, size=len(raw), digest='sha256:' + digest,
+                                  browser_download_url=client.prefix + name))
+        client.files['SHA256SUMS.txt'] += (digest + '  ' + name + '\n').encode()
+        sums = client.files['SHA256SUMS.txt']
+        next(a for a in client.assets if a['name'] == 'SHA256SUMS.txt').update(
+            size=len(sums), digest='sha256:' + hashlib.sha256(sums).hexdigest())
+        previous = dict(schema_version=1, releases=[])
+        result = build_catalog(previous, client)
+        self.assertEqual(result['releases'][0]['manifest'], client.record['manifest'])
+        self.assertEqual(result['releases'][0]['assets'], client.record['assets'])
+        client.files[name] = b'changed descriptor'
+        with self.assertRaisesRegex(PatchError, 'Download verification failed'):
+            build_catalog(previous, client)
+
     def test_checksummed_extras_keep_format_and_size_bounds(self):
         for name, size in [('PC-patch.zip', 256 * 1024**2 + 1),
                            ('report.json', 64 * 1024**2 + 1),
+                           ('English.cue', 64 * 1024 + 1),
                            ('installer.exe', 10)]:
             client = ReleaseClient()
             digest = '1' * 64

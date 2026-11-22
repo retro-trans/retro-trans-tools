@@ -1147,6 +1147,97 @@
       "vita_min_app_version": "0.5.16"
     },
     {
+      "repo": "retro-trans/Elminage-II",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "elminage-ii",
+        "game_name": "Elminage II",
+        "platform": "PSP",
+        "version": "0.8.0",
+        "source_commit": "77d64b16f3cc268df28406aa1eaa96a2fdd927f6",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage2-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c65bc955dc92d447efa6633dc6356937487b433635a5d4abf4b63c98ec98d4f9",
+            "source_bytes": 536608768,
+            "target_sha256": "9042f31c8f949c9cb0a26917eefcb9aca04800968e6c741863ab2a1bd010837b",
+            "target_bytes": 550742016,
+            "patch_sha256": "346bbf2c7cc98aee4777c4ebd98770f8b5f2d332cc05a25bf054f30a02271fad",
+            "patch_bytes": 12233800
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05488"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage2-English-v0.8.0.xdelta": "https://github.com/retro-trans/Elminage-II/releases/download/v0.8.0/Elminage2-English-v0.8.0.xdelta"
+      }
+    },
+    {
+      "repo": "retro-trans/Elminage-II",
+      "tag": "v0.8.1",
+      "manifest": {
+        "game_id": "elminage-ii",
+        "game_name": "Elminage II",
+        "platform": "PSP",
+        "version": "0.8.1",
+        "source_commit": "999b7a1457bdf5663b88b00cf252c8d74b9a29cd",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage2-English-v0.8.1.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c65bc955dc92d447efa6633dc6356937487b433635a5d4abf4b63c98ec98d4f9",
+            "source_bytes": 536608768,
+            "target_sha256": "b14707e0719f027e5ce0508192fb5d0eeb1c7c1d96cdd6e68f8d2b865d9cfcbe",
+            "target_bytes": 550742016,
+            "patch_sha256": "2ebc9fa65b035126bf4797b27accb45463dd77f17ebbf8303e1b6860fd357167",
+            "patch_bytes": 12233832
+          },
+          {
+            "patch": "Elminage2-English-v0.8.0-to-v0.8.1.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.0",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "9042f31c8f949c9cb0a26917eefcb9aca04800968e6c741863ab2a1bd010837b",
+            "source_bytes": 550742016,
+            "target_sha256": "b14707e0719f027e5ce0508192fb5d0eeb1c7c1d96cdd6e68f8d2b865d9cfcbe",
+            "target_bytes": 550742016,
+            "patch_sha256": "c27781c34612a69c2855afc67bbb3c4e168e49190f749a045061f3d583b3c736",
+            "patch_bytes": 3847
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05488"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage2-English-v0.8.1.xdelta": "https://github.com/retro-trans/Elminage-II/releases/download/v0.8.1/Elminage2-English-v0.8.1.xdelta",
+        "Elminage2-English-v0.8.0-to-v0.8.1.xdelta": "https://github.com/retro-trans/Elminage-II/releases/download/v0.8.1/Elminage2-English-v0.8.0-to-v0.8.1.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Elminage-III",
       "tag": "v0.8.0",
       "manifest": {

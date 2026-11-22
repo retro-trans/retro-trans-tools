@@ -40,6 +40,7 @@ SCHEMAS = {
                   'errno': 'int', 'http_status': 'int', 'ssl_verify_code': 'int'},
     'network_open': {'host': 'host', 'endpoint': 'word'},
     'network_ok': {'host': 'host', 'http_status': 'int'},
+    'tls_context': {'provider': 'word', 'verification_required': 'bool', 'hostname_checked': 'bool'},
     'download': {'state': 'word', 'bytes': 'int', 'sha256': 'hash'},
     'vita_input': {'mode': 'word', 'pkg': 'bool'},
     'vita_profile': {'mode': 'word', 'files': 'int'},

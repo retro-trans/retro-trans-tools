@@ -12,19 +12,29 @@ from .catalog import CATALOG_URL, Catalog, atomic_json
 from .core import GitHubClient, PatchError
 
 
+def tls_details(client):
+    context = client.tls_context() or ssl.create_default_context()
+    details = {'provider': 'windows-native' if sys.platform == 'win32' else 'certifi',
+               'verification_required': context.verify_mode == ssl.CERT_REQUIRED,
+               'hostname_checked': context.check_hostname}
+    # Windows native roots are not an OpenSSL certificate store. Truststore
+    # deliberately does not implement cert_store_stats(); don't fail the check
+    # or misreport an empty CA store when native verification is in use.
+    if sys.platform != 'win32':
+        details['trusted_ca_count'] = context.cert_store_stats()['x509_ca']
+        details['default_ca_count'] = ssl.create_default_context().cert_store_stats()['x509_ca']
+    if not details['verification_required'] or not details['hostname_checked']:
+        raise PatchError('HTTPS verification is not enabled.')
+    return details
+
+
 def diagnose_network(path):
     report = {'ok': False, 'version': __version__, 'frozen': bool(getattr(sys, 'frozen', False)),
               'real_game_pkg_tested': False}
-    step = 'certificate bundle'
+    step = 'HTTPS verifier'
     try:
         client = GitHubClient()
-        context = client.tls_context() or ssl.create_default_context()
-        report['tls'] = {'verification_required': context.verify_mode == ssl.CERT_REQUIRED,
-                         'hostname_checked': context.check_hostname,
-                         'trusted_ca_count': context.cert_store_stats()['x509_ca'],
-                         'default_ca_count': ssl.create_default_context().cert_store_stats()['x509_ca']}
-        if not report['tls']['verification_required'] or not report['tls']['hostname_checked']:
-            raise PatchError('HTTPS verification is not enabled.')
+        report['tls'] = tls_details(client)
         step = 'public catalog'
         catalog = Catalog(client.json(CATALOG_URL))
         report['catalog_patches'] = len(catalog.edges)

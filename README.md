@@ -247,12 +247,27 @@ The five newest sessions are retained; each rotates at 512 KiB with one backup
 (about 5 MiB maximum for those sessions). Failure to write a log does not stop
 patching. The logging directory follows `RETRO_TRANS_DATA_DIR` in isolated tests.
 
+### HTTPS certificate errors
+
+Windows downloads use the Windows native certificate verifier through bundled
+truststore; Mac/Linux use the bundled certifi CA list. Certificate and hostname
+checks remain enabled, including redirected downloads. Windows can build chains
+using its managed roots and fetch missing intermediate certificates.
+
+If GitHub certificate verification still fails, check the computer's date/time
+and install pending Windows updates. On a managed network, ask the administrator
+to check the HTTPS proxy's certificate configuration. Do not disable certificate
+checking or install certificates from an unknown source. **Open logs** records
+the verifier and certificate error code without certificate contents or credentials.
+
 ### Running from source
 
 The runtime uses Python's standard library and Tkinter. Use Python 3.12+ with
-Tkinter for new builds; the source requires Python 3.8+.
+Tkinter for new builds; the source requires Python 3.10+. Packaged apps include
+Python and all dependencies.
 
 ```powershell
+python -m pip install -e .
 python -m retro_trans
 python -m unittest discover -s tests -v
 python -m retro_trans.catalog_builder

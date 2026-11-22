@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-22",
+  "status": "local unreleased Windows HTTPS fix",
+  "base_commit": "922ecf14e80a489c531bf409cbc0e2e06fe16ed9",
+  "branch": "codex/github-certificate-fix",
+  "app_version_unchanged": "0.5.23",
+  "platform": "Windows 11 x64",
+  "truststore": "0.10.5",
+  "tests": {
+    "run": 383,
+    "passed": 378,
+    "skipped": 5,
+    "failures": 0,
+    "errors": 0
+  },
+  "tls_regressions": [
+    "trusted certificate and context reuse",
+    "untrusted certificate rejected",
+    "expired certificate rejected",
+    "wrong hostname rejected",
+    "Vita asset redirect removes authorization",
+    "Vita redirect certificate verified",
+    "missing verifier fails closed",
+    "verifier initialization fails closed",
+    "native error code recorded without private details"
+  ],
+  "packaged_health": {
+    "ok": true,
+    "version": "0.5.23",
+    "stage": "complete",
+    "tls": {
+      "provider": "windows-native",
+      "verification_required": true,
+      "hostname_checked": true
+    },
+    "tk": "8.6.12",
+    "title": "Retro Trans 0.5.23",
+    "window": [
+      700,
+      440
+    ],
+    "patches": 344,
+    "tabs": [
+      "Automatic",
+      "Apply xdelta",
+      "Save conversion",
+      "Vita",
+      "DCP",
+      "PS3 DLC"
+    ],
+    "z3_save_converter": true,
+    "chd_round_trip": true,
+    "rvz_round_trip": true,
+    "mx_converter": "experimental early Hugo intermission",
+    "mx_cng_self_check": true,
+    "mx_crypto_provider": "Windows CNG",
+    "vita_pkg_profile_engine": true,
+    "vita_pkg_crypto_self_check": true,
+    "whole_pkg_xdelta": false,
+    "installed_cpk_patching": true,
+    "local_pkg_rebuilding": true,
+    "license_required_for_pkg_patching": true,
+    "dreamcast_dcp": true,
+    "dcp_engine_bundled": true,
+    "dcp_engine_started": true,
+    "automatic_dcp": true,
+    "automatic_dcp_profiles": 6,
+    "game_library_games": 37,
+    "vita_library_routes": 12
+  },
+  "packaged_network": {
+    "ok": true,
+    "version": "0.5.23",
+    "frozen": true,
+    "real_game_pkg_tested": false,
+    "tls": {
+      "provider": "windows-native",
+      "verification_required": true,
+      "hostname_checked": true
+    },
+    "catalog_patches": 344,
+    "vita_patch_files": 153,
+    "vita3k": {
+      "asset": "windows-latest.zip",
+      "bytes": 38204516,
+      "sha256": "5bbc2a1fa6eaa6f07bd7c4488207bfe8e0a4dc1dc45f37d6f3c74249ebf319a3"
+    }
+  },
+  "additional_live_checks": [
+    "public game library",
+    "latest release API",
+    "redirected UPDATE.json"
+  ],
+  "notices_verified": [
+    "standalone EXE",
+    "portable ZIP"
+  ],
+  "artifacts": {
+    "Retro-Trans.exe": {
+      "bytes": 70679063,
+      "sha256": "44987c4f28660840acf179fe0e5cb382287a28cd2c47c05f3f10c02e01215545"
+    },
+    "Retro-Trans-Windows.zip": {
+      "bytes": 80590130,
+      "sha256": "6b6ca292c9237237a47c2cd7ac9b67a1569d2fd12efc8ceb135e4fb04248c19c"
+    }
+  },
+  "limitations": [
+    "Affected users have not yet retested; their original error code was not provided.",
+    "Mac, Linux and Android builds were not produced in this change."
+  ],
+  "pushed": false,
+  "published": false
+}

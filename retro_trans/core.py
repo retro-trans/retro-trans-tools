@@ -187,16 +187,32 @@ class GitHubClient:
     def tls_context(self):
         # Python's OpenSSL on macOS does not automatically use the Keychain.
         # A frozen app cannot depend on its builder's certificate-file path.
-        # Windows keeps its existing OS certificate-store behavior.
-        if sys.platform not in ('darwin', 'linux'):
+        if sys.platform not in ('win32', 'darwin', 'linux'):
             return None
         if not hasattr(self, '_tls_context'):
-            try:
-                import certifi
-                self._tls_context = ssl.create_default_context(cafile=certifi.where())
-            except (ImportError, OSError, ssl.SSLError) as exc:
-                raise PatchError('The app\'s HTTPS certificate bundle is missing or damaged. '
-                                 'Download a fresh app package and try again.') from exc
+            if sys.platform == 'win32':
+                # Use Windows chain building, including its managed trust roots
+                # and missing-intermediate retrieval, not a snapshot of its CAs
+                # loaded into OpenSSL. Keep verification local to this client.
+                try:
+                    import truststore
+                    context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                except (ImportError, OSError) as exc:
+                    raise PatchError('The app\'s Windows HTTPS verifier could not start. '
+                                     'Download a fresh app package and try again.') from exc
+                provider = 'windows-native'
+            else:
+                try:
+                    import certifi
+                    context = ssl.create_default_context(cafile=certifi.where())
+                except (ImportError, OSError, ssl.SSLError) as exc:
+                    raise PatchError('The app\'s HTTPS certificate bundle is missing or damaged. '
+                                     'Download a fresh app package and try again.') from exc
+                provider = 'certifi'
+            self._tls_context = context
+            diagnostics.event('tls_context', provider=provider,
+                              verification_required=context.verify_mode == ssl.CERT_REQUIRED,
+                              hostname_checked=context.check_hostname)
         return self._tls_context
 
     def open(self, url):

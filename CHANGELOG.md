@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Use native Windows certificate-chain verification for GitHub downloads,
+  including Windows-managed roots and missing-intermediate retrieval. Keep
+  certificate and hostname checks enabled on every request and redirect.
+- Bundle the pinned verifier and its license; check it during packaged startup
+  validation and record its provider in local diagnostics.
+
 ## Game registration — 2026-11-25
 
 - Register Japanese Tengoku-hen Vita PCSG00494 and its exact PKG content ID before publishing the authorized 0.1.4 game patches. Keep PS3 identities, existing routes and app versions unchanged.

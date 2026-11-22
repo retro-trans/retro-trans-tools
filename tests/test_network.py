@@ -8,7 +8,7 @@ import tempfile
 import types
 import unittest
 import urllib.error
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from retro_trans.core import GitHubClient, GitHubRateLimit, PatchError
 
@@ -29,11 +29,50 @@ class NetworkTests(unittest.TestCase):
             self.assertEqual(context.verify_mode, ssl.CERT_REQUIRED)
             self.assertTrue(context.check_hostname)
 
-    def test_windows_keeps_default_trust(self):
+    def test_windows_uses_native_verifier_and_reuses_context(self):
+        client = GitHubClient()
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        truststore = types.SimpleNamespace(SSLContext=Mock(return_value=context))
         with patch('retro_trans.core.sys.platform', 'win32'), \
+                patch.dict(sys.modules, {'truststore': truststore}), \
                 patch('urllib.request.urlopen', return_value=io.BytesIO()) as open_url:
-            GitHubClient().open('https://github.com/retro-trans/retro-trans-tools')
-            self.assertIsNone(open_url.call_args.kwargs['context'])
+            client.open('https://github.com/retro-trans/retro-trans-tools')
+            client.open('https://api.github.com/repos/retro-trans/retro-trans-tools')
+            truststore.SSLContext.assert_called_once_with(ssl.PROTOCOL_TLS_CLIENT)
+            self.assertIs(open_url.call_args.kwargs['context'], context)
+            self.assertEqual(context.verify_mode, ssl.CERT_REQUIRED)
+            self.assertTrue(context.check_hostname)
+
+    def test_missing_windows_verifier_fails_closed_without_download(self):
+        with patch('retro_trans.core.sys.platform', 'win32'), \
+                patch.dict(sys.modules, {'truststore': None}), \
+                patch('urllib.request.urlopen') as open_url:
+            with self.assertRaisesRegex(PatchError, 'Windows HTTPS verifier'):
+                GitHubClient().open('https://github.com/retro-trans/retro-trans-tools')
+            open_url.assert_not_called()
+
+    def test_windows_verifier_initialization_failure_does_not_fall_back(self):
+        truststore = types.SimpleNamespace(SSLContext=Mock(side_effect=OSError('private details')))
+        with patch('retro_trans.core.sys.platform', 'win32'), \
+                patch.dict(sys.modules, {'truststore': truststore}), \
+                patch('urllib.request.urlopen') as open_url:
+            with self.assertRaisesRegex(PatchError, 'Windows HTTPS verifier') as raised:
+                GitHubClient().open('https://github.com/retro-trans/retro-trans-tools')
+            self.assertNotIn('private details', str(raised.exception))
+            open_url.assert_not_called()
+
+    def test_windows_diagnostics_do_not_query_openssl_ca_store(self):
+        from retro_trans.network_check import tls_details
+        context = Mock(verify_mode=ssl.CERT_REQUIRED, check_hostname=True)
+        context.cert_store_stats.side_effect = NotImplementedError
+        with patch('retro_trans.core.sys.platform', 'win32'), \
+                patch.object(GitHubClient, 'tls_context', return_value=context):
+            self.assertEqual(tls_details(GitHubClient()), dict(provider='windows-native',
+                             verification_required=True, hostname_checked=True))
+            context.cert_store_stats.assert_not_called()
+            context.check_hostname = False
+            with self.assertRaisesRegex(PatchError, 'verification is not enabled'):
+                tls_details(GitHubClient())
 
     def test_missing_bundle_fails_closed_without_download(self):
         with patch('retro_trans.core.sys.platform', 'darwin'), \

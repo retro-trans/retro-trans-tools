@@ -2,7 +2,7 @@
 import sys
 from retro_trans import __version__
 from retro_trans.catalog import atomic_json, load_catalog
-from retro_trans.core import engine_context
+from retro_trans.core import GitHubClient, engine_context
 from retro_trans.gui import Application, main
 from retro_trans.updater import helper_main, maybe_install_pending
 from retro_trans.z3_saves import GUIDE
@@ -14,6 +14,10 @@ def diagnose(path):
     app = None
     report = {"ok": False, "version": __version__, "stage": "native interface"}
     try:
+        report['stage'] = 'HTTPS verifier'
+        from retro_trans.network_check import tls_details
+        report['tls'] = tls_details(GitHubClient())
+        report['stage'] = 'native interface'
         app = Application(startup=False, visible=False)
         app.update_idletasks()
         app.vita_game.set('Vita3K PKG')

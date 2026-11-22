@@ -28,7 +28,8 @@ if ($TlsRuntimeData) {
     # that runtime's policy; never disable TLS verification to make it work.
     $TlsRuntimeArguments = @('--add-data', "$TlsRuntimeData;.")
 }
-& $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' @TlsRuntimeArguments --distpath $OutputDirectory launch.py
+# Retain truststore's MIT license inside the standalone EXE as well as the ZIP.
+& $BuildPython -m PyInstaller --noconfirm --clean --onefile --windowed --name "Retro-Trans" --add-data 'retro_trans/resources;retro_trans/resources' --copy-metadata truststore @TlsRuntimeArguments --distpath $OutputDirectory launch.py
 if ($LASTEXITCODE -ne 0) { throw "Packaging failed." }
 $RuntimeHome = & $BuildPython -c "import sys; print(sys.base_prefix)"
 $LicensesDirectory = Join-Path $OutputDirectory 'licenses'
@@ -52,7 +53,7 @@ Copy-Item -LiteralPath 'docs/RVZ.md' -Destination (Join-Path $OutputDirectory 'd
 Copy-Item -LiteralPath 'docs/PS3_DLC.md' -Destination (Join-Path $OutputDirectory 'docs/PS3_DLC.md')
 Copy-Item -LiteralPath 'retro_trans\resources\XDELTA-LICENSE.txt' -Destination $LicensesDirectory
 & $BuildPython -m retro_trans.dependency_notices $LicensesDirectory
-if ($LASTEXITCODE -ne 0) { throw "Could not package cryptography dependency notices." }
+if ($LASTEXITCODE -ne 0) { throw "Could not package Python dependency notices." }
 & $BuildPython -c "from retro_trans.chd import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'chdman')
 if ($LASTEXITCODE -ne 0) { throw "Could not package CHD engine notices." }
 & $BuildPython -c "from retro_trans.rvz import copy_notices; import sys; copy_notices(sys.argv[1])" (Join-Path $LicensesDirectory 'dolphin-tool')

@@ -3,6 +3,7 @@ import hashlib
 import io
 from contextlib import nullcontext
 import os
+import ssl
 from pathlib import Path
 import subprocess
 import tempfile
@@ -102,6 +103,17 @@ class DiagnosticsTests(unittest.TestCase):
         row = self.rows()[-1]
         self.assertEqual(row['http_status'], 403)
         self.assertNotIn('SECRET', self.log.read_text())
+
+    def test_tls_provider_and_native_verification_code_are_safe_to_log(self):
+        error = ssl.SSLCertVerificationError('PRIVATE certificate URL and machine details')
+        error.verify_code = 0x800B0109
+        d.event('tls_context', provider='windows-native', verification_required=True, hostname_checked=True,
+                certificate='PRIVATE PEM', path='PRIVATE machine path')
+        d.exception(urllib.error.URLError(error))
+        self.assertEqual(self.rows()[-2]['provider'], 'windows-native')
+        self.assertTrue(self.rows()[-2]['verification_required'])
+        self.assertEqual(self.rows()[-1]['ssl_verify_code'], 0x800B0109)
+        self.assertNotIn('PRIVATE', self.log.read_text())
 
     def test_download_cache_and_vita_input_modes_are_recorded(self):
         payload = b'public patch fixture'

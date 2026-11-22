@@ -1,12 +1,14 @@
-"""Retain complete license trees from bundled Python cryptography dependencies."""
+"""Retain complete license trees from bundled Python dependencies."""
 import importlib.metadata
 from pathlib import Path
 import shutil
+import sys
 
 
 def copy_notices(destination):
     destination=Path(destination)
-    for name in ('cryptography','cffi','pycparser'):
+    names = ('cryptography','cffi','pycparser') + (('truststore',) if sys.platform == 'win32' else ())
+    for name in names:
         package=importlib.metadata.distribution(name)
         found=False
         for entry in package.files or []:

@@ -48,8 +48,16 @@ Mac builds include certifi 2026.7.22 and its Mozilla CA certificate bundle for
 verified HTTPS independently of developer-installed Python certificates.
 Certifi is licensed under MPL-2.0; its full license is retained as
 `native/licenses/certifi-LICENSE.txt`. Source: https://github.com/certifi/python-certifi .
-Certificate and hostname verification stay enabled. Windows continues to use
-its existing certificate-store handling.
+Certificate and hostname verification stay enabled.
+
+## Windows HTTPS verification
+
+Windows builds include truststore 0.10.5 (MIT), copyright Seth Michael Larson,
+to validate HTTPS certificate chains with Windows CryptoAPI and Windows-managed
+trust roots. Certificate and hostname verification remain required. Source:
+https://github.com/sethmlarson/truststore . The complete license accompanies the
+portable ZIP in `licenses/truststore/licenses/LICENSE` and is embedded in the
+standalone EXE's `truststore-0.10.5.dist-info/licenses/LICENSE`.
 
 ## Optional Vita3K package conversion
 

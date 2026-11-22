@@ -103,6 +103,18 @@
       ]
     },
     {
+      "game_id": "elminage-ii",
+      "name": "Elminage II",
+      "repo": "retro-trans/Elminage-II",
+      "package_ids": [
+        {
+          "platform": "PSP",
+          "kind": "disc-id",
+          "id": "ULJM-05488"
+        }
+      ]
+    },
+    {
       "game_id": "elminage-iii",
       "name": "Elminage III",
       "repo": "retro-trans/Elminage-III",

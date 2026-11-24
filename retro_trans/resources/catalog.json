@@ -1238,6 +1238,59 @@
       }
     },
     {
+      "repo": "retro-trans/Elminage-II",
+      "tag": "v0.8.3",
+      "manifest": {
+        "game_id": "elminage-ii",
+        "game_name": "Elminage II",
+        "platform": "PSP",
+        "version": "0.8.3",
+        "source_commit": "e15ec64ba0d5653bf91b372095c8ffb751e064bd",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Elminage2-English-v0.8.3.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "c65bc955dc92d447efa6633dc6356937487b433635a5d4abf4b63c98ec98d4f9",
+            "source_bytes": 536608768,
+            "target_sha256": "2f8664ea9a2c51bed51b4cbf7dd334c51db61469ce47dc633fdaf292a07c4479",
+            "target_bytes": 550746112,
+            "patch_sha256": "48a31d055fcc598a6b7ab691f49e19be318abdcb36f5b4cf7b3fc7d97fb7288f",
+            "patch_bytes": 12238925
+          },
+          {
+            "patch": "Elminage2-English-v0.8.1-to-v0.8.3.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.8.1",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "b14707e0719f027e5ce0508192fb5d0eeb1c7c1d96cdd6e68f8d2b865d9cfcbe",
+            "source_bytes": 550742016,
+            "target_sha256": "2f8664ea9a2c51bed51b4cbf7dd334c51db61469ce47dc633fdaf292a07c4479",
+            "target_bytes": 550746112,
+            "patch_sha256": "a07e1e343702cf8e7e74c5525cb39bc8a8cf6f9e865abc59cfeb6d560479ca00",
+            "patch_bytes": 36818
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PSP",
+            "kind": "disc-id",
+            "id": "ULJM-05488"
+          }
+        ]
+      },
+      "assets": {
+        "Elminage2-English-v0.8.3.xdelta": "https://github.com/retro-trans/Elminage-II/releases/download/v0.8.3/Elminage2-English-v0.8.3.xdelta",
+        "Elminage2-English-v0.8.1-to-v0.8.3.xdelta": "https://github.com/retro-trans/Elminage-II/releases/download/v0.8.3/Elminage2-English-v0.8.1-to-v0.8.3.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Elminage-III",
       "tag": "v0.8.0",
       "manifest": {

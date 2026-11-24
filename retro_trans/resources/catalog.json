@@ -3442,6 +3442,44 @@
       }
     },
     {
+      "repo": "retro-trans/Mouri-Motonari",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "mouri-motonari-chikai-no-sanshi",
+        "game_name": "Mouri Motonari: Chikai no Sanshi",
+        "platform": "PS1",
+        "version": "0.8.0",
+        "source_commit": "82c207c48ced98446591eca5baeb1fa3b3dc7d0a",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "MouriMotonari-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "bin",
+            "target_format": "bin",
+            "source_sha256": "105b2dcfb08ab234ac78101943869b730105357763f4acd4f398fd286025ff1a",
+            "source_bytes": 393193248,
+            "target_sha256": "a13d48832597c492b9a1f021f2c93fadbc597b0d12ddbb913ecbb4a7aa0d4494",
+            "target_bytes": 393193248,
+            "patch_sha256": "8b70ca77f338b879586b7bf30d1242e3bdfab97847d13b1af121dfec6278fa33",
+            "patch_bytes": 98172224
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS1",
+            "kind": "disc-id",
+            "id": "SLPS-01285"
+          }
+        ]
+      },
+      "assets": {
+        "MouriMotonari-English-v0.8.0.xdelta": "https://github.com/retro-trans/Mouri-Motonari/releases/download/v0.8.0/MouriMotonari-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Ore-no-Shikabane-o-Koete-Yuke",
       "tag": "v0.2.38",
       "manifest": {

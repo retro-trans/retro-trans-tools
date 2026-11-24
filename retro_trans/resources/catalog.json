@@ -6016,6 +6016,139 @@
       }
     },
     {
+      "repo": "retro-trans/SRW-Z",
+      "tag": "v0.9.92",
+      "manifest": {
+        "schema_version": 1,
+        "game_id": "srw-z",
+        "game_name": "Super Robot Wars Z",
+        "platform": "PS2",
+        "version": "0.9.92",
+        "source_commit": "b2ac6d2a290bfe52a37da9299ed59d48de2f7c44",
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "project",
+            "id": "srw-z"
+          }
+        ],
+        "patches": [
+          {
+            "patch": "SRWZ-English-v0.9.92.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "ddbedefc0061213c50928fb213a7fb277c0345f01dab7386adc0383638a78cd2",
+            "source_sha1": "e8dbe37e88afe8f82d48889b0775274ccde3cf99",
+            "source_bytes": 3758358528,
+            "target_sha256": "9d9a66e4354557daf16d46505b400427e1c7d03477ba54e142445e9e2ad49852",
+            "target_sha1": "62af7c8c933555a51e513fd020fdb2c669234951",
+            "target_bytes": 3763404800,
+            "patch_sha256": "95ef8f47e5b86084f62c6d117cdcf31167c9a6044cc010421ff6c81df39454a5",
+            "patch_bytes": 20208276
+          },
+          {
+            "patch": "SRWZ-English-v0.9.91-to-v0.9.92.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "0.9.91",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "fb44886e693e4c28bc5f280c99f423d4c24fd67d327d4caa65e47920e4e2f547",
+            "source_sha1": "b48c9cb10b22c69ed5eb1031d8e4ef770e689fb0",
+            "source_bytes": 3763404800,
+            "target_sha256": "9d9a66e4354557daf16d46505b400427e1c7d03477ba54e142445e9e2ad49852",
+            "target_sha1": "62af7c8c933555a51e513fd020fdb2c669234951",
+            "target_bytes": 3763404800,
+            "patch_sha256": "f33d66b89eb37e81a85837c2383a79dd69f72193c75a40521876ab389c2e262c",
+            "patch_bytes": 37613
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.92.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "950e2759d0d7482387d97d6df31325d9e352097a23e0bb4724073d1538d8cf77",
+            "source_sha1": "2ebadb5c8fa764135206eaec2044ea5482dd4d6b",
+            "source_bytes": 3755081728,
+            "target_sha256": "f9e01be3f50906f02e6e66dc1557d6cfc3cea17d5226a3a707ab79bf4757f7b6",
+            "target_sha1": "2e16f97668ec46cd0e5934c5311990ba21486f5d",
+            "target_bytes": 3760525312,
+            "patch_sha256": "897fe36b90c72164f000f7540662f7d28e6fef431562bdeeb968cfa53f1f2d83",
+            "patch_bytes": 19192037
+          },
+          {
+            "patch": "SRWZ-English-Best-v0.9.91-to-v0.9.92.xdelta",
+            "edition": "best",
+            "language": "en",
+            "source_version": "0.9.91",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "1f4ddd9bb900bc918b97f5740409697b8c80c055befdada13c1db268284b6a1f",
+            "source_sha1": "80f206188cbe1c12e668918a5648c95b7e205e0a",
+            "source_bytes": 3760525312,
+            "target_sha256": "f9e01be3f50906f02e6e66dc1557d6cfc3cea17d5226a3a707ab79bf4757f7b6",
+            "target_sha1": "2e16f97668ec46cd0e5934c5311990ba21486f5d",
+            "target_bytes": 3760525312,
+            "patch_sha256": "8eea1342ce466e8383fa2e64c06a74e00754982a2f22210e827fbe4a28c96368",
+            "patch_bytes": 36998
+          }
+        ],
+        "build_provenance": {
+          "repository_snapshot_note": "source_commit pins the upstream snapshot, not a complete recipe for cumulative local changes. Local inputs, validators and review evidence are fingerprinted below.",
+          "base_images": [
+            {
+              "edition": "original",
+              "output": "E:\\Projects\\SRW Z\\SRW Z English Original v0.9.91 - Brockary and text fit 2026-11-24.iso",
+              "sha256": "058caa347ec353a746b844b6c40e1f999e0e5d147252a8ee64efb69b98325a1a"
+            },
+            {
+              "edition": "best",
+              "output": "E:\\Projects\\SRW Z\\SRW Z English Best v0.9.91 - Brockary and text fit 2026-11-24.iso",
+              "sha256": "7c85412f21cbbd19d74059277acd0b880ecff98bf1e3d78f9df72e1ad2c40c1e"
+            }
+          ],
+          "previous_release_manifest_sha256": "dbbbd1f7eb60d57445794644c5bae5819b2708c570abcd9559c4f99d6ce0be0c",
+          "official_naming": {
+            "source": "https://gundam-official.com/",
+            "precedence": "Dedicated English series profiles",
+            "retained_from": "0.9.91"
+          },
+          "catalog_registration": {
+            "registry_file_sha": "11d3627add5fb438e2a1d6997f10156dd51591fa",
+            "identifier_source": "retro_trans/resources/game-library.json"
+          },
+          "local_tool_sha256": {
+            "_work/release-v0.9.92/release_build.py": "d2830616094169cd0c828548accb95bb148f6309fb16bded7d768428bf207fa5",
+            "_work/release-v0.9.92/package.py": "a04debe5252f4b13f0005dc42961ff5640ce2a00102bbdfb1f72cfac3e7bdcc1",
+            "_work/weapon-library-fit-2026-11-24/build.py": "e5e357ff6ab542765f4a7b82b1dfb476d43ee9ae178c34c3436cd3f0bbec9f4a",
+            "_work/weapon-library-fit-2026-11-24/prepare.py": "60f8e562749cf810a489414d4c8a0d8dcb080786baccdd71a0e75ae0db5bf44a",
+            "_work/getter-names-2026-11-24/build.py": "32ac7b86ee2b870c74f165a0fd1f0eba3f4d3b7679011c21819426eefba5fa8b",
+            "best_adapter/stage.py": "9be109c4831d7cfad95ee1fe89b6d61aa5339ea05a073acdd52c28a5ad3c3bb3"
+          },
+          "review_evidence_sha256": {
+            "_work/eiji-identity-2026-11-09/proof.json": "d6998c845c0990fc4265c9f16c3033db7bbc5924a390a2dceb67d9f587f9cfba",
+            "_work/ui-regressions-2026-11-09/REPORT.md": "97cf11601c65b13705c86f82f4e8f9b9c7a6e8024d6ff0026f83a5ec7455f2fd",
+            "_work/bazaar-parts-fit-2026-11-09/REPORT.md": "c343cee13c38f7a80bd5b9e27583e84ec5c2cf19659607ff0ec84ac2c8d92329",
+            "_work/best-scene-sound-2026-11-12/REPORT.md": "4c19616e0cb6af6feb5807b8d75f06bbd605773fcba156f02a3cb45f4ec56110",
+            "_work/getter-names-2026-11-24/REPORT.md": "02f8e9db6058414a46b10de23c61319bdc583b03abcd8e0a25fb1b906bbd9294",
+            "_work/weapon-library-fit-2026-11-24/REPORT.md": "ee4b8a5517923d74504dfc4ab904479d7222cf0148dc64f9e9b2d12409f9ead3"
+          },
+          "pending": "Fresh in-game UI/scene audio confirmation and a full playthrough remain pending. Best remains experimental."
+        }
+      },
+      "assets": {
+        "SRWZ-English-v0.9.92.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.92/SRWZ-English-v0.9.92.xdelta",
+        "SRWZ-English-v0.9.91-to-v0.9.92.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.92/SRWZ-English-v0.9.91-to-v0.9.92.xdelta",
+        "SRWZ-English-Best-v0.9.92.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.92/SRWZ-English-Best-v0.9.92.xdelta",
+        "SRWZ-English-Best-v0.9.91-to-v0.9.92.xdelta": "https://github.com/retro-trans/SRW-Z/releases/download/v0.9.92/SRWZ-English-Best-v0.9.91-to-v0.9.92.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/SRW-Z-Special-Disc",
       "tag": "v0.3.0",
       "manifest": {

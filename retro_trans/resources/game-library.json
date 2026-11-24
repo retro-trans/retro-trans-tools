@@ -271,6 +271,18 @@
       ]
     },
     {
+      "game_id": "shiren-ds2",
+      "name": "Fushigi no Dungeon: Fuurai no Shiren DS2 - Sabaku no Majou",
+      "repo": "retro-trans/Shiren-DS2",
+      "package_ids": [
+        {
+          "platform": "NDS",
+          "kind": "title-id",
+          "id": "YWFJ"
+        }
+      ]
+    },
+    {
       "game_id": "srw-mx-portable",
       "name": "Super Robot Taisen MX Portable",
       "repo": "retro-trans/SRW-MX-Portable",

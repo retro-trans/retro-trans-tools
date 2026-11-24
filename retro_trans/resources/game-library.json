@@ -247,6 +247,18 @@
       ]
     },
     {
+      "game_id": "mouri-motonari-chikai-no-sanshi",
+      "name": "Mouri Motonari: Chikai no Sanshi",
+      "repo": "retro-trans/Mouri-Motonari",
+      "package_ids": [
+        {
+          "platform": "PS1",
+          "kind": "disc-id",
+          "id": "SLPS-01285"
+        }
+      ]
+    },
+    {
       "game_id": "ore-no-shikabane-o-koete-yuke",
       "name": "Ore no Shikabane o Koete Yuke",
       "repo": "retro-trans/Ore-no-Shikabane-o-Koete-Yuke",

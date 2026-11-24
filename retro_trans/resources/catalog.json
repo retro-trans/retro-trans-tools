@@ -7890,6 +7890,44 @@
       }
     },
     {
+      "repo": "retro-trans/Shiren-DS2",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "shiren-ds2",
+        "game_name": "Fushigi no Dungeon: Fuurai no Shiren DS2 - Sabaku no Majou",
+        "platform": "NDS",
+        "version": "0.8.0",
+        "source_commit": "fd963acf08e5cd522369e9821b6e36897c4084bc",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "ShirenDS2-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "nds",
+            "target_format": "nds",
+            "source_sha256": "7ea49b5a8c4df6033e4d41f755301844a04040160cdcb3ffacb8e28f0b6b3593",
+            "source_bytes": 33554432,
+            "target_sha256": "073e6a78e99bf8f83c2824ba686d835b82b750da0c12b7a8b1df13d5201b27f1",
+            "target_bytes": 33554432,
+            "patch_sha256": "86a9f9b53e86c59ed7e5980f2280fa3e9774746ea18c9066d585a500a2921c09",
+            "patch_bytes": 366564
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "NDS",
+            "kind": "title-id",
+            "id": "YWFJ"
+          }
+        ]
+      },
+      "assets": {
+        "ShirenDS2-English-v0.8.0.xdelta": "https://github.com/retro-trans/Shiren-DS2/releases/download/v0.8.0/ShirenDS2-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Summon-Night-3",
       "tag": "v0.1.35",
       "manifest": {

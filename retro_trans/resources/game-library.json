@@ -484,6 +484,18 @@
       ]
     },
     {
+      "game_id": "srw-z3-tengoku-vita",
+      "name": "Super Robot Taisen Z3: Tengoku-hen (Vita)",
+      "repo": "retro-trans/SRW-Z3-2",
+      "package_ids": [
+        {
+          "platform": "PS Vita",
+          "kind": "vita-content-id",
+          "id": "JP0700-PCSG00494_00-SRWZ3OF2DLGPKG00"
+        }
+      ]
+    },
+    {
       "game_id": "srw-z3-tengoku-ps3",
       "name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
       "repo": "retro-trans/SRW-Z3-2",

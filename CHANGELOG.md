@@ -1,5 +1,9 @@
 # Changelog
 
+## Game registration — 2026-11-25
+
+- Register Japanese Tengoku-hen Vita PCSG00494 and its exact PKG content ID before publishing the authorized 0.1.4 game patches. Keep PS3 identities, existing routes and app versions unchanged.
+
 ## Catalog maintenance — 2026-11-21
 
 - Accept checksummed CUE sidecars up to 64 KiB during hosted catalog

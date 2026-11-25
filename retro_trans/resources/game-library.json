@@ -484,18 +484,6 @@
       ]
     },
     {
-      "game_id": "srw-z3-tengoku-vita",
-      "name": "Super Robot Taisen Z3: Tengoku-hen (Vita)",
-      "repo": "retro-trans/SRW-Z3-2",
-      "package_ids": [
-        {
-          "platform": "PS Vita",
-          "kind": "vita-content-id",
-          "id": "JP0700-PCSG00494_00-SRWZ3OF2DLGPKG00"
-        }
-      ]
-    },
-    {
       "game_id": "srw-z3-tengoku-ps3",
       "name": "Super Robot Taisen Z3: Tengoku-hen (PS3)",
       "repo": "retro-trans/SRW-Z3-2",
@@ -504,6 +492,18 @@
           "platform": "PS3",
           "kind": "project",
           "id": "srw-z3-tengoku-ps3"
+        }
+      ]
+    },
+    {
+      "game_id": "srw-z3-tengoku-vita",
+      "name": "Super Robot Taisen Z3: Tengoku-hen (Vita)",
+      "repo": "retro-trans/SRW-Z3-2",
+      "package_ids": [
+        {
+          "platform": "PS Vita",
+          "kind": "vita-content-id",
+          "id": "JP0700-PCSG00494_00-SRWZ3OF2DLGPKG00"
         }
       ]
     },
@@ -932,6 +932,52 @@
         "name": "SRW-Z3-v0.9.6-Vita-rePatch-patches.zip",
         "bytes": 16300445,
         "sha256": "561d41ec99fdc31ae4d6b48012f5bf875c6794633a294508f58eae07de5a71ef"
+      }
+    },
+    {
+      "game_id": "srw-z3-tengoku-vita",
+      "repo": "retro-trans/SRW-Z3-2",
+      "version": "0.1.4",
+      "mode": "pkg",
+      "content_id": "JP0700-PCSG00494_00-SRWZ3OF2DLGPKG00",
+      "package": {
+        "bytes": 2926199744,
+        "sha256": "009833f3ecb46da08e50ad9d3cfc9772a2d74499f29960a6645d88235e78e7b0"
+      },
+      "profile": {
+        "id": 789501187,
+        "name": "VITA-PKG.json",
+        "bytes": 32859,
+        "sha256": "83932045c3979232f269ef19860d207284a727bee39458bb501a1f585c8b7574"
+      },
+      "archive": {
+        "id": 789501192,
+        "name": "SRW-Z3-Tengoku-v0.1.4-Vita-PKG-patches.zip",
+        "bytes": 24262717,
+        "sha256": "64ac439338d6b4418ef1d06e382a7b0fa767700e2d78967d245aa84f0d52ef16"
+      }
+    },
+    {
+      "game_id": "srw-z3-tengoku-vita",
+      "repo": "retro-trans/SRW-Z3-2",
+      "version": "0.1.4",
+      "mode": "repatch",
+      "content_id": "JP0700-PCSG00494_00-SRWZ3OF2DLGPKG00",
+      "package": {
+        "bytes": 2926199744,
+        "sha256": "009833f3ecb46da08e50ad9d3cfc9772a2d74499f29960a6645d88235e78e7b0"
+      },
+      "profile": {
+        "id": 789501190,
+        "name": "VITA-REPATCH.json",
+        "bytes": 8048,
+        "sha256": "602675c6c3930b36e11c89c955272793d6c2ac5c49c222ec902d3efd749fafc2"
+      },
+      "archive": {
+        "id": 789501185,
+        "name": "SRW-Z3-Tengoku-v0.1.4-Vita-rePatch-patches.zip",
+        "bytes": 22297091,
+        "sha256": "6573a29ddfb288f483c6fa741fcf816ee388f4084d4cecb1849612c0fe76a179"
       }
     }
   ]

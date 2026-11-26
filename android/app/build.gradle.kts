@@ -16,6 +16,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
+    System.getenv("RETRO_TRANS_PREVIEW_KEYSTORE")?.let { previewKey ->
+        signingConfigs.getByName("debug") {
+            storeFile = file(previewKey).also { require(it.isFile) { "Preview signing file is missing" } }
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
     buildTypes { debug { applicationIdSuffix = ".debug" }; release { isMinifyEnabled = false } }
     buildFeatures { compose = true; buildConfig = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

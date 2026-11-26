@@ -32,9 +32,12 @@ jobs:
           PREVIEW_KEYSTORE: ${{ secrets.ANDROID_PREVIEW_KEYSTORE_BASE64 }}
         run: |
           test -n "$PREVIEW_KEYSTORE"
-          mkdir -p ~/.android
-          printf '%s' "$PREVIEW_KEYSTORE" | base64 --decode > ~/.android/debug.keystore
-          chmod 600 ~/.android/debug.keystore
+          preview_key="$RUNNER_TEMP/retro-trans-preview.keystore"
+          printf '%s' "$PREVIEW_KEYSTORE" | base64 --decode > "$preview_key"
+          chmod 600 "$preview_key"
+          fingerprint=$(keytool -exportcert -alias androiddebugkey -storepass android -keystore "$preview_key" | sha256sum | cut -d ' ' -f1)
+          test "$fingerprint" = '32fcd938f3658c416b38bfae12d4c5de22f7811cab981ca9a2854244926ea5f7'
+          echo "RETRO_TRANS_PREVIEW_KEYSTORE=$preview_key" >> "$GITHUB_ENV"
       - name: Install pinned native tools
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
       - name: Validate routes and build both APKs
@@ -70,4 +73,4 @@ jobs:
           if-no-files-found: error
       - name: Remove the ephemeral signing file
         if: always() && github.event_name != 'pull_request'
-        run: rm -f ~/.android/debug.keystore
+        run: rm -f "$RUNNER_TEMP/retro-trans-preview.keystore"

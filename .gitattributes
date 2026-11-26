@@ -1,0 +1,4 @@
+android/** text=auto eol=lf
+android/**/*.bat text eol=crlf
+android/app/src/androidTest/assets/* -text
+android/gradle/wrapper/gradle-wrapper.jar -text

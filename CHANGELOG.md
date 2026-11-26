@@ -1,12 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.5.24 — 2026-11-26
 
 - Use native Windows certificate-chain verification for GitHub downloads,
   including Windows-managed roots and missing-intermediate retrieval. Keep
   certificate and hostname checks enabled on every request and redirect.
 - Bundle the pinned verifier and its license; check it during packaged startup
   validation and record its provider in local diagnostics.
+- Require successful Windows, Apple Silicon/Intel macOS, Linux x86-64 and
+  Android preview builds before publishing a release. Include current source
+  and synthetic tests for Android; keep its experimental scope explicit.
 
 ## Game registration — 2026-11-25
 

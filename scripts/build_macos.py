@@ -44,6 +44,16 @@ def zip_app(app, output):
 def manifest(native):
     atomic_json(native/'manifest.json', {'architecture': architecture(),
         'sha256': {name: sha256_file(native/name) for name in ('xdelta3', 'chdman')}})
+    # PyInstaller and ad-hoc signing can rewrite native Mach-O bytes. Record
+    # their final identities while preserving upstream/source provenance.
+    rid = 'osx-arm64' if architecture() == 'arm64' else 'osx-x64'
+    path = native/'dcp'/rid/'engine.json'
+    if path.is_file():
+        data = json.loads(path.read_text())
+        for name in data['files']:
+            binary = path.parent/name
+            data['files'][name] = dict(bytes=binary.stat().st_size, sha256=sha256_file(binary))
+        atomic_json(path, data)
 
 
 def prepare():
@@ -120,6 +130,13 @@ def main():
         '--add-data', 'retro_trans/resources:retro_trans/resources']
     for name in ('xdelta3', 'chdman'):
         args.extend(['--add-binary', str(native/name)+':retro_trans/resources/native'])
+    rid = 'osx-arm64' if architecture() == 'arm64' else 'osx-x64'
+    dcp = native/'dcp'/rid
+    if not (dcp/'engine.json').is_file():
+        raise RuntimeError('Build the pinned Mac DCP helper first.')
+    for binary in dcp.iterdir():
+        if binary.is_file() and (binary.suffix == '.dylib' or binary.name in ('RetroTrans.Dcp', 'createdump')):
+            args.extend(['--add-binary', str(binary)+':retro_trans/resources/native/dcp/'+rid])
     subprocess.run(args+['launch.py'], check=True)
     app = ROOT/'dist'/APP
     info_path = app/'Contents/Info.plist'

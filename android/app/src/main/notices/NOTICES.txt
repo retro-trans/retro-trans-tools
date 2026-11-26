@@ -1,0 +1,24 @@
+Android interface: Kotlin and AndroidX / Jetpack Compose (Apache-2.0).
+Networking: OkHttp 4.12.0 and Okio (Apache-2.0).
+JSON: kotlinx.serialization 1.9.0 (Apache-2.0).
+
+xdelta3 3.2.0, commit ff322e592383227b0d65ddfde7e0e5bbc504dc15.
+Copyright Joshua MacDonald and contributors. Apache-2.0.
+https://github.com/jmacd/xdelta
+The APK includes XDELTA-LICENSE.txt.
+
+XZ / liblzma 5.8.3, commit 4b73f2ec19a99ef465282fbce633e8deb33691b3.
+https://github.com/tukaani-project/xz
+Native source archives are pinned by SHA-256 in the build definition.
+liblzma is distributed under BSD Zero Clause; see XZ-LICENSE.txt.
+The Android build adapts xdelta's LZMA allocator to enforce a shared 256 MiB
+native allocation budget and a 128 MiB secondary-stream memory limit.
+The complete Apache license text is included as APACHE-2.0.txt.
+
+No game data, title keys or licenses are included.
+
+Experimental DCP: original Kotlin ISO9660/ZIP consumer and disc-layout-preserving
+writer, using the bundled xdelta decoder above. No desktop Universal Dreamcast
+Patcher executable, .NET runtime or downloaded executable is embedded. The DCP
+archive format is interoperable only within the documented initial Android scope.
+ISO9660 record structures: ECMA-119, https://ecma-international.org/publications-and-standards/standards/ecma-119/

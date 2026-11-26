@@ -1,13 +1,14 @@
-# Mac feature-parity test build
+# Retro Trans 0.5.24 for macOS
 
-This branch targets the same features as Windows: automatic verified patches,
-manual xdelta creation/application, supported CHD conversion, Vita rePatch,
-Z3 saves, experimental MX saves, and verified next-launch app updates.
-It is a test build, not a release or a claim of game-specific playtesting.
+Native Apple Silicon and Intel builds include Automatic and manual xdelta,
+CHD, Dreamcast DCP, PS3 DLC, Z3/MX save tools and verified whole-app updates.
+RVZ conversion and rebuilding a Vita PKG are not available on macOS. Hardware
+rePatch can use the isolated official Vita3K Mac installer; a CLI check does not
+establish real-game compatibility.
 
 ## Install
 
-Download the matching workflow artifact, then extract the contained
+Download the matching release ZIP:
 `Retro-Trans-macos-arm64.zip` (Apple Silicon, including M1) or
 `Retro-Trans-macos-x86_64.zip` (Intel). Move `Retro-Trans.app` to a writable
 folder, normally Applications. The window title includes the app version.
@@ -52,10 +53,9 @@ UPDATE.json and EXE handling are unchanged. A verified whole-app ZIP is staged,
 checked on startup, and installed with a previous-bundle backup. Failed startup
 restores the previous app. No newer Mac asset means no Mac update is offered.
 
-The macOS workflow builds both architectures and runs native GUI, patch,
+The shared release workflow builds both Mac architectures and runs native GUI, patch,
 CHD, save cryptography, archive-safety and update tests, plus packaged startup,
-whole-bundle replacement and official Vita3K CLI checks. Test artifacts expire
-after 30 days. It cannot publish a release (read-only repository permissions).
+whole-bundle replacement and official Vita3K CLI checks. A release is published only after Windows, both Macs, Linux and Android pass.
 
 The 0.5.6 Mac test build supersedes 0.5.5, which omitted HTTPS certificates.
 It bundles certifi roots and keeps TLS/hostname verification enabled. The
@@ -65,6 +65,7 @@ DNS and timeout failures now have distinct messages. A network that substitutes
 its own HTTPS certificates may still require administrator assistance.
 
 Build dependencies: Python 3.12, PyInstaller 6.22.3, certifi 2026.7.22, and Homebrew rom-tools.
-Run `python scripts/build_macos.py`, then
+Build the pinned DCP helper for `osx-arm64` or `osx-x64` with
+`scripts/bundle_dcp.py --rid <rid> --write`. Run `python scripts/build_macos.py`, then
 `python scripts/check_macos_package.py` on a Mac. Tool receipts/notices are
 included in the app. Full Windows regression runs separately.

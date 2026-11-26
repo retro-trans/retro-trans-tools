@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-30",
+  "version": "0.1.0-test1",
+  "artifact_kind": "Debug-signed Android test APK",
+  "package_id": "org.retrotrans.tools.debug",
+  "apk": "Retro-Trans-Android-0.1.0-test1.apk",
+  "bytes": 21096438,
+  "sha256": "e52a7670a8100e4fae138b6b652a3876ab48fa46273f97bf55bbe46d4c2fffef",
+  "build_abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "minimum_sdk": 26,
+  "target_sdk": 36,
+  "test_environment": "Isolated Android 16/API 36 x86_64 emulator, 4 KiB pages; no physical phone",
+  "jvm_test_methods": 4,
+  "desktop_route_cases": 1391,
+  "instrumentation_tests": {
+    "latest_app_suite_passed": 10,
+    "large_native_output_test_passed": true,
+    "large_output_bytes": 4303355904,
+    "large_source_copy_offset": 5368709243
+  },
+  "checks": [
+    "None/DJW/LZMA desktop xdelta round trips",
+    "Wrong source and corrupt/truncated patches rejected",
+    "Cancellation before and after output, output size bound",
+    "Non-seekable source rejected",
+    "Legacy/modern catalog validation and route parity",
+    "Grouped missing and duplicate components",
+    "Offline three-operation/two-track upgrade plus CUE export",
+    "Manual UI patch and existing-output protection",
+    "Cancelled export cleanup",
+    "ELF and APK 16 KiB alignment",
+    "Debug APK signature",
+    "UI inspection at 100% and 180% text scale"
+  ],
+  "lint": "0 errors, 35 warnings",
+  "libraries": [
+    {
+      "library": "lib/arm64-v8a/libandroidx.graphics.path.so",
+      "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+      "load_segment_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "library": "lib/x86_64/libandroidx.graphics.path.so",
+      "sha256": "4e56c996f13670e70082658de7880c4020eabf4f25e43387f88ed78a713fc9f0",
+      "load_segment_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "library": "lib/arm64-v8a/libretro_patch.so",
+      "sha256": "e6cc5b7272e8178cf6e5ed2d9cd9131e2977c0473d441d4016be39c421fe83ce",
+      "load_segment_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "library": "lib/x86_64/libretro_patch.so",
+      "sha256": "72f149512429012a25786a6fa832f145891bb3b90e2e2a05d4db17891abdbbc4",
+      "load_segment_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    }
+  ],
+  "remaining_gates": [
+    "Physical ARM64 phone and minimum API runtime",
+    "16 KiB page runtime",
+    "SD/USB providers and revoked grants",
+    "Forced process death, long background execution and service timeout",
+    "Measured real-phone memory and throughput",
+    "Signed production updates and installer flows; production feed/signing not configured"
+  ],
+  "deferred": [
+    "CHD",
+    "DCP",
+    "Save conversion",
+    "Vita PKG/rePatch",
+    "Private automatic downloads",
+    "Create xdelta"
+  ],
+  "release_url": "https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.18",
+  "distribution_note": "Attached as Android 0.1.0-test1 to the existing Windows v0.5.18 release. No production Android update feed is enabled."
+}

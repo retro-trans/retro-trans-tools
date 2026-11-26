@@ -1,4 +1,4 @@
-# Retro Trans 0.5.22 for Linux
+# Retro Trans 0.5.24 for Linux
 
 This portable x86-64 build targets Ubuntu 24.04 and compatible desktop systems
 with glibc 2.39 or newer. ARM Linux, older distributions and Steam Deck have not
@@ -9,7 +9,7 @@ beside its `_internal` folder. No Python, .NET, Wine, xdelta, CHD or Dolphin
 installation is needed. If your file manager asks, choose **Run**. From a terminal:
 
 ```sh
-tar -xzf Retro-Trans-Linux-x86_64-0.5.22.tar.gz
+tar -xzf Retro-Trans-Linux-x86_64-0.5.24.tar.gz
 ./Retro-Trans/Retro-Trans
 ```
 
@@ -44,4 +44,4 @@ dependencies in `.github/workflows/linux.yml`, running
 `python scripts/bundle_dcp.py --rid linux-x64 --write`.
 The workflow runs regression tests, packaged conversion/startup checks, and a
 network-disabled container check without Python or installed patching engines.
-Windows release assets and the existing v0.5.22 tag are preserved.
+All platforms must pass the shared publication gate before a new version is published.

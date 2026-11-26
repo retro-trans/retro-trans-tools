@@ -3,6 +3,7 @@ on:
   push:
     branches: [codex/macos-feature-parity]
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 jobs:
@@ -17,11 +18,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.426'
       - name: Install build-only dependencies
         run: |
           brew install rom-tools
           python -m pip install pyinstaller==6.22.3 certifi==2026.7.22
           python -m pip install -e .
+      - name: Build pinned DCP helper
+        run: python scripts/bundle_dcp.py --rid "osx-$(python -c 'from retro_trans.macos import architecture; print("arm64" if architecture()=="arm64" else "x64")')" --write
       - name: Test and package all features
         env:
           GH_TOKEN: ${{ github.token }}
@@ -38,9 +44,11 @@ jobs:
             dist/UPDATE-macos-*.json
             dist/*HEALTH*.json
             dist/MAC-VALIDATION.json
+            dist/NETWORK-HEALTH.json
           if-no-files-found: error
           retention-days: 30
   windows-regression:
+    if: github.event_name != 'workflow_call' && !startsWith(github.ref, 'refs/tags/') && github.ref_name != 'codex/release-0.5.24'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

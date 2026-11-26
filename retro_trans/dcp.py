@@ -76,7 +76,17 @@ def engine():
         for name, identity in manifest['files'].items():
             safe_name(name)
             p = directory / name
-            if p.is_symlink() or p.stat().st_size != identity['bytes'] or sha256_file(p) != identity['sha256']:
+            allowed_bundle_link = False
+            if p.is_symlink() and sys.platform == 'darwin' and getattr(sys, 'frozen', False):
+                from .macos import app_bundle
+                bundle = app_bundle()
+                if bundle:
+                    try:
+                        p.resolve(strict=True).relative_to((bundle/'Contents').resolve())
+                        allowed_bundle_link = True
+                    except (OSError, ValueError):
+                        pass
+            if (p.is_symlink() and not allowed_bundle_link) or p.stat().st_size != identity['bytes'] or sha256_file(p) != identity['sha256']:
                 raise PatchError('The bundled DCP engine failed verification. Reinstall this build.')
         return directory / ('RetroTrans.Dcp.exe' if sys.platform == 'win32' else 'RetroTrans.Dcp')
     except (OSError, ValueError, KeyError) as exc:

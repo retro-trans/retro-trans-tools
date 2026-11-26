@@ -317,12 +317,18 @@ scheduled job can contain warnings; consult its report when reviewing coverage.
 
 ### Publishing the application
 
-Set `retro_trans.__version__` and push a matching stable `vX.Y.Z` tag. The Windows
-workflow runs tests, builds a standalone EXE with the engine/catalog bundled,
-checks its offline startup, and publishes `Retro-Trans.exe`, the distribution ZIP,
-and `UPDATE.json`. The update metadata contains schema version, app version,
-platform, asset filename, byte size and SHA-256. Existing app releases are never
-overwritten. Patch-catalog updates do not require a new application version.
+Set `retro_trans.__version__`, the Android preview version/versionCode, and the
+concise release notes. The shared release workflow builds Windows x64, macOS
+Apple Silicon and Intel, Linux x86-64, and the Android ARM64/x86-64 preview.
+Every platform must pass its tests and packaged checks. `scripts/prepare_release.py`
+rejects missing or stale builds, mismatched hashes, failed checks and an unexpected
+Android signer, then creates one complete asset set and `SHA256SUMS.txt`.
+
+A matching stable `vX.Y.Z` tag publishes only after all platform jobs succeed.
+Branch builds stage artifacts for review and never publish. Existing releases and
+assets are never overwritten. Android remains explicitly a preview with manual
+updates; no production Android signing/feed claim is made. Windows and Mac update
+metadata refer to their exact verified assets. Catalog updates are independent.
 
 ## Scoped catalog maintenance
 

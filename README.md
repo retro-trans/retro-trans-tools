@@ -1,55 +1,24 @@
 # Retro Trans
 
-**Windows 0.5.23:** Automatic can verify and concatenate explicitly declared
-source files before applying xdelta. This supports Apathy's original Steam
-`kiwame.exe` plus `kiwame.tpatch`, and ordinary incremental patches from an
-already translated executable. See [combined sources](docs/COMBINED_SOURCES.md).
-Download the [Windows release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.23).
+A compact native patching toolkit for [retro-trans](https://github.com/retro-trans)
+releases. Download verified translations, recognize original or already-patched
+files, and save a new verified copy. No game files or licenses are included.
 
-**Linux 0.5.22:** a portable x86-64 package is available on the
-[0.5.22 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.22).
-Extract the whole archive and run `Retro-Trans/Retro-Trans`. It targets Ubuntu
-24.04 and compatible desktops, bundles xdelta/CHD/RVZ/DCP tools, and needs no
-Python or .NET installation. App updates are manual; Vita PKG rebuilding still
-requires Windows. See [Linux instructions and limits](docs/LINUX.md).
+**0.5.24** fixes Windows HTTPS certificate-chain verification and includes current
+builds for every supported platform in [Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest):
 
-**Windows 0.5.22:** adds the **PS3 DLC** tab for verified translated copies of
-owned Z3 EDATs, matched to the exact English base ISO or game folder. Download
-the [latest Windows release](https://github.com/retro-trans/retro-trans-tools/releases/latest)
-and follow the [DLC instructions](docs/PS3_DLC.md). Originals remain untouched;
-no automatic installation, license downloads or missing DLC are supplied.
-Existing RVZ, DCP, Vita and other workflows are retained.
+| Platform | Download | Notes |
+| --- | --- | --- |
+| Windows x64 | EXE or portable ZIP | Windows 10/11; native certificate verification. |
+| macOS | Apple Silicon or Intel ZIP | Native app; ad-hoc signed, not notarized. [Mac instructions](docs/MAC_TEST_BUILD.md). |
+| Linux x86-64 | Portable tar.gz | glibc 2.39+ and X11/XWayland; [Linux instructions](docs/LINUX.md). |
+| Android ARM64/x86-64 | Preview APK | Android 8+; [preview scope and instructions](android/README.md). |
 
-**Windows 0.5.21:** adds GameCube/Wii **RVZ input and output** in Automatic and
-Apply xdelta. Download the [Windows release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.21)
-and see [RVZ instructions](docs/RVZ.md). The converter is bundled; RVZ conversion
-requires Windows 10 1903 or later, x64, and the current Microsoft Visual C++ v14 x64 runtime.
-
-Release authors: every new console/PC game release must register its package or
-product IDs in the [central game library](docs/GAME_LIBRARY.md). Windows 0.5.21
-also uses this library for direct Vita discovery, reducing repeated GitHub requests.
-
-**Windows 0.5.20:** **Automatic** recognizes the published original Black/Matrix AD
-Disc 1 and Disc 2 CUE/BIN sets and downloads their matching DCP packages. Choose a
-new output folder; game-file, boot-code and CD-audio verification remain enabled.
-The separate DCP tab still accepts local packages. See [DCP instructions](docs/DCP.md).
-
-Automatic supports larger complete Vita profiles, including
-SRW Z3's Vita3K package. It downloads small Vita translation patches and
-rebuilds an English PKG locally using your original PKG and matching
-`work.bin`/`.rif`. Generic hardware rePatch and manual installed CPK patching
-are also supported. Download the Windows EXE or ZIP from
-[Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).
-
-Mac **0.5.18** and Android **0.1.0-test1** downloads remain available on the
-[0.5.18 release](https://github.com/retro-trans/retro-trans-tools/releases/tag/v0.5.18).
-DCP is included in the Windows and Linux releases; Vita PKG output remains
-Windows-only. The Mac ZIPs are ad hoc signed and are not notarized by Apple.
-
-A compact Windows desktop toolkit for translation releases from
-[retro-trans](https://github.com/retro-trans). Download the standalone EXE or ZIP
-from [Releases](https://github.com/retro-trans/retro-trans-tools/releases/latest).
-No Python, Node.js, or .NET installation is needed to run it.
+Python, .NET and separate patch engines are bundled where needed. Platform feature
+sets differ: Vita PKG rebuilding is Windows-only; RVZ is Windows/Linux; Android
+supports Automatic/manual xdelta and experimental DCP, with combined-source assembly,
+CHD/RVZ, save tools and Vita PKG deferred. Desktop includes combined-source patches,
+PS3 DLC, CHD, DCP and save tools. All releases wait for every platform build to pass.
 
 ## Use
 

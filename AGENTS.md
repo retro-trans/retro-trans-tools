@@ -1,5 +1,8 @@
 # Project preferences
 
+- Every future app release must include Windows, macOS, Linux, and Android builds for all supported architectures. Build and validate every platform's artifacts before publishing the release; do not silently omit a platform or substitute an older build. Release creation, publication, and pushing still require the user's explicit request.
+- The user explicitly requested a new release with all platforms and the Windows certificate fix on 2026-11-26. This authorizes the related source push and publication of 0.5.24 after all platform checks pass. Keep the Android build labeled as a preview and preserve all earlier releases.
+
 - The user explicitly approved pushing and publishing Tools 0.5.23 with combined-source support, then Apathy 0.8.1, on 2026-11-12. This includes the relevant shared library/catalog integration and public-download verification. Preserve existing releases, unrelated work, originals and saves.
 
 - Every new game release, for any console or PC, must register its package/product IDs in `retro_trans/resources/game-library.json` before publication. Reuse existing IDs and add new platforms, editions or discs explicitly. New binary/DCP manifests must declare registered `package_ids`; Vita profiles must have their exact content IDs registered. Run the publication gate in `docs/GAME_LIBRARY.md`. Preserve historical manifests and never publish private library records or licenses. App release permission is still required separately.

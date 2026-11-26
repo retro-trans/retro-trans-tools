@@ -1,12 +1,13 @@
-name: Release Windows app
+name: Release all platforms
 on:
   push:
     tags: ['v*']
+    branches: [codex/release-0.5.24]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  release:
+  windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +21,7 @@ jobs:
         shell: pwsh
         run: |
           $AppVersion = python -c "from retro_trans import __version__; print(__version__)"
-          if ('${{ github.ref_name }}' -ne "v$AppVersion") { throw 'Run this workflow on the matching version tag.' }
+          if ('${{ github.ref_type }}' -eq 'tag' -and '${{ github.ref_name }}' -ne "v$AppVersion") { throw 'Run this workflow on the matching version tag.' }
       - name: Test and package
         shell: pwsh
         run: ./scripts/build.ps1 -Python python
@@ -34,19 +35,59 @@ jobs:
       - name: Check next-launch update with packaged apps
         shell: pwsh
         run: ./.venv/Scripts/python.exe scripts/check_packaged_update.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: windows-release-health
-          path: packaged-health.json
-          if-no-files-found: error
-      - name: Publish immutable app release
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Check packaged GitHub certificate verification
         shell: pwsh
         run: |
-          gh release view '${{ github.ref_name }}' --repo '${{ github.repository }}' 2>$null
-          if ($LASTEXITCODE -eq 0) { throw 'Release already exists. Publish a new version instead of overwriting it.' }
-          $NotesPath = 'docs/releases/${{ github.ref_name }}.md'
-          $NotesArguments = if (Test-Path -LiteralPath $NotesPath) { @('--notes-file', $NotesPath) } else { @('--generate-notes') }
-          gh release create '${{ github.ref_name }}' dist/Retro-Trans.exe dist/Retro-Trans-Windows.zip dist/UPDATE.json --repo '${{ github.repository }}' --verify-tag --title 'Retro Trans ${{ github.ref_name }}' @NotesArguments
-          if ($LASTEXITCODE -ne 0) { throw 'Release publishing failed.' }
+          $Check = Start-Process -FilePath './dist/Retro-Trans.exe' -ArgumentList '--network-check','packaged-network.json' -WindowStyle Hidden -PassThru
+          if (-not $Check.WaitForExit(300000)) { throw 'Packaged network check timed out.' }
+          $Report = Get-Content packaged-network.json -Raw | ConvertFrom-Json
+          if (-not $Report.ok) { throw $Report.error }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Retro-Trans-Windows
+          path: |
+            dist/Retro-Trans.exe
+            dist/Retro-Trans-Windows.zip
+            dist/UPDATE.json
+            packaged-health.json
+            packaged-network.json
+          if-no-files-found: error
+  macos:
+    uses: ./.github/workflows/macos-test.yml
+  linux:
+    uses: ./.github/workflows/linux.yml
+  android:
+    uses: ./.github/workflows/android-checks.yml
+    secrets: inherit
+  assemble:
+    needs: [windows, macos, linux, android]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: Retro-Trans-*
+          path: artifacts
+      - name: Require and verify all platform builds
+        run: python scripts/prepare_release.py artifacts release-assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: complete-release
+          path: release-assets/*
+          if-no-files-found: error
+      - name: Publish complete immutable release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Release already exists. Publish a new version instead of overwriting it.' >&2
+            exit 1
+          fi
+          gh release create "$GITHUB_REF_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --verify-tag --title "Retro Trans $GITHUB_REF_NAME" --notes-file "docs/releases/$GITHUB_REF_NAME.md"

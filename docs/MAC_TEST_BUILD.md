@@ -13,8 +13,8 @@ Download the matching release ZIP:
 `Retro-Trans-macos-x86_64.zip` (Intel). Move `Retro-Trans.app` to a writable
 folder, normally Applications. The window title includes the app version.
 No Python, Homebrew, Windows, or emulator compatibility layer is needed by users.
-Current runners target macOS 14 or newer on Apple Silicon and macOS 15 or newer
-on Intel. The exact minimum is recorded in the app and update metadata.
+Current builds target macOS 15 or newer on both Apple Silicon and Intel.
+The exact minimum is recorded in the app and update metadata.
 Builds are ad-hoc signed, not Apple Developer ID signed or notarized. macOS may
 require explicit approval in Privacy & Security; do not disable Gatekeeper.
 

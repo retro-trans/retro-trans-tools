@@ -6,6 +6,8 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.junit.*
@@ -37,17 +39,36 @@ class WorkflowTest {
         while(System.currentTimeMillis()<end) { if(block())return;Thread.sleep(100) }
         error("Timed out waiting for app state")
     }
+    private fun clickPicker(selector:BySelector, timeout:Long=10000, optional:Boolean=false):Boolean {
+        val end=android.os.SystemClock.uptimeMillis()+timeout
+        while(android.os.SystemClock.uptimeMillis()<end) {
+            try {
+                // DocumentsUI replaces nodes while loading folders. Re-find a stale
+                // node instead of keeping a handle from the previous directory.
+                val node=device.findObject(selector)
+                if(node!=null && node.isEnabled) {
+                    node.click()
+                    device.waitForIdle()
+                    return true
+                }
+            } catch(_:StaleObjectException) { /* Retry only the stale UI lookup. */ }
+            Thread.sleep(100)
+        }
+        check(optional) { "Picker control unavailable or disabled: $selector" }
+        return false
+    }
     private fun chooseFolder() {
-        device.wait(Until.findObject(By.text("Change output folder")),10000)!!.click()
-        device.waitForIdle()
+        clickPicker(By.text("Change output folder"))
+        // Verify a fresh picker result, rather than a persisted grant from a prior test.
+        context.getSharedPreferences("settings",0).edit().remove("output").commit()
         // Providers may ignore EXTRA_INITIAL_URI until the first grant.
-        device.findObject(By.text("Documents"))?.click()
-        device.wait(Until.findObject(By.text("RetroTransAndroidTest")),2000)?.click()
-        device.waitForIdle()
-        val use=device.wait(Until.findObject(By.text(java.util.regex.Pattern.compile("(?i)use this folder"))),10000)!!
-        assertTrue("Choose the test child folder, not a restricted storage root",use.isEnabled)
-        use.click()
-        device.wait(Until.findObject(By.text(java.util.regex.Pattern.compile("(?i)allow"))),5000)?.click()
+        clickPicker(By.text("Documents"),2000,optional=true)
+        clickPicker(By.text("RetroTransAndroidTest"),5000,optional=true)
+        clickPicker(By.text(java.util.regex.Pattern.compile("(?i)use this folder")))
+        clickPicker(By.text(java.util.regex.Pattern.compile("(?i)allow")),5000,optional=true)
+        waitFor { context.getSharedPreferences("settings",0).getString("output",null)!=null }
+        assertEquals("Choose only the test child folder",tree.toString(),
+            context.getSharedPreferences("settings",0).getString("output",null))
         waitFor { runCatching { Storage(context).folder(tree).canWrite() }.getOrDefault(false) }
     }
     @Test fun manualPatchThroughUiExportsVerifiedCopyAndRefusesOverwrite() {

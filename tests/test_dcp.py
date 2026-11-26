@@ -21,6 +21,37 @@ class DcpTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_frozen_mac_engine_links_stay_inside_app_and_keep_hash_checks(self):
+        bundle = self.root/'Retro-Trans.app'
+        module = bundle/'Contents/Resources/retro_trans/dcp.py'
+        directory = module.parent/'resources/native/dcp/osx-x64'
+        directory.mkdir(parents=True)
+        target = bundle/'Contents/Frameworks/RetroTrans.Dcp'
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b'synthetic engine')
+        executable = directory/'RetroTrans.Dcp'
+        try:
+            executable.symlink_to(target)
+        except OSError:
+            self.skipTest('Symlink creation requires OS support')
+        manifest = {'upstream_commit': dcp.UPSTREAM, 'files': {'RetroTrans.Dcp': {
+            'bytes': target.stat().st_size, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()}}}
+        (directory/'engine.json').write_text(json.dumps(manifest), encoding='utf-8')
+        with patch.object(dcp, '__file__', str(module)), patch.object(dcp.sys, 'platform', 'darwin'), \
+                patch.object(dcp.sys, 'frozen', True, create=True), \
+                patch.object(dcp.platform, 'machine', return_value='x86_64'), \
+                patch('retro_trans.macos.app_bundle', return_value=bundle):
+            self.assertEqual(dcp.engine(), executable)
+            target.write_bytes(b'corrupt engine!!')
+            with self.assertRaises(PatchError):
+                dcp.engine()
+            outside = self.root/'outside-engine'
+            outside.write_bytes(b'synthetic engine')
+            executable.unlink()
+            executable.symlink_to(outside)
+            with self.assertRaises(PatchError):
+                dcp.engine()
+
     def package(self, name='patch.dcp', members=None, metadata=None):
         path = self.root / name
         with zipfile.ZipFile(path, 'w') as z:

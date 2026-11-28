@@ -2564,6 +2564,44 @@
       }
     },
     {
+      "repo": "retro-trans/Kengo-3",
+      "tag": "v0.8.0",
+      "manifest": {
+        "game_id": "kengo-3",
+        "game_name": "Kengo 3",
+        "platform": "PS2",
+        "version": "0.8.0",
+        "source_commit": "6c01bba500db53a6c65ec76e5bd6ff64fd3800e0",
+        "schema_version": 1,
+        "patches": [
+          {
+            "patch": "Kengo3-English-v0.8.0.xdelta",
+            "edition": "original",
+            "language": "en",
+            "source_version": "original",
+            "source_format": "iso",
+            "target_format": "iso",
+            "source_sha256": "81404c00f2f493f7b17b0af5970f96746ff209d07bb74c7593a1e6552187d784",
+            "source_bytes": 3528556544,
+            "target_sha256": "05c3ba0812e347da719474b3e0bd1108937f03a6941e58fcad2777d78315c843",
+            "target_bytes": 3531116544,
+            "patch_sha256": "09415a6e4afdac4258657a02333e64b00f808909157835f0881b114fff77a0b9",
+            "patch_bytes": 109789945
+          }
+        ],
+        "package_ids": [
+          {
+            "platform": "PS2",
+            "kind": "disc-id",
+            "id": "SLPM-65700"
+          }
+        ]
+      },
+      "assets": {
+        "Kengo3-English-v0.8.0.xdelta": "https://github.com/retro-trans/Kengo-3/releases/download/v0.8.0/Kengo3-English-v0.8.0.xdelta"
+      }
+    },
+    {
       "repo": "retro-trans/Lost-Heroes",
       "tag": "v0.1.12",
       "manifest": {

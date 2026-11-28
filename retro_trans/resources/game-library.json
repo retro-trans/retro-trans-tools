@@ -187,6 +187,18 @@
       ]
     },
     {
+      "game_id": "kengo-3",
+      "name": "Kengo 3",
+      "repo": "retro-trans/Kengo-3",
+      "package_ids": [
+        {
+          "platform": "PS2",
+          "kind": "disc-id",
+          "id": "SLPM-65700"
+        }
+      ]
+    },
+    {
       "game_id": "lost-heroes",
       "name": "Lost Heroes",
       "repo": "retro-trans/Lost-Heroes",
